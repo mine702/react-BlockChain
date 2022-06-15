@@ -1,55 +1,57 @@
-import React,{useState,useEffect} from 'react';
+import { useState } from 'react';
 import Button from '@mui/material/Button';
-import axios from 'axios';
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
+import Grid from '@mui/material/Grid';
+import images1 from '../images/house.jpg';
 
-export default function FullScreenDialog() {
-
-  useEffect(()=>{
-    preview();
-    return()=>preview();
-  })
-  const preview = ()=>{
-    if(!files)return false;
-    const imgEl=document.querySelector('.img__box');
+function MyPage() {
+  const [imageSrc, setImageSrc] = useState(images1);
+  const encodeFileToBase64 = (fileBlob) => {
     const reader = new FileReader();
-    reader.onload=()=>(imgEl.style.backgroundImage = `url(${reader.result})`);
-    reader.readAsDataURL(files[0]);
-  }
-  const [files,setFiles] = useState('');
-  
-  const onLoadFile = (e) =>{
-    const file = e.target.files;
-    console.log(file);
-    setFiles(file);
-  }
-
-  const handleClick=(e)=>{
-    const formdata = new FormData();
-    formdata.append('uploadImage',files[0]);
-    const config = {
-      Headers: {
-        'content-type':'multipart/form-data'
-      }
-    }
-
-    axios.post('api',formdata,config);
-  }
-
+    reader.readAsDataURL(fileBlob);
+    return new Promise((resolve) => {
+      reader.onload = () => {
+        setImageSrc(reader.result);
+        resolve();
+      };
+    });
+  };
   return (
-    <div>
-      <div>
-        <strong>업로드된 이미지</strong>
-        <div>
-          <img src='' alt=''/>
-        </div>
+    <main className="container">
+      <div className="preview">
+        <Grid container spacing={4}>
+          <Grid xs={12} sm={6} md={4}>
+            <Card
+              sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+            >
+              <CardMedia
+                component="img"
+                sx={{
+                  // 16:9
+                  pt: '0%',
+                }}
+                image={imageSrc}
+                alt="random"
+              />
+            </Card>
+          </Grid>
+        </Grid>
+        <Button
+          variant="contained"
+          component="label"
+        >
+          사진 올리기
+          <input
+            type="file"
+            hidden
+            onChange={(e) => {
+              encodeFileToBase64(e.target.files[0]);
+            }}
+          />
+        </Button>
       </div>
-      <form>
-        <input type="file" accept="img/*" onChange={onLoadFile}/>
-        <label htmlFor='imgae'>파일 선택하기</label>
-      </form>
-      <Button variant="outlined" onChange={handleClick}>
-        저장하기
-      </Button>
-    </div>
+    </main>
   );
 }
+export default MyPage;

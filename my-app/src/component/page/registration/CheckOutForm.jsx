@@ -14,10 +14,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AddressForm from './AddressForm';
 import OrderForm from './OrderForm';
 import Review from './ReviewForm';
+import { useNavigate } from "react-router-dom";
 
-const steps = ['판매자 정보 등록', '판매할 집 정보 등록', '판매 정보 확인'];
+const steps = ['판매자 정보 등록', '판매할 집 정보 등록', '등록완료'];
 
-function getStepContent(step) {
+function getStepContent(step) {  
   switch (step) {
     case 0:
       return <AddressForm />;
@@ -33,6 +34,7 @@ function getStepContent(step) {
 const theme = createTheme();
 
 function CheckOutForm() {
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = () => {
@@ -75,16 +77,7 @@ function CheckOutForm() {
           </Stepper>
           <React.Fragment>
             {activeStep === steps.length ? (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order
-                  confirmation, and will send you an update when your order has
-                  shipped.
-                </Typography>
-              </React.Fragment>
+              navigate("/post-MainPage")
             ) : (
               <React.Fragment>
                 {getStepContent(activeStep)}
