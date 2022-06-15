@@ -14,9 +14,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AddressForm from './AddressForm';
 import OrderForm from './OrderForm';
 import Review from './ReviewForm';
-import { useNavigate } from "react-router-dom";
 
-const steps = ['Shipping address', 'Payment details', 'Review your order'];
+const steps = ['판매자 정보 등록', '판매할 집 정보 등록', '판매 정보 확인'];
 
 function getStepContent(step) {
   switch (step) {
@@ -34,8 +33,6 @@ function getStepContent(step) {
 const theme = createTheme();
 
 function CheckOutForm() {
-  const navigate = useNavigate();
-
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = () => {
@@ -67,7 +64,7 @@ function CheckOutForm() {
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">
-            Checkout
+            판매 등록
           </Typography>
           <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
             {steps.map((label) => (
@@ -94,7 +91,7 @@ function CheckOutForm() {
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   {activeStep !== 0 && (
                     <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                      Back
+                      이전
                     </Button>
                   )}
 
@@ -103,7 +100,7 @@ function CheckOutForm() {
                     onClick={handleNext}
                     sx={{ mt: 3, ml: 1 }}
                   >
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+                    {activeStep === steps.length - 1 ? 'Place order' : '다음'}
                   </Button>
                 </Box>
               </React.Fragment>

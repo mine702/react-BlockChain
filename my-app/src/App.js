@@ -16,7 +16,7 @@ function App(props) {
     return (
         <BrowserRouter>
             <Routes>
-                <Route index element={<LoginPage />} />
+                <Route index element={<TestPage />} />
                 <Route path="post-NewMemberPage" element={<NewMemberPage />} />
                 <Route path="post-MainPage" element={<MainPage />} />
                 <Route path="post-Checkout" element={<Checkout />} />

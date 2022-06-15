@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -9,28 +9,20 @@ function OrderForm() {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Payment method
+        집 정보 등록
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <TextField
             required
-            id="cardName"
-            label="Name on card"
+            id="houseAddress"
+            label="집주소"
             fullWidth
-            autoComplete="cc-name"
             variant="standard"
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <TextField
-            required
-            id="cardNumber"
-            label="Card number"
-            fullWidth
-            autoComplete="cc-number"
-            variant="standard"
-          />
+          <input type="file" />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
