@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect }  from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -17,11 +17,33 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
+
+let socket;
 
 const theme = createTheme();
 
-function SignUp(props) {
+const Chat = ({ location }) => {
+
+    const [name, setName] = useState("");
+    const [id, setId] = useState("");
+    const [pw, setPw] = useState("");
+    const [number, setNumber] = useState("");
+    const [MetaMaskAcc, setMetaMaskAcc] = useState("");
+
+    const ENDPOINT = "http://localhost:8080";
     const navigate = useNavigate();
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+       
+      }, []);
+
+    function SendMessage(){
+        socket.emit("Message", { name, id, pw, number, MetaMaskAcc });
+    }
+
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -54,23 +76,25 @@ function SignUp(props) {
                             <Grid item xs={12}>
                                 <TextField
                                     autoComplete="given-name"
-                                    name="firstName"
+                                    name="name"
                                     required
                                     fullWidth
-                                    id="firstName"
+                                    id="name"
                                     label="이름"
                                     autoFocus
+                                    onChange={(e) => setName(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     required
                                     fullWidth
-                                    name="Userid"
-                                    label="Id"
-                                    type="Userid"
-                                    id="Userid"
-                                    autoComplete="new-Userid"
+                                    name="id"
+                                    label="id"
+                                    type="id"
+                                    id="id"
+                                    autoComplete="new-id"
+                                    onChange={(e) => setId(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -82,16 +106,18 @@ function SignUp(props) {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
+                                    onChange={(e) => setPw(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     required
                                     fullWidth
-                                    id="email"
+                                    id="number"
                                     label="전화번호"
-                                    name="email"
-                                    autoComplete="email"
+                                    name="number"
+                                    autoComplete="number"
+                                    onChange={(e) => setNumber(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -102,6 +128,7 @@ function SignUp(props) {
                                     label="MetaMaskAcc"
                                     name="MetaMaskAcc"
                                     autoComplete="MetaMaskAcc"
+                                    onChange={(e) => setMetaMaskAcc(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>
@@ -151,12 +178,12 @@ function SignUp(props) {
                             </Grid>
                         </Grid>
                         <Button
-                            type="submit"
+                            type="button"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                             onClick={() => {
-                                navigate("/")
+                                SendMessage();
                             }}
                         >
                             회원가입
@@ -177,4 +204,4 @@ function SignUp(props) {
     );
 }
 
-export default SignUp;
+export default Chat;

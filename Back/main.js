@@ -25,8 +25,8 @@ server.listen(8080, function() {
 
 io.on('connection', socket => {
   console.log("안녕하세요");
-  socket.on('message', ({ name, id, pw, number, MetaMaskAcc}) => {
-    console.log(name);
+  socket.on('Message', ({ name, id, pw, number, MetaMaskAcc}) => {
+    console.log(name, id, pw, number, MetaMaskAcc);
     //io.emit('message', { name, message })
   })
 })
