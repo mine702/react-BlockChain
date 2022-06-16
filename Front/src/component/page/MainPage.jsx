@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation  } from "react-router";
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -27,6 +27,12 @@ import Card1 from '../ui/Card1';
 const theme = createTheme();
 function Album(props) {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        console.log(location);
+      }, [ location ])
+      
     const [cards, setCardsLow] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     const [locationvalue, setLocationvalue] = useState("");
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use

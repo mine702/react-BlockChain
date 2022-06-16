@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,13 +12,17 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import io from "socket.io-client";
 
 const theme = createTheme();
+let socket;
 
 function SignIn(props) {
     const navigate = useNavigate();
-
+    const ENDPOINT = "http://localhost:8080";
+    const [id, setId] = useState("");
+    const [pw, setPw] = useState("");
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -27,6 +31,26 @@ function SignIn(props) {
             password: data.get('password'),
         });
     };
+
+    function LoginButtonOnClick() {
+        socket.emit("MemberIdCheck", { id, pw });
+        socket.on("MemberIdCheck", (result) => {
+            // eslint-disable-next-line eqeqeq
+            if(result.result == "" || undefined){
+                alert("id가 없습니다.");
+                setId("");
+            }
+            else{
+                console.log(result.result.name)
+                navigate("/post-MainPage", {location:result.result.name});
+            }
+        })
+        
+    }
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
@@ -51,21 +75,17 @@ function SignIn(props) {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
                             label="ID"
-                            name="email"
-                            autoComplete="email"
                             autoFocus
+                            onChange={(e) => setId(e.target.value)}
                         />
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            name="password"
                             label="Password"
                             type="password"
-                            id="password"
-                            autoComplete="current-password"
+                            onChange={(e) => setPw(e.target.value)}
                         />
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
@@ -76,9 +96,7 @@ function SignIn(props) {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
-                            onClick={()=>{
-                                navigate("/post-MainPage")
-                            }}
+                            onClick={LoginButtonOnClick}
                         >
                             로그인
                         </Button>

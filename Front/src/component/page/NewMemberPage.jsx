@@ -11,12 +11,8 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import io from "socket.io-client";
 
 let socket;
@@ -25,7 +21,7 @@ let socket;
 const theme = createTheme();
 
 const Chat = ({ location }) => {
-
+    const { stateusername } = useLocation();
     const [name, setName] = useState("");
     const [id, setId] = useState("");
     const [pw, setPw] = useState("");
