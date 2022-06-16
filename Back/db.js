@@ -11,15 +11,15 @@ let dbcontrol =
     db_init :function ()
     {
         MongoClient.connect(url, function(err, db) {
-        dbo = db.db("test");
+        dbo = db.db("Real_Estate_Project");
         console.log('conneted!!');
         })
     },
 
-    db_insert: function(name, age)
+    db_insert: function(name, id, pw, number, MetaMaskAcc)
     {
-        var myobj = { name : name, age: age };
-        dbo.collection("customers").insertOne(myobj, function(err, res) {
+        var myobj = { name : name, id: id, pw: pw, number : number, MetaMaskAcc : MetaMaskAcc };
+        dbo.collection("Member").insertOne(myobj, function(err, res) {
         if (err) throw err;
         console.log("1 document inserted");
         })
@@ -28,9 +28,26 @@ let dbcontrol =
     db_delete: function (name)
     {
         var myquery = { name: name };
-        dbo.collection("customers").deleteOne(myquery, function(err, obj) {
+        dbo.collection("Member").deleteOne(myquery, function(err, obj) {
         if (err) throw err;
         console.log("1 document deleted");
+        });
+    },
+
+    db_idCheck: function (id) {
+        var query = { id: id };
+        return new Promise(resolve => {
+            dbo.collection("Member").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                if(result!="")
+                {
+                    resolve(true);
+                }
+                else
+                {  
+                    resolve(false);
+                }
+            });            
         });
     },
 

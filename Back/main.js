@@ -24,10 +24,18 @@ server.listen(8080, function() {
 })
 
 io.on('connection', socket => {
-  console.log("안녕하세요");
-  socket.on('Message', ({ name, id, pw, number, MetaMaskAcc}) => {
-    console.log(name, id, pw, number, MetaMaskAcc);
-    //io.emit('message', { name, message })
+
+  socket.on('sign_up', ({ name, id, pw, number, MetaMaskAcc}) => {
+    dbcontrol.db_insert(name, id, pw, number, MetaMaskAcc);
+    socket.emit("MemberCheck", "회원 가입 완료!!!");
+  })
+
+  socket.on('idCheck', ({ id }) => {
+    (async ()=>{
+      let result = await dbcontrol.db_idCheck(id);
+      console.log(result);
+      socket.emit("idCheck_rusult", {result});
+    })()
   })
 })
 

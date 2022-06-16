@@ -21,6 +21,7 @@ import io from "socket.io-client";
 
 let socket;
 
+
 const theme = createTheme();
 
 const Chat = ({ location }) => {
@@ -31,18 +32,69 @@ const Chat = ({ location }) => {
     const [number, setNumber] = useState("");
     const [MetaMaskAcc, setMetaMaskAcc] = useState("");
 
+    const [idcheck, setIdCheck] = useState(false);
+    const [checked, setCheckedButtons] = useState(false);
+
     const ENDPOINT = "http://localhost:8080";
     const navigate = useNavigate();
 
     useEffect(() => {
         socket = io(ENDPOINT);
-       
       }, []);
-
+    
     function SendMessage(){
-        socket.emit("Message", { name, id, pw, number, MetaMaskAcc });
+        if(checked === false){
+            alert("개인정보 동의를 하세요");
+        }
+        else if(name === "" || id === "" || pw ==="" || number==="" || MetaMaskAcc===""){
+            alert("입력하지 않은 정보가 있습니다");
+        }
+        else if(idcheck === false){
+            alert("ID 중복 체크 하세요!");
+        }
+        else{
+            socket.emit("sign_up", { name, id, pw, number, MetaMaskAcc });
+            socket.on("MemberCheck" , (CheckMsg)=>{
+                alert(CheckMsg);
+            })
+            navigate('/');
+        }
     }
 
+    function CheckBoxBool(){
+        if(checked === false){
+            setCheckedButtons(true);
+        }
+        else if(checked ===true){
+            setCheckedButtons(false);
+        }
+    }
+
+    function idCheck() {
+
+        if (id !== "") 
+        {
+            socket.emit("idCheck", { id });
+            socket.on( "idCheck_rusult", (result)=>{
+                if(result.result === true)
+                {
+                    alert("중복된 ID 입니다.")
+                    setIdCheck(false);
+                }
+                else if(result.result === false)
+                {
+                    setIdCheck(true);
+                    alert("사용가능한 ID 입니다.")
+                }
+            });
+        }
+        else
+        {
+            alert("ID를 입력하세요");
+        }
+    }
+
+   
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -85,7 +137,7 @@ const Chat = ({ location }) => {
                                     onChange={(e) => setName(e.target.value)}
                                 />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid item xs={12} sm={8}>
                                 <TextField
                                     required
                                     fullWidth
@@ -96,6 +148,19 @@ const Chat = ({ location }) => {
                                     autoComplete="new-id"
                                     onChange={(e) => setId(e.target.value)}
                                 />
+                            </Grid>
+                            <Grid item xs={12} sm={4}>
+                                <Button
+                                    type="button"
+                                    fullWidth
+                                    variant="outlined"
+                                    sx={{ mt: 1, mb: 2 }}
+                                    onClick={() => {
+                                        idCheck();
+                                    }}
+                                >
+                                    id 중복체크
+                                </Button>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
@@ -131,48 +196,9 @@ const Chat = ({ location }) => {
                                     onChange={(e) => setMetaMaskAcc(e.target.value)}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={4}>
-                            <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">년도</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        label="locationv"
-                                    >
-                                        <MenuItem value={"1999"}>1999</MenuItem>
-                                        <MenuItem value={"2000"}>2000</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                            <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">월</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        label="locationv"
-                                    >
-                                        <MenuItem value={"07"}>07</MenuItem>
-                                        <MenuItem value={"08"}>08</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                            <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">일</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        label="locationv"
-                                    >
-                                        <MenuItem value={"01"}>01</MenuItem>
-                                        <MenuItem value={"02"}>02</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
                             <Grid item xs={12}>
                                 <FormControlLabel
-                                    control={<Checkbox value="allowExtraEmails" color="primary" />}
+                                    control={<Checkbox value="allowExtraEmails" color="primary" onClick={CheckBoxBool} />}
                                     label="개인정보 확인에 동의 하십니까?"
                                 />
                             </Grid>
