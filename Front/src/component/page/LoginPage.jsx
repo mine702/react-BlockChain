@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from "react";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,13 +13,29 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
 
 const theme = createTheme();
 
+let socket;
+
+const ENDPOINT = "http://localhost:8080";
+
 function SignIn(props) {
+
     const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const [id, setId] = useState("");
+    const [pw, setPw] = useState("");
+    
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+      }, []);
+
+     
+        
+      const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         console.log({
@@ -51,11 +67,12 @@ function SignIn(props) {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="ID"
-                            name="email"
-                            autoComplete="email"
+                            id="id"
+                            label="id"
+                            name="id"
+                            autoComplete="id"
                             autoFocus
+                            onChange={(e) => setId(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -66,18 +83,30 @@ function SignIn(props) {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            onChange={(e) => setPw(e.target.value)}
                         />
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
                             label="아이디 저장"
                         />
                         <Button
-                            type="submit"
+                            type="button"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
-                            onClick={()=>{
-                                navigate("/post-MainPage")
+                            onClick={async () => {
+                                socket.emit("Login", { id, pw });
+                                await socket.on("Login_result", (result)=>{
+                                    if(result =="" || undefined)
+                                    {
+                                        alert("아이디와 비밀번호를 확인하세요");
+                                    }
+                                    else
+                                    {
+                                        console.log(result);
+                                        navigate("/post-MainPage", {state: result});
+                                    }
+                                })
                             }}
                         >
                             로그인

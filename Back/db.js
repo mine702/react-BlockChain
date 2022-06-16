@@ -1,5 +1,4 @@
 //const res = require('express/lib/response');
-
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://wb35:1234@cluster.yau6n.mongodb.net/?retryWrites=true&w=majority";
 
@@ -47,6 +46,18 @@ let dbcontrol =
                 {  
                     resolve(false);
                 }
+            });            
+        });
+    },
+
+    db_Login: function (id, pw) {
+        var query = { id: id, pw : pw};
+        return new Promise(resolve => {
+            dbo.collection("Member").find(query).toArray(function (err, result) {
+                if (err) throw err;
+               
+                resolve(result);
+                
             });            
         });
     },

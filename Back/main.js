@@ -37,6 +37,16 @@ io.on('connection', socket => {
       socket.emit("idCheck_rusult", {result});
     })()
   })
+
+  socket.on('Login', ({ id, pw }) => {
+    (async ()=>{
+      let result = await dbcontrol.db_Login(id, pw);
+      console.log(result);
+      socket.emit("Login_result", result);
+    })()
+  })
+
+  
 })
 
 
