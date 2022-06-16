@@ -1,57 +1,53 @@
-import { useState } from 'react';
+import * as React from 'react';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
-import Grid from '@mui/material/Grid';
-import images1 from '../images/house.jpg';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
-function MyPage() {
-  const [imageSrc, setImageSrc] = useState(images1);
-  const encodeFileToBase64 = (fileBlob) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(fileBlob);
-    return new Promise((resolve) => {
-      reader.onload = () => {
-        setImageSrc(reader.result);
-        resolve();
-      };
-    });
+export default function FormDialog() {
+  
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
   };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <main className="container">
-      <div className="preview">
-        <Grid container spacing={4}>
-          <Grid xs={12} sm={6} md={4}>
-            <Card
-              sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-            >
-              <CardMedia
-                component="img"
-                sx={{
-                  // 16:9
-                  pt: '0%',
-                }}
-                image={imageSrc}
-                alt="random"
-              />
-            </Card>
-          </Grid>
-        </Grid>
-        <Button
-          variant="contained"
-          component="label"
-        >
-          사진 올리기
-          <input
-            type="file"
-            hidden
-            onChange={(e) => {
-              encodeFileToBase64(e.target.files[0]);
-            }}
+    <div>
+      <Button variant="outlined" onClick={handleClickOpen}>
+        대화창 열기
+      </Button>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
+        <DialogTitle>대화창</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+          <TextField
+              multiline={true}
+              rows={24}
+              fullWidth
+              disabled
+            ></TextField>
+          </DialogContentText>
+        
+        <TextField
+            autoFocus
+            id="messagetextbox"
+            label="메시지 입력"
+            fullWidth
+            variant="standard"
           />
-        </Button>
-      </div>
-    </main>
+        </DialogContent>
+        <DialogActions>
+          <Button>보내기</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 }
-export default MyPage;

@@ -95,9 +95,8 @@ function Album(props) {
                             </List>
                         </Box>
                     </SwipeableDrawer> 
-                    <FullScreenDialog></FullScreenDialog>
+                    <FullScreenDialog></FullScreenDialog> {/* 메시지 아이콘 */}
                 </Toolbar>
-
             </AppBar>
             <main>
                 {/* Hero unit */}
