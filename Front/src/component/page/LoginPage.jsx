@@ -32,22 +32,6 @@ function SignIn(props) {
         });
     };
 
-    function LoginButtonOnClick() {
-        socket.emit("MemberIdCheck", { id, pw });
-        socket.on("MemberIdCheck", (result) => {
-            // eslint-disable-next-line eqeqeq
-            if(result.result == "" || undefined){
-                alert("id가 없습니다.");
-                setId("");
-            }
-            else{
-                console.log(result.result.name)
-                navigate("/post-MainPage", {location:result.result.name});
-            }
-        })
-        
-    }
-
     useEffect(() => {
         socket = io(ENDPOINT);
     }, []);
@@ -96,7 +80,18 @@ function SignIn(props) {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
-                            onClick={LoginButtonOnClick}
+                            onClick={async () => {
+                                socket.emit("MemberIdCheck", { id, pw });
+                                socket.on("MemberIdCheck", (result) => {
+                                    // eslint-disable-next-line eqeqeq
+                                    if (result.result == "" || undefined) {
+                                        alert("id가 없습니다.");
+                                        setId("");
+                                    }
+                                    navigate("/post-MainPage",{ state: result.result.name });
+                                    }
+                                )
+                            }}
                         >
                             로그인
                         </Button>

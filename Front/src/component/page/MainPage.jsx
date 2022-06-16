@@ -30,7 +30,7 @@ function Album(props) {
     const location = useLocation();
 
     useEffect(() => {
-        console.log(location);
+        console.log(location.state);
       }, [ location ])
       
     const [cards, setCardsLow] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
