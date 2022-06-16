@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate, useLocation  } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -28,13 +28,10 @@ const theme = createTheme();
 function Album(props) {
     const navigate = useNavigate();
     const location = useLocation();
-
-    useEffect(() => {
-        console.log(location.state);
-      }, [ location ])
-      
     const [cards, setCardsLow] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     const [locationvalue, setLocationvalue] = useState("");
+
+    const [username] = useState(location.state)
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
     const [state, setState] = React.useState({
         left: false
@@ -48,7 +45,6 @@ function Album(props) {
         ) {
             return;
         }
-
         setState({ ...state, [anchor]: open });
     };
     useEffect(() => {
@@ -65,7 +61,7 @@ function Album(props) {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <AppBar position="relative">
-                <Toolbar>
+                <Toolbar>                    
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -90,7 +86,9 @@ function Album(props) {
                                 <ListItem key="마이페이지" disablePadding sx={{ display: 'block' }}>
                                     <Divider />
                                     <ListItemButton>
-                                        <ListItemText primary="MyPage" />
+                                        <ListItemText onClick={() => {
+                                            navigate("/post-UserMyPage", { state: location.state })
+                                        }} primary="MyPage" />
                                     </ListItemButton>
                                     <ListItemButton>
                                         <ListItemText onClick={() => {
@@ -100,8 +98,10 @@ function Album(props) {
                                 </ListItem>
                             </List>
                         </Box>
-                    </SwipeableDrawer> 
+                    </SwipeableDrawer>
                     <FullScreenDialog></FullScreenDialog>
+                    <Box sx={{ flexGrow: 1 }} />               
+                      접속중인 사람 : {username}
                 </Toolbar>
 
             </AppBar>

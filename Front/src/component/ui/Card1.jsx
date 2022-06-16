@@ -5,8 +5,11 @@ import CardMedia from '@mui/material/CardMedia';
 import images1 from '../images/house.jpg';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import { useNavigate } from "react-router";
 
 function Card1(props) {
+    const navigate = useNavigate();
     const { cards } = props;
     return (
         <Grid container spacing={4}>
@@ -25,8 +28,10 @@ function Card1(props) {
                             alt="random"
                         />
                         <CardActions>
-                            <Button size="small">보기</Button>
-                            <Button size="small">저장</Button>
+                        <Box sx={{ flexGrow: 1 }} /> 
+                            <Button size="small" onClick={()=>{
+                                navigate("/")
+                            }}>보기</Button>
                         </CardActions>
                     </Card>
                 </Grid>

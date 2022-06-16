@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 
 const theme = createTheme();
@@ -88,8 +88,10 @@ function SignIn(props) {
                                         alert("id가 없습니다.");
                                         setId("");
                                     }
-                                    navigate("/post-MainPage",{ state: result.result.name });
+                                    else {
+                                        navigate("/post-MainPage", { state: result.result.name });
                                     }
+                                }
                                 )
                             }}
                         >
