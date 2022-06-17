@@ -73,7 +73,7 @@ function Album(props) {
             })
         }
         else (
-            setCardsLow([])
+            setCardsLow()
         )
         //alert(`${state1}님이 접속하였습니다.`);
     }, [locationvalue])
