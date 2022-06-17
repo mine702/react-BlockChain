@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -16,12 +16,14 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import io from "socket.io-client";
+
+let socket;
 
 function CheckOutForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const [files, setFiles] = useState(images1);
-  const [locationvalue, setLocationvalue] = useState("");
   const encodeFileToBase64 = (fileBlob) => {
     const reader = new FileReader();
     reader.readAsDataURL(fileBlob);
@@ -33,6 +35,40 @@ function CheckOutForm() {
     });
   };
 
+  const [locationvalue, setLocationvalue] = useState("");
+  const [address, setAddress] = useState("");
+  const [checked, setCheckedButtons] = useState(false);
+
+  const ENDPOINT = "http://localhost:8080";
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+  }, []);
+
+  function SendMessage() {
+    if (checked === false) {
+      alert("개인정보 동의를 하세요");
+    }
+    else if (locationvalue === "" || address === "") {
+      alert("입력하지 않은 정보가 있습니다");
+    }
+    else {
+      socket.emit("Housesign_up", { locationvalue, address, files });
+      socket.on("Housesign_up_check", (CheckMsg) => {
+        alert(CheckMsg);
+      })
+      navigate("/post-MainPage", { state: location.state })
+    }
+  }
+
+  function CheckBoxBool(){
+    if(checked === false){
+        setCheckedButtons(true);
+    }
+    else if(checked ===true){
+        setCheckedButtons(false);
+    }
+}
   return (
     <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
       <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
@@ -72,6 +108,9 @@ function CheckOutForm() {
                   label="집주소"
                   fullWidth
                   variant="standard"
+                  onChange={(e)=>{
+                    setAddress(e.target.value)
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -104,7 +143,7 @@ function CheckOutForm() {
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
-                  control={<Checkbox color="secondary" />}
+                  control={<Checkbox color="secondary" onClick={CheckBoxBool} />}
                   label="판매 게시글에 올리시겠습니까?"
                 />
               </Grid>
@@ -114,10 +153,7 @@ function CheckOutForm() {
             <Button
               variant="contained"
               sx={{ mt: 3, ml: 1 }}
-              onClick={() => {
-                alert("등록 완료!!");
-                navigate("/post-MainPage", { state: location.state })
-              }}
+              onClick={SendMessage}
             >등록
             </Button>
           </Box>

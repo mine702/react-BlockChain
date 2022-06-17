@@ -41,8 +41,12 @@ io.on('connection', socket => {
   socket.on('MemberIdCheck', ({ id, pw }) => {
     (async () => {
       let result = await dbcontrol.db_select(id, pw);
-      console.log(result);
       socket.emit("MemberIdCheck", { result });
     })()
+  })
+
+  socket.on('Housesign_up', ({ locationvalue, address, files }) => {
+    dbcontrol.db_inserthouse(locationvalue, address, files);
+    socket.emit("Housesign_up_check", "등록 완료!!!");
   })
 })

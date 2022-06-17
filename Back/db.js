@@ -23,6 +23,14 @@ let dbcontrol =
         })
     },
 
+    db_inserthouse: function (locationvalue, address, files) {
+        var myobj = { address: address, files: files };
+        dbo.collection(`${ locationvalue }`).insertOne(myobj, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+        })
+    },
+
     db_delete: function (name) {
         var myquery = { name: name };
         dbo.collection("Member").deleteOne(myquery, function (err, obj) {
