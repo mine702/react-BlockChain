@@ -85,7 +85,7 @@ function SignIn(props) {
                                 socket.on("MemberIdCheck", (result) => {
                                     // eslint-disable-next-line eqeqeq
                                     if (result.result == "" || undefined) {
-                                        alert("id가 없습니다.");
+                                        alert("ID를 다시 확인해주세요");
                                         setId("");
                                     }
                                     else {
