@@ -67,6 +67,11 @@ function PrimarySearchAppBar() {
                                             navigate("/")
                                         }} primary="LogOut" />
                                     </ListItemButton>
+                                    <ListItemButton>
+                                        <ListItemText onClick={() => {
+                                            navigate("/post-MainPage", { state: location.state })
+                                        }} primary="MainPage" />
+                                    </ListItemButton>
                                 </ListItem>
                             </List>
                         </Box>
