@@ -46,6 +46,10 @@ io.on('connection', socket => {
     })()
   })
 
+  socket.on('House_Register', ({ locationvalue, address, files }) => {
+    dbcontrol.db_House_Register(locationvalue, address, files);
+    socket.emit("House_Register_Result", "등록 완료!!!");
+  })
   
 })
 
