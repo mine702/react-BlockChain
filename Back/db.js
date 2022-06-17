@@ -1,6 +1,7 @@
 //const res = require('express/lib/response');
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb+srv://wb35:1234@cluster.yau6n.mongodb.net/?retryWrites=true&w=majority";
+var url = "mongodb+srv://root:1234@firstcluster.fvuco.mongodb.net/?retryWrites=true&w=majority";
+//mongodb+srv://wb35:1234@firstcluster.fvuco.mongodb.net/?retryWrites=true&w=majority
 
 var dbo;
 

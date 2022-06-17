@@ -4,6 +4,7 @@ const cors = require('cors');
 const dbcontrol = require('./db.js');
 const http = require("http");
 const server = http.createServer(app);
+
 const io = require('socket.io')(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -28,15 +29,16 @@ io.on('connection', socket => {
   socket.on('sign_up', ({ name, id, pw, number, MetaMaskAcc}) => {
     dbcontrol.db_insert(name, id, pw, number, MetaMaskAcc);
     socket.emit("MemberCheck", "회원 가입 완료!!!");
-  })
+  });
 
   socket.on('idCheck', ({ id }) => {
     (async ()=>{
+      console.log(id);
       let result = await dbcontrol.db_idCheck(id);
       console.log(result);
-      socket.emit("idCheck_rusult", {result});
+      socket.emit("idCheck_result", {result});
     })()
-  })
+  });
 
   socket.on('Login', ({ id, pw }) => {
     (async ()=>{
@@ -44,9 +46,11 @@ io.on('connection', socket => {
       console.log(result);
       socket.emit("Login_result", result);
     })()
-  })
-
+  });
   
+  socket.on('Message', (msg) => {
+    console.log(msg);
+  })
 })
 
 

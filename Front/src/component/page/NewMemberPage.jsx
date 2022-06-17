@@ -71,11 +71,11 @@ const Chat = ({ location }) => {
     }
 
     function idCheck() {
-
         if (id !== "") 
         {
+            //console.log(id);
             socket.emit("idCheck", { id });
-            socket.on( "idCheck_rusult", (result)=>{
+            socket.on( "idCheck_result", (result)=>{
                 if(result.result === true)
                 {
                     alert("중복된 ID 입니다.")
