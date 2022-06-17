@@ -36,7 +36,7 @@ function Album(props) {
     const location = useLocation();
 
     const [cards, setCardsLow] = useState([]);
-    const [imagesrc, setImagesrc] = useState([]);
+  
 
     const [locationvalue, setLocationvalue] = useState("");
 
@@ -68,13 +68,21 @@ function Album(props) {
         if (locationvalue == "대전") {
             socket.emit("Location_Data", { locationvalue });
             socket.on("Location_Data_Result", (Result) => {
-                setImagesrc(Result[0].files)
-                setCardsLow([Result])
+                console.log(Result);
+                setCardsLow(Result)
+                
+                
             })
         }
-        else (
-            setCardsLow()
-        )
+        else if(locationvalue == "서울"){
+            socket.emit("Location_Data", { locationvalue });
+            socket.on("Location_Data_Result", (Result) => {
+                console.log(Result);
+                setCardsLow(Result)
+                
+                
+            })
+        }        
         //alert(`${state1}님이 접속하였습니다.`);
     }, [locationvalue])
 
@@ -108,7 +116,9 @@ function Album(props) {
                                 <ListItem key="마이페이지" disablePadding sx={{ display: 'block' }}>
                                     <Divider />
                                     <ListItemButton>
-                                        <ListItemText primary="MyPage" />
+                                        <ListItemText onClick={() => {
+                                            navigate("/post-UserMyPage", { state: location.state })
+                                        }} primary="MyPage" />
                                     </ListItemButton>
                                     <ListItemButton>
                                         <ListItemText onClick={() => {
@@ -176,7 +186,7 @@ function Album(props) {
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Card1 cards={cards} imagesrc={imagesrc}></Card1>
+                    <Card1 cards={cards}></Card1>
                 </Container>
             </main>
             {/* Footer */}

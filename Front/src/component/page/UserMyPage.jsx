@@ -19,7 +19,7 @@ import CardContent from '@mui/material/CardContent';
 function PrimarySearchAppBar() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [username] = useState(location.state)
+    const [username] = useState(location.state[0].name);
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -33,6 +33,9 @@ function PrimarySearchAppBar() {
     const [state, setState] = React.useState({
         left: false
     });
+    function SendMessage() {
+        navigate("/post-MainPage", { state: location.state });            
+    }
 
     return (
 
@@ -68,9 +71,7 @@ function PrimarySearchAppBar() {
                                         }} primary="LogOut" />
                                     </ListItemButton>
                                     <ListItemButton>
-                                        <ListItemText onClick={() => {
-                                            navigate("/post-MainPage", { state: location.state })
-                                        }} primary="MainPage" />
+                                        <ListItemText onClick={SendMessage} primary="MainPage" />
                                     </ListItemButton>
                                 </ListItem>
                             </List>
@@ -84,8 +85,8 @@ function PrimarySearchAppBar() {
                     >
                         MyPage
                     </Typography>
-                    <Box sx={{ flexGrow: 1 }} />               
-                      접속중인 사람 : {username}
+                    <Box sx={{ flexGrow: 1 }} />
+                    접속중인 사람 : {username}
                 </Toolbar>
             </AppBar>
             <Box
@@ -110,7 +111,7 @@ function PrimarySearchAppBar() {
                     >
                         <CardContent sx={{ flexGrow: 1 }}>
                             <Typography gutterBottom variant="h5" component="h2">
-                            판매내역
+                                판매내역
                             </Typography>
                             <Typography>
                                 This is a media card. You can use this section to describe the
@@ -118,13 +119,13 @@ function PrimarySearchAppBar() {
                             </Typography>
                         </CardContent>
                     </Card>
-                    <br/>
+                    <br />
                     <Card
                         sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                    >                        
+                    >
                         <CardContent sx={{ flexGrow: 1 }}>
                             <Typography gutterBottom variant="h5" component="h2">
-                            구매내역
+                                구매내역
                             </Typography>
                             <Typography>
                                 This is a media card. You can use this section to describe the

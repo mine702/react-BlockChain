@@ -7,21 +7,22 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
 function Card1(props) {
-    const { cards, imagesrc } = props;
+    const { cards } = props;
     return (
         <Grid container spacing={4}>
-            {cards.map((card) => (
-                <Grid item key={card} xs={12} sm={6} md={4}>
-                    <Card
+            { cards.map((card) => (
+                <Grid  item xs={5} sm={6} md={4} key={card}>
+                    <Card 
                         sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                     >
                         <CardMedia
+                           
                             component="img"
                             sx={{
                                 // 16:9
                                 pt: '0%',
                             }}
-                            src={imagesrc}
+                            src={card.files}
                             alt="random"
                         />
                         
