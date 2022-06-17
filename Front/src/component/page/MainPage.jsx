@@ -158,7 +158,7 @@ function Album(props) {
                                 </FormControl>
                             </Box>
                             <Button variant="contained" onClick={() => {
-                                navigate("/post-Checkout")
+                                navigate("/post-Checkout", { state: location.state })
                             }}>판매 등록</Button>
                             <Button variant="outlined">매물 검색</Button>
                         </Stack>

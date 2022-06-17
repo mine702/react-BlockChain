@@ -11,6 +11,7 @@ import MainPage from './component/page/MainPage';
 import NewMemberPage from './component/page/NewMemberPage';
 import LoginPage from './component/page/LoginPage';
 import Checkout from "./component/page/registration/CheckOutForm";
+import UserMyPage from "./component/page/UserMyPage";
 //import TestPage from './component/page/TestPage';
 function App(props) {
     return (
@@ -20,6 +21,7 @@ function App(props) {
                 <Route path="post-NewMemberPage" element={<NewMemberPage />} />
                 <Route path="post-MainPage" element={<MainPage />} />
                 <Route path="post-Checkout" element={<Checkout />} />
+                <Route path="post-UserMyPage" element={<UserMyPage />} />
             </Routes>
         </BrowserRouter>
     );
