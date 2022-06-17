@@ -12,12 +12,16 @@ import { useNavigate, useLocation } from "react-router";
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import images1 from '../../images/house.jpg'
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 function CheckOutForm() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [files,setFiles]=useState(images1);
-  
+  const [files, setFiles] = useState(images1);
+  const [locationvalue, setLocationvalue] = useState("");
   const encodeFileToBase64 = (fileBlob) => {
     const reader = new FileReader();
     reader.readAsDataURL(fileBlob);
@@ -42,6 +46,25 @@ function CheckOutForm() {
               집 정보 등록
             </Typography>
             <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Box sx={{ minWidth: 200 }}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">지역</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="locationv"
+                      value={locationvalue}
+                      onChange={(e) =>
+                        setLocationvalue(e.target.value)
+                      }
+                    >
+                      <MenuItem value={"대전"}>대전</MenuItem>
+                      <MenuItem value={"서울"}>서울</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
@@ -75,7 +98,7 @@ function CheckOutForm() {
                   <input
                     type="file"
                     hidden
-                    onChange={(e)=>encodeFileToBase64(e.target.files[0])}
+                    onChange={(e) => encodeFileToBase64(e.target.files[0])}
                   />
                 </Button>
               </Grid>
