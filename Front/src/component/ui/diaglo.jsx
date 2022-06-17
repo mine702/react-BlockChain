@@ -90,7 +90,9 @@ function SendMsg() {
     const [open, setOpen] = useState(false);
     const [scroll, setScroll] = useState('paper');
 
-    const [message, setMessage] = useState("");
+    
+    const [msg, setMessage] = useState("")
+    const [chat, setChat] = useState([]);
     //const [messages, setMessages] = useState([]);
 
     
@@ -102,21 +104,42 @@ function SendMsg() {
 
     useEffect(() => {
         socketRef.current = io.connect("http://localhost:8080");
-        socketRef.current.on("message", ({ message }) => {
-            setMessage([...message, { message }])
-        })
-        return () => socketRef.current.disconnect()
-    })
+        
+        //return () => socketRef.current.disconnect()
+    }, [])
     
-    function SendMessage(){ 
-        try {
-            socketRef.current.emit('Message', {message});
-            console.log(message);              
-        } catch (error) {
-            console.log(error);
-        }
+    async function SendMessage(){ 
+
+            socketRef.current.emit('message', {msg});
+            console.log(msg);  
+            await socketRef.current.on("message_return",  ({msg})  => {
+              console.log(msg)
+              setChat([...chat, { msg }])
+          })            
 
     }
+
+    // const onTextChange = (e) => {
+    //   setState({ ...state, [e.target.name]: e.target.value })
+    // }
+
+  //   const onMessageSubmit = (e) => {
+  //     const { msg } = state
+  //     socketRef.current.emit("message", {  msg })
+  //     e.preventDefault()
+  //     setState({ message: ""})
+  //  }
+
+
+    const renderChat = () => {
+      return chat.map(({ msg }, index) => (
+        <div key={index}>
+          <h3>
+             <span>{msg}</span>
+          </h3>
+        </div>
+      ))
+  }
   
     const handleClickOpen = (scrollType) => () => {
       setOpen(true);
@@ -128,6 +151,7 @@ function SendMsg() {
     };
   
     const descriptionElementRef = React.useRef(null);
+
     React.useEffect(() => {
       if (open) {
         const { current: descriptionElement } = descriptionElementRef;
@@ -148,6 +172,7 @@ function SendMsg() {
           aria-labelledby="scroll-dialog-title"
           aria-describedby="scroll-dialog-description"
         >
+          
           <DialogTitle id="scroll-dialog-title">채팅창</DialogTitle>
           <DialogContent dividers={scroll === 'paper'}>
             <DialogContentText
@@ -162,8 +187,20 @@ function SendMsg() {
               ref={descriptionElementRef}
               tabIndex={-1}
             >
+            <div
+          
+           >{renderChat()}</div>     
+            {/* <TextField
+              name='message'
+              onChange={(e) => onTextChange(e)}
+              value={state.message}
+              id="outlined-multiline-static"
+              variant="outlined"
+              label="Message">
+            </TextField>      */}
             </DialogContentText>
           </DialogContent>
+         
           <DialogActions>
           <TextField
               id='standard-basic'
@@ -172,6 +209,7 @@ function SendMsg() {
           />
             <Button onClick={SendMessage}>전송하기</Button>
           </DialogActions>
+          
         </Dialog>
       </div>
     );

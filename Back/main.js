@@ -48,8 +48,13 @@ io.on('connection', socket => {
     })()
   });
   
-  socket.on('Message', (msg) => {
-    console.log(msg);
+  socket.on('message', ({msg}) => {
+    (async ()=>{
+      console.log(msg);
+      let msg_return = msg;
+      socket.emit('message_return', { msg})
+    })()
+    
   })
 })
 
