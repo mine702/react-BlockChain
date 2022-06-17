@@ -70,6 +70,17 @@ let dbcontrol =
         })
     },
 
+    db_Location_Data: function (locationvalue)
+    {   
+        return new Promise(resolve => {
+            dbo.collection(`${locationvalue}`).find({}).toArray(function(err,result){
+                if(err) throw err;
+                resolve(result);
+                console.log("All document selected");
+            });           
+        });
+    },
+
     db_select: function (name) {
         var query = { name: name };
 

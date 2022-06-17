@@ -23,16 +23,22 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Divider from '@mui/material/Divider';
 import FullScreenDialog from '../ui/diaglo';
 import Card1 from '../ui/Card1';
+import io from "socket.io-client";
 
 const theme = createTheme();
+
+let socket;
+const ENDPOINT = "http://localhost:8080";
 
 function Album(props) {
 
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [cards, setCardsLow] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const [cards, setCardsLow] = useState([]);
     const [locationvalue, setLocationvalue] = useState("");
+
+    const [imagesrc, setImagesrc] = useState("");
 
     const [username, setUsername] = useState("");
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
@@ -40,6 +46,10 @@ function Album(props) {
         left: false
     });
 
+    useEffect(() => {
+        socket = io(ENDPOINT);        
+    }, []);
+    
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -60,11 +70,19 @@ function Album(props) {
     useEffect(() => {
         // eslint-disable-next-line eqeqeq
         if (locationvalue == "대전") {
-            setCardsLow([1, 2, 3, 4, 5, 6]);
+            socket.emit("Location_Data", { locationvalue });
+            socket.on("Location_Data_Result", (Result) => {
+                setImagesrc(Result[0].files)
+                setCardsLow([Result.length])
+            })
         }
-        else (
-            setCardsLow([1, 2, 3, 4, 5, 6, 7, 8, 9])
-        )
+        else if(locationvalue == "서울"){
+            socket.emit("Location_Data", { locationvalue });
+            socket.on("Location_Data_Result", (Result) => {
+                setImagesrc(Result[0].files)
+                setCardsLow([Result.length])
+            })
+        }        
         //alert(`${state1}님이 접속하였습니다.`);
     }, [locationvalue])
 
@@ -168,7 +186,7 @@ function Album(props) {
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Card1 cards={cards}></Card1>
+                    <Card1 cards={cards} imagesrc={imagesrc} ></Card1>
                 </Container>
             </main>
             {/* Footer */}

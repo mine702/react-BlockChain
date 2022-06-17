@@ -2,7 +2,6 @@ import React from "react";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
-import images1 from '../images/house.jpg';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -10,7 +9,7 @@ import { useNavigate } from "react-router";
 
 function Card1(props) {
     const navigate = useNavigate();
-    const { cards } = props;
+    const { cards , imagesrc} = props;
     return (
         <Grid container spacing={4}>
             {cards.map((card) => (
@@ -24,7 +23,7 @@ function Card1(props) {
                                 // 16:9
                                 pt: '0%',
                             }}
-                            image={images1}
+                            image={imagesrc}
                             alt="random"
                         />
                         <CardActions>

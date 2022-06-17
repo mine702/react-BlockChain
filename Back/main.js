@@ -49,7 +49,13 @@ io.on('connection', socket => {
     dbcontrol.db_House_Register(locationvalue, address, files);
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
-  
+
+  socket.on('Location_Data', ({ locationvalue }) => {
+    (async ()=> {
+    let result = await dbcontrol.db_Location_Data(locationvalue);
+    socket.emit("Location_Data_Result", result);
+    })()
+  })
 })
 
 
