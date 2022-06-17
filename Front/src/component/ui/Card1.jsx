@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
 function Card1(props) {
-    const { cards } = props;
+    const { cards, imagesrc } = props;
     return (
         <Grid container spacing={4}>
             {cards.map((card) => (
@@ -21,9 +21,10 @@ function Card1(props) {
                                 // 16:9
                                 pt: '0%',
                             }}
-                            image={images1}
+                            src={imagesrc}
                             alt="random"
                         />
+                        
                         <CardActions>
                             <Button size="small">보기</Button>
                             <Button size="small">저장</Button>

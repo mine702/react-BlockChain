@@ -90,7 +90,7 @@ function SignIn(props) {
                             label="아이디 저장"
                         />
                         <Button
-                            type="button"
+                            type="submit"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}

@@ -23,15 +23,21 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Divider from '@mui/material/Divider';
 import FullScreenDialog from '../ui/diaglo';
 import Card1 from '../ui/Card1';
+import io from "socket.io-client";
 
 const theme = createTheme();
+
+let socket;
+const ENDPOINT = "http://localhost:8080";
 
 function Album(props) {
 
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [cards, setCardsLow] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const [cards, setCardsLow] = useState([]);
+    const [imagesrc, setImagesrc] = useState([]);
+
     const [locationvalue, setLocationvalue] = useState("");
 
     const [username, setUsername] = useState("");
@@ -53,20 +59,24 @@ function Album(props) {
     };
 
     useEffect(() => {
-        alert(`${location.state[0].name}님이 접속하였습니다.`);
+        socket = io(ENDPOINT);
         setUsername(location.state[0].name);
     }, [location])
 
-    // useEffect(() => {
-    //     // eslint-disable-next-line eqeqeq
-    //     if (locationvalue == "대전") {
-    //         setCardsLow([1, 2, 3, 4, 5, 6]);
-    //     }
-    //     else (
-    //         setCardsLow([1, 2, 3, 4, 5, 6, 7, 8, 9])
-    //     )
-    //     //alert(`${state1}님이 접속하였습니다.`);
-    // }, [locationvalue])
+    useEffect(() => {
+        // eslint-disable-next-line eqeqeq
+        if (locationvalue == "대전") {
+            socket.emit("Location_Data", { locationvalue });
+            socket.on("Location_Data_Result", (Result) => {
+                setImagesrc(Result[0].files)
+                setCardsLow([Result])
+            })
+        }
+        else (
+            setCardsLow([])
+        )
+        //alert(`${state1}님이 접속하였습니다.`);
+    }, [locationvalue])
 
     return (
         <ThemeProvider theme={theme}>
@@ -166,7 +176,7 @@ function Album(props) {
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Card1 cards={cards}></Card1>
+                    <Card1 cards={cards} imagesrc={imagesrc}></Card1>
                 </Container>
             </main>
             {/* Footer */}
