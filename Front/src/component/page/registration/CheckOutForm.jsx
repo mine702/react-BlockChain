@@ -53,11 +53,11 @@ function CheckOutForm() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else {
-      socket.emit("Housesign_up", { locationvalue, address, files });
-      socket.on("Housesign_up_check", (CheckMsg) => {
+      socket.emit("House_Register", { locationvalue, address, files });
+      socket.on("House_Register_Result", (CheckMsg) => {
         alert(CheckMsg);
+        navigate("/post-MainPage", { state: location.state });
       })
-      navigate("/post-MainPage", { state: location.state })
     }
   }
 

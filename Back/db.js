@@ -1,41 +1,35 @@
 //const res = require('express/lib/response');
-
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://mine0702:633ehddbs@cluster0.ohw26.mongodb.net/?retryWrites=true&w=majority";
 
 var dbo;
 
-let dbcontrol =
+let dbcontrol = 
 {
-
-    db_init: function () {
-        MongoClient.connect(url, function (err, db) {
-            dbo = db.db("Real_Estate_Project");
-            console.log('conneted!!');
+    
+    db_init :function ()
+    {
+        MongoClient.connect(url, function(err, db) {
+        dbo = db.db("Real_Estate_Project");
+        console.log('conneted!!');
         })
     },
 
-    db_insert: function (name, id, pw, number, MetaMaskAcc) {
-        var myobj = { name: name, id: id, pw: pw, number: number, MetaMaskAcc: MetaMaskAcc };
-        dbo.collection("Member").insertOne(myobj, function (err, res) {
-            if (err) throw err;
-            console.log("1 document inserted");
+    db_insert: function(name, id, pw, number, MetaMaskAcc)
+    {
+        var myobj = { name : name, id: id, pw: pw, number : number, MetaMaskAcc : MetaMaskAcc };
+        dbo.collection("Member").insertOne(myobj, function(err, res) {
+        if (err) throw err;
+        console.log("1 document inserted");
         })
     },
 
-    db_inserthouse: function (locationvalue, address, files) {
-        var myobj = { address: address, files: files };
-        dbo.collection(`${ locationvalue }`).insertOne(myobj, function (err, res) {
-            if (err) throw err;
-            console.log("1 document inserted");
-        })
-    },
-
-    db_delete: function (name) {
+    db_delete: function (name)
+    {
         var myquery = { name: name };
-        dbo.collection("Member").deleteOne(myquery, function (err, obj) {
-            if (err) throw err;
-            console.log("1 document deleted");
+        dbo.collection("Member").deleteOne(myquery, function(err, obj) {
+        if (err) throw err;
+        console.log("1 document deleted");
         });
     },
 
@@ -44,53 +38,80 @@ let dbcontrol =
         return new Promise(resolve => {
             dbo.collection("Member").find(query).toArray(function (err, result) {
                 if (err) throw err;
-                if (result != "") {
+                if(result!="")
+                {
                     resolve(true);
                 }
-                else {
+                else
+                {  
                     resolve(false);
                 }
-            });
+            });            
         });
     },
 
-    db_select: function (id, pw) {
-        var query = { id: id, pw: pw };
+    db_Login: function (id, pw) {
+        var query = { id: id, pw : pw};
         return new Promise(resolve => {
             dbo.collection("Member").find(query).toArray(function (err, result) {
                 if (err) throw err;
-                if (result == "") {
+               
+                resolve(result);
+                
+            });            
+        });
+    },
+
+    db_House_Register: function (locationvalue, address, files) {
+        var myobj = { address: address, files: files };
+        dbo.collection(`${ locationvalue }`).insertOne(myobj, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+        })
+    },
+
+    db_select: function (name) {
+        var query = { name: name };
+
+        return new Promise(resolve => {
+            dbo.collection("customers").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                if(result=="")
+                {
                     console.log("undefined");
+                }
+                else
+                {
+                    console.log("1 document selected");
                     resolve(result);
                 }
-                else {
-                    console.log("1 document selected");
-                    resolve(result[0]);
-                }
-            });
+            });            
         });
     },
 
-    db_update: function (before_name, after_name, age) {
+    db_update: function (before_name, after_name, age)
+    {
         var myquery = { name: before_name };
-        var newvalues = { $set: { name: after_name, age: age } };
-        dbo.collection("customers").updateOne(myquery, newvalues, function (err, res) {
-            if (err) throw err;
-            console.log("1 document updated");
+        var newvalues = { $set: {name: after_name, age: age } };
+        dbo.collection("customers").updateOne(myquery, newvalues, function(err, res) {
+        if (err) throw err;
+        console.log("1 document updated");
         });
     },
 
-    db_selectAll: function () {
+    db_selectAll: function ()
+    {
         return new Promise(resolve => {
-            dbo.collection("customers").find({}).toArray(function (err, result) {
-                if (err) throw err;
+            dbo.collection("customers").find({}).toArray(function(err,result){
+                if(err) throw err;
                 resolve(result);
                 console.log("All document selected");
-            });
+            });           
         });
     },
 
-    db_close: function () {
+    db_close: function()
+    {
         db.close();
     }
 }

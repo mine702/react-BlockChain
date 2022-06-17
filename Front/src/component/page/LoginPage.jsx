@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,16 +16,22 @@ import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 
 const theme = createTheme();
+
 let socket;
 
+const ENDPOINT = "http://localhost:8080";
+
 function SignIn(props) {
+
     const navigate = useNavigate();
-    const ENDPOINT = "http://localhost:8080";
+
     const [id, setId] = useState("");
     const [pw, setPw] = useState("");
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
+    
         console.log({
             email: data.get('email'),
             password: data.get('password'),
@@ -35,6 +41,8 @@ function SignIn(props) {
     useEffect(() => {
         socket = io(ENDPOINT);
     }, []);
+
+    
 
     return (
         <ThemeProvider theme={theme}>
@@ -81,18 +89,18 @@ function SignIn(props) {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                             onClick={async () => {
-                                socket.emit("MemberIdCheck", { id, pw });
-                                socket.on("MemberIdCheck", (result) => {
+                                socket.emit("Login", { id, pw });
+                                await socket.on("Login_result", (result) => {
                                     // eslint-disable-next-line eqeqeq
-                                    if (result.result == "" || undefined) {
-                                        alert("ID를 다시 확인해주세요");
+                                    if (result == "" || undefined) {
+                                        alert("아이디와 비밀번호를 확인하세요");
                                         setId("");
                                     }
                                     else {
-                                        navigate("/post-MainPage", { state: result.result.name });
+                                        //console.log(result);
+                                        navigate("/post-MainPage", { state: result });
                                     }
-                                }
-                                )
+                                })
                             }}
                         >
                             로그인

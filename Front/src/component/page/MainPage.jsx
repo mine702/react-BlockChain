@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect  } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate, useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -25,13 +25,16 @@ import FullScreenDialog from '../ui/diaglo';
 import Card1 from '../ui/Card1';
 
 const theme = createTheme();
+
 function Album(props) {
+
     const navigate = useNavigate();
     const location = useLocation();
+
     const [cards, setCardsLow] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     const [locationvalue, setLocationvalue] = useState("");
 
-    const [username] = useState(location.state)
+    const [username, setUsername] = useState("");
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
     const [state, setState] = React.useState({
         left: false
@@ -45,8 +48,15 @@ function Album(props) {
         ) {
             return;
         }
+
         setState({ ...state, [anchor]: open });
     };
+
+    useEffect(() => {
+        //console.log(location.state)
+        setUsername(location.state[0].name);
+    }, [location])
+
     useEffect(() => {
         // eslint-disable-next-line eqeqeq
         if (locationvalue == "대전") {
@@ -55,13 +65,14 @@ function Album(props) {
         else (
             setCardsLow([1, 2, 3, 4, 5, 6, 7, 8, 9])
         )
+        //alert(`${state1}님이 접속하였습니다.`);
     }, [locationvalue])
 
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <AppBar position="relative">
-                <Toolbar>                    
+                <Toolbar>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -69,6 +80,7 @@ function Album(props) {
                         edge="start"
                     >
                         <MenuIcon />
+                        
                     </IconButton>
                     <SwipeableDrawer
                         anchor="left"
@@ -86,7 +98,7 @@ function Album(props) {
                                 <ListItem key="마이페이지" disablePadding sx={{ display: 'block' }}>
                                     <Divider />
                                     <ListItemButton>
-                                        <ListItemText onClick={() => {
+                                    <ListItemText onClick={() => {
                                             navigate("/post-UserMyPage", { state: location.state })
                                         }} primary="MyPage" />
                                     </ListItemButton>
@@ -98,10 +110,11 @@ function Album(props) {
                                 </ListItem>
                             </List>
                         </Box>
-                    </SwipeableDrawer>
+                        
+                    </SwipeableDrawer> 
                     <FullScreenDialog></FullScreenDialog>
-                    <Box sx={{ flexGrow: 1 }} />               
-                      접속중인 사람 : {username}
+                    <Box sx={{ flexGrow: 1 }} />
+                    {username+ "님"}
                 </Toolbar>
 
             </AppBar>
