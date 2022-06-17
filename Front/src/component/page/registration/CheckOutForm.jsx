@@ -21,9 +21,12 @@ import io from "socket.io-client";
 let socket;
 
 function CheckOutForm() {
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const [files, setFiles] = useState(images1);
+  
   const encodeFileToBase64 = (fileBlob) => {
     const reader = new FileReader();
     reader.readAsDataURL(fileBlob);
