@@ -11,7 +11,7 @@ function Card1(props) {
     return (
         <Grid container spacing={4}>
             { cards.map((card) => (
-                <Grid  item xs={5} sm={6} md={4} key={card}>
+                <Grid  item xs={5} sm={6} md={4} key={card._id}>
                     <Card 
                         sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                     >

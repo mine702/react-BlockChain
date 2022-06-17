@@ -60,6 +60,7 @@ function CheckOutForm() {
       socket.emit("House_Register", { locationvalue, address, files });
       socket.on("House_Register_Result", (CheckMsg) => {
         alert(CheckMsg);
+        socket.off();
         navigate("/post-MainPage", { state: location.state });
       })
     }

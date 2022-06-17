@@ -64,26 +64,21 @@ function Album(props) {
     }, [location])
 
     useEffect(() => {
-        // eslint-disable-next-line eqeqeq
-        if (locationvalue == "대전") {
+
+        if(locationvalue !== "")
+        {
             socket.emit("Location_Data", { locationvalue });
             socket.on("Location_Data_Result", (Result) => {
                 console.log(Result);
-                setCardsLow(Result)
-                
-                
+                setCardsLow(Result);
+                socket.off();
             })
         }
-        else if(locationvalue == "서울"){
-            socket.emit("Location_Data", { locationvalue });
-            socket.on("Location_Data_Result", (Result) => {
-                console.log(Result);
-                setCardsLow(Result)
-                
-                
-            })
-        }        
-        //alert(`${state1}님이 접속하였습니다.`);
+        else
+        {
+            
+        }  
+
     }, [locationvalue])
 
     return (
