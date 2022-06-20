@@ -1,7 +1,8 @@
 //const res = require('express/lib/response');
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb+srv://root:1234@firstcluster.fvuco.mongodb.net/?retryWrites=true&w=majority";
+var url = "mongodb+srv://jinzero:0619@cluster0.hs9i9.mongodb.net/?retryWrites=true&w=majority";
 //mongodb+srv://wb35:1234@firstcluster.fvuco.mongodb.net/?retryWrites=true&w=majority
+const dayjs = require('dayjs');
 
 var dbo;
 
@@ -11,7 +12,7 @@ let dbcontrol =
     db_init :function ()
     {
         MongoClient.connect(url, function(err, db) {
-        dbo = db.db("Real_Estate_Project");
+        dbo = db.db("LoginInfo");
         console.log('conneted!!');
         })
     },
@@ -101,6 +102,46 @@ let dbcontrol =
                 console.log("All document selected");
             });           
         });
+    },
+
+
+
+    db_InsertMsg : function(to,from)
+    {
+        var myobj = { from : from, to : to, msg:"",time : dayjs().format("MM월DD일HH:mm:ss") };
+        dbo.collection("MsgInfo").insertOne(myobj, function(err, res) {
+        if (err) throw err;
+        console.log("1 document inserted");
+        })
+    },
+
+    db_UpdateMsg : function(to,from,msg)
+    {
+        return new Promise(resolve => {
+            dbo.collection("MsgInfo").find({}, { projection: { msg: 1, time : 1, to : 1, from : 1 } }).toArray(function(err, result) {
+                if (err) throw err;
+                console.log(result[0].msg);
+                for(var i = 0; i< result.length; i++)
+                {
+                    if(result[i].to ==to && result[i].from == from)
+                    {
+                        //console.log(result[i].msg + "+"  + result[i].time);
+                        myquery = { to : result[i].to, from : result[i].from };
+                        newmsg = result[i].msg + "#" +  msg;
+                        //newtime = result[i].time + "@" + dayjs().format("MM월DD일HH:mm:ss");
+                        newvalues = { $set: {msg: newmsg } };
+                        dbo.collection("MsgInfo").updateOne(myquery, newvalues, function(err, res) {
+                          if (err) throw err; 
+                    });
+                    
+                }
+              }});
+            })
+    },
+
+    db_getMsgInfo : function()
+    {
+
     },
 
     db_close: function()

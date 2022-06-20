@@ -5,10 +5,13 @@ import CardMedia from '@mui/material/CardMedia';
 import images1 from '../images/house.jpg';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Chat from "../ui/Chat";
 
 
 function Card1(props) {
     const { cards } = props;
+    const name = props.name;
     return (
         <Grid container spacing={4}>
             {cards.map((card) => (
@@ -27,7 +30,7 @@ function Card1(props) {
                         />
                         <CardActions>
                             <Button size="small">보기</Button>
-                            <Button size="small">저장</Button>
+                            <IconButton><Chat name = {name}></Chat></IconButton>
                         </CardActions>
                     </Card>
                 </Grid>

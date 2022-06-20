@@ -48,14 +48,21 @@ io.on('connection', socket => {
     })()
   });
   
-  socket.on('message', ({msg}) => {
+  socket.on('message', ({msg,t_name,f_name}) => {
     (async ()=>{
       console.log(msg);
-      let msg_return = msg;
+      dbcontrol.db_UpdateMsg(t_name,f_name,msg);
       socket.emit('message_return', { msg})
     })()
-    
-  })
+  });
+
+  socket.on('getMsgInfo',({}) => {
+    (async ()=>{
+      let result = await dbcontrol.db_getMsgInfo();
+      console.log(result[0]);
+      socket.emit("MsgInfo", result);
+    })()
+  });
 })
 
 

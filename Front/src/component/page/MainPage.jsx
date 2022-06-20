@@ -21,7 +21,7 @@ import ListItemText from '@mui/material/ListItemText';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import Divider from '@mui/material/Divider';
-import FullScreenDialog from '../ui/diaglo';
+import ChatList from '../ui/ChatList';
 import Card1 from '../ui/Card1';
 
 const theme = createTheme();
@@ -52,21 +52,17 @@ function Album(props) {
         setState({ ...state, [anchor]: open });
     };
 
+    function getMsgInfo() {
+        socketRef.current.emit('getMsgInfo', {});
+        socketRef.current.on("MsgInfo",  ({result})  => {
+            console.log(result[0]);
+      })            
+    }
+
     useEffect(() => {
         alert(`${location.state[0].name}님이 접속하였습니다.`);
         setUsername(location.state[0].name);
     }, [location])
-
-    // useEffect(() => {
-    //     // eslint-disable-next-line eqeqeq
-    //     if (locationvalue == "대전") {
-    //         setCardsLow([1, 2, 3, 4, 5, 6]);
-    //     }
-    //     else (
-    //         setCardsLow([1, 2, 3, 4, 5, 6, 7, 8, 9])
-    //     )
-    //     //alert(`${state1}님이 접속하였습니다.`);
-    // }, [locationvalue])
 
     return (
         <ThemeProvider theme={theme}>
@@ -109,8 +105,8 @@ function Album(props) {
                             </List>
                         </Box>
                         
-                    </SwipeableDrawer> 
-                    <FullScreenDialog></FullScreenDialog>
+                    </SwipeableDrawer>
+                    <ChatList name = {username} onClick={getMsgInfo}></ChatList> 
                     <Box sx={{ flexGrow: 1 }} />
                     {username+ "님"}
                 </Toolbar>
@@ -166,7 +162,7 @@ function Album(props) {
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Card1 cards={cards}></Card1>
+                    <Card1 name = {username} cards={cards}></Card1>
                 </Container>
             </main>
             {/* Footer */}
