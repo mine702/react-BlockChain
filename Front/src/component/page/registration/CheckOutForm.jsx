@@ -39,7 +39,7 @@ function CheckOutForm() {
   const [locationvalue, setLocationvalue] = useState("");
   const [address, setAddress] = useState("");
   const [checked, setCheckedButtons] = useState(false);
-
+  const [price, setPrice] = useState();
   const ENDPOINT = "http://localhost:8080";
 
   useEffect(() => {
@@ -54,7 +54,7 @@ function CheckOutForm() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else {
-      socket.emit("House_Register", { locationvalue, address, files, sellusername, sellusernumber });
+      socket.emit("House_Register", { locationvalue, address, price, files, sellusername, sellusernumber });
       socket.on("House_Register_Result", (CheckMsg) => {
         alert(CheckMsg);
         navigate("/post-MainPage", { state: location.state });
@@ -111,6 +111,18 @@ function CheckOutForm() {
                   variant="standard"
                   onChange={(e) => {
                     setAddress(e.target.value)
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  id="houseprice"
+                  label="가격 (ETH)"
+                  fullWidth
+                  variant="standard"
+                  onChange={(e) => {
+                    setPrice(e.target.value)
                   }}
                 />
               </Grid>

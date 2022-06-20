@@ -17,8 +17,9 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
 function PrimarySearchAppBar() {
-    const navigate = useNavigate();
-    const location = useLocation();
+    const navigate = useNavigate()
+    const location = useLocation()    
+
     const [username] = useState(location.state[0].name);
     const toggleDrawer = (anchor, open) => (event) => {
         if (
@@ -34,7 +35,7 @@ function PrimarySearchAppBar() {
         left: false
     });
     function SendMessage() {
-        navigate("/post-MainPage", { state: location.state });            
+        navigate("/post-MainPage", { state: location.state });
     }
 
     return (

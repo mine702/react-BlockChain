@@ -57,8 +57,8 @@ let dbcontrol =
         });
     },
 
-    db_House_Register: function (locationvalue, address, files, sellusername, sellusernumber) {
-        var myobj = { address: address, files: files, name: sellusername, number: sellusernumber };
+    db_House_Register: function (locationvalue, address, price, files, sellusername, sellusernumber) {
+        var myobj = { address: address, price: price, files: files, name: sellusername, number: sellusernumber };
         dbo.collection(`${locationvalue}`).insertOne(myobj, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -111,10 +111,25 @@ let dbcontrol =
         });
     },
 
+    db_MyPageSell: function (name, number) {
+        return new Promise(resolve => {
+            var query = { name: name, number: number };
+            dbo.collection("대전").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                resolve(result);
+                console.log("All document selected");
+            });
+            dbo.collection("서울").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                resolve(result);
+                console.log("All document selected");
+            });
+        });
+    },
+
     db_close: function () {
         db.close();
     }
 }
-
 module.exports = dbcontrol;
 //export {db_init, db_insert, db_delete, db_close };

@@ -45,8 +45,8 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on('House_Register', ({ locationvalue, address, files, sellusername, sellusernumber }) => {
-    dbcontrol.db_House_Register(locationvalue, address, files, sellusername, sellusernumber);
+  socket.on('House_Register', ({ locationvalue, address, price, files, sellusername, sellusernumber }) => {
+    dbcontrol.db_House_Register(locationvalue, address, price, files, sellusername, sellusernumber);
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
 
@@ -56,46 +56,12 @@ io.on('connection', socket => {
       socket.emit("Location_Data_Result", result);
     })()
   })
+
+  socket.on('MyPageSell', ({ name, number }) => {
+    console.log(name, number);
+    (async () => {
+      let result = await dbcontrol.db_MyPageSell(name, number);
+      socket.emit("MyPageSell_Result", result);
+    })()
+  })
 })
-
-
-
-
-// app.get('/', function(req, res){
-//     //res.sendFile(__dirname + '/main.html')
-//     res.status(200).json({
-//       status: "succ",
-//       message: "여기는 홈페이지입니다.",
-//     });
-// });
-
-// app.post('/insert', function(req, res){
-//    dbcontrol.db_insert(req.body.name, req.body.age);
-// });
-
-// app.post('/delete', function(req, res){
-//   dbcontrol.db_delete(req.body.name);
-// });
-
-// //const text = document.getElementsByName("after_name").value;
-
-// app.post('/select', function(req, res){
-//   (async ()=>{
-//     let result = await dbcontrol.db_select(req.body.name);
-//     console.log(result[0]);
-//     res.send(result[0]);
-//   })()
-// });
-
-// app.post('/update', function(req, res){
-//   dbcontrol.db_update(req.body.before_name, req.body.after_name, req.body.age);
-// });
-
-// app.post('/selectAll', function(req, res){
-//   (async ()=>{
-//     let result = await dbcontrol.db_selectAll();
-//     console.log(result[0]);
-//     res.send(result[0]);
-//   })()
-// });
-

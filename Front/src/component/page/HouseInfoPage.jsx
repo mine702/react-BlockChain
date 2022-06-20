@@ -19,11 +19,11 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
-
+import WarningDialog from "../ui/WarningDialog"
 function HouseInfoPage() {
     const navigate = useNavigate();
     const location = useLocation();
-    // const [username] = useState(location.state[0].name);
+
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -34,6 +34,7 @@ function HouseInfoPage() {
         }
         setState({ ...state, [anchor]: open });
     };
+
     const [state, setState] = React.useState({
         left: false
     });
@@ -112,9 +113,15 @@ function HouseInfoPage() {
                                 Seller information
                             </Typography>
                             <Typography gutterBottom variant="h6">
-                                name: {location.state[0].name}<br />
-                                number : {location.state[0].number}
-                            </Typography><br />
+                                &nbsp;&nbsp;name: {location.state[0].name}<br />
+                                &nbsp;&nbsp;number : {location.state[0].number}
+                            </Typography>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                Price
+                            </Typography>
+                            <Typography gutterBottom variant="h6">
+                                &nbsp;&nbsp;{location.state[0].price} (ETH)
+                            </Typography>
                             <Typography gutterBottom variant="h5" component="h2">
                                 Picture
                             </Typography>
@@ -136,13 +143,14 @@ function HouseInfoPage() {
                                 Address
                             </Typography>
                             <Typography>
-                                {location.state[0].address}
+                                &nbsp;&nbsp;{location.state[0].address}
                             </Typography>
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
+                            <WarningDialog></WarningDialog>
                             <Button size="small" onClick={() => {
-                            }}>chatting</Button>
+                            }}>Chatting</Button>
                         </CardActions>
                     </Card>
                 </Container>

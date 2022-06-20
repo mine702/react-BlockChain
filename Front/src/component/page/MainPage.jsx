@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -35,11 +35,10 @@ function Album(props) {
     const navigate = useNavigate();
     const location = useLocation();
     const [cards, setCardsLow] = useState([]);
-  
-
+    const [number, setNumber] = useState()
     const [locationvalue, setLocationvalue] = useState("");
-
     const [username, setUsername] = useState("");
+    const [name,setName] = useState("");
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
     const [state, setState] = React.useState({
         left: false
@@ -53,31 +52,35 @@ function Album(props) {
         ) {
             return;
         }
-
         setState({ ...state, [anchor]: open });
     };
 
     useEffect(() => {
         socket = io(ENDPOINT);
         setUsername(location.state[0].name);
+        setNumber(location.state[0].number)
+        setName(location.state[0].name)
     }, [location])
 
     useEffect(() => {
-
-        if(locationvalue !== "")
-        {
+        if (locationvalue !== "") {
             socket.emit("Location_Data", { locationvalue });
             socket.on("Location_Data_Result", (Result) => {
                 setCardsLow(Result);
                 socket.off();
             })
         }
-        else
-        {
-            
-        }  
-
     }, [locationvalue])
+
+    function GotoMyPage() {
+        socket.emit("MyPageSell", { name, number });
+        socket.on("MyPageSell_Result", (Result) => {
+            
+            socket.off();
+        })
+
+        navigate("/post-UserMyPage", { state: location.state })
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -91,7 +94,7 @@ function Album(props) {
                         edge="start"
                     >
                         <MenuIcon />
-                        
+
                     </IconButton>
                     <SwipeableDrawer
                         anchor="left"
@@ -109,9 +112,7 @@ function Album(props) {
                                 <ListItem key="마이페이지" disablePadding sx={{ display: 'block' }}>
                                     <Divider />
                                     <ListItemButton>
-                                        <ListItemText onClick={() => {
-                                            navigate("/post-UserMyPage", { state: location.state })
-                                        }} primary="MyPage" />
+                                        <ListItemText onClick={GotoMyPage} primary="MyPage" />
                                     </ListItemButton>
                                     <ListItemButton>
                                         <ListItemText onClick={() => {
@@ -121,11 +122,10 @@ function Album(props) {
                                 </ListItem>
                             </List>
                         </Box>
-                        
-                    </SwipeableDrawer> 
+                    </SwipeableDrawer>
                     <FullScreenDialog></FullScreenDialog>
                     <Box sx={{ flexGrow: 1 }} />
-                    {username+ "님"}
+                    접속중인 사람 : {username}
                 </Toolbar>
 
             </AppBar>
