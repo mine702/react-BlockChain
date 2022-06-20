@@ -40,6 +40,8 @@ function CheckOutForm() {
 
   const [locationvalue, setLocationvalue] = useState("");
   const [address, setAddress] = useState("");
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
   const [checked, setCheckedButtons] = useState(false);
 
   const ENDPOINT = "http://localhost:8080";
@@ -47,6 +49,8 @@ function CheckOutForm() {
   useEffect(() => {
     socket = io(ENDPOINT);
     console.log(location.state);
+    setName(location.state[0].name);
+    setNumber(location.state[0].number);
   }, []);
 
   function SendMessage() {
@@ -57,7 +61,7 @@ function CheckOutForm() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else {
-      socket.emit("House_Register", { locationvalue, address, files });
+      socket.emit("House_Register", { locationvalue, address, files, name, number });
       socket.on("House_Register_Result", (CheckMsg) => {
         alert(CheckMsg);
         socket.off();

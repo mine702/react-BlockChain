@@ -39,7 +39,7 @@ function SignIn(props) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         console.log({
-            email: data.get('email'),
+            email: data.get('id'),
             password: data.get('password'),
         });
     };

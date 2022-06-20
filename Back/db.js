@@ -62,8 +62,8 @@ let dbcontrol =
         });
     },
 
-    db_House_Register: function (locationvalue, address, files) {
-        var myobj = { address: address, files: files };
+    db_House_Register: function (locationvalue, address, files, name, number ) {
+        var myobj = { address: address, files: files, name: name, number: number };
         dbo.collection(`${ locationvalue }`).insertOne(myobj, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
