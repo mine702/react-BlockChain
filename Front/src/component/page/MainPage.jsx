@@ -34,11 +34,10 @@ function Album(props) {
 
     const navigate = useNavigate();
     const location = useLocation();
-
     const [cards, setCardsLow] = useState([]);
-    const [locationvalue, setLocationvalue] = useState("");
+  
 
-    const [imagesrc, setImagesrc] = useState("");
+    const [locationvalue, setLocationvalue] = useState("");
 
     const [username, setUsername] = useState("");
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
@@ -46,10 +45,6 @@ function Album(props) {
         left: false
     });
 
-    useEffect(() => {
-        socket = io(ENDPOINT);        
-    }, []);
-    
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -63,27 +58,25 @@ function Album(props) {
     };
 
     useEffect(() => {
-        //console.log(location.state)
+        socket = io(ENDPOINT);
         setUsername(location.state[0].name);
     }, [location])
 
     useEffect(() => {
-        // eslint-disable-next-line eqeqeq
-        if (locationvalue == "대전") {
+
+        if(locationvalue !== "")
+        {
             socket.emit("Location_Data", { locationvalue });
             socket.on("Location_Data_Result", (Result) => {
-                setImagesrc(Result[0].files)
-                setCardsLow([Result.length])
+                setCardsLow(Result);
+                socket.off();
             })
         }
-        else if(locationvalue == "서울"){
-            socket.emit("Location_Data", { locationvalue });
-            socket.on("Location_Data_Result", (Result) => {
-                setImagesrc(Result[0].files)
-                setCardsLow([Result.length])
-            })
-        }        
-        //alert(`${state1}님이 접속하였습니다.`);
+        else
+        {
+            
+        }  
+
     }, [locationvalue])
 
     return (
@@ -116,7 +109,7 @@ function Album(props) {
                                 <ListItem key="마이페이지" disablePadding sx={{ display: 'block' }}>
                                     <Divider />
                                     <ListItemButton>
-                                    <ListItemText onClick={() => {
+                                        <ListItemText onClick={() => {
                                             navigate("/post-UserMyPage", { state: location.state })
                                         }} primary="MyPage" />
                                     </ListItemButton>
@@ -186,7 +179,7 @@ function Album(props) {
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Card1 cards={cards} imagesrc={imagesrc} ></Card1>
+                    <Card1 cards={cards} user={location.state}></Card1>
                 </Container>
             </main>
             {/* Footer */}
