@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -18,13 +18,11 @@ import CardContent from '@mui/material/CardContent';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
-import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
 function HouseInfoPage() {
     const navigate = useNavigate();
     const location = useLocation();
-
     console.log(location.state);
     // const [username] = useState(location.state[0].name);
     const toggleDrawer = (anchor, open) => (event) => {
@@ -112,11 +110,12 @@ function HouseInfoPage() {
                     >
                         <CardContent sx={{ flexGrow: 1 }}>
                             <Typography gutterBottom variant="h5" component="h2">
-                                판매자 정보
+                                Seller information
                             </Typography>
-                            <Typography>
-                                나다
-                            </Typography><br/>
+                            <Typography gutterBottom variant="h6">
+                                name: {location.state[0].name}<br />
+                                number : {location.state[0].number}
+                            </Typography><br />
                             <Typography gutterBottom variant="h5" component="h2">
                                 Picture
                             </Typography>

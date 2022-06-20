@@ -34,7 +34,8 @@ function CheckOutForm() {
       };
     });
   };
-
+  const [sellusername, setSellUserName] = useState(location.state[0].name)
+  const [sellusernumber, setSellUserNumber] = useState(location.state[0].number)
   const [locationvalue, setLocationvalue] = useState("");
   const [address, setAddress] = useState("");
   const [checked, setCheckedButtons] = useState(false);
@@ -53,7 +54,7 @@ function CheckOutForm() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else {
-      socket.emit("House_Register", { locationvalue, address, files });
+      socket.emit("House_Register", { locationvalue, address, files, sellusername, sellusernumber });
       socket.on("House_Register_Result", (CheckMsg) => {
         alert(CheckMsg);
         navigate("/post-MainPage", { state: location.state });
@@ -61,14 +62,14 @@ function CheckOutForm() {
     }
   }
 
-  function CheckBoxBool(){
-    if(checked === false){
-        setCheckedButtons(true);
+  function CheckBoxBool() {
+    if (checked === false) {
+      setCheckedButtons(true);
     }
-    else if(checked ===true){
-        setCheckedButtons(false);
+    else if (checked === true) {
+      setCheckedButtons(false);
     }
-}
+  }
   return (
     <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
       <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
@@ -108,7 +109,7 @@ function CheckOutForm() {
                   label="집주소"
                   fullWidth
                   variant="standard"
-                  onChange={(e)=>{
+                  onChange={(e) => {
                     setAddress(e.target.value)
                   }}
                 />
