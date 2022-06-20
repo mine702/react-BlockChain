@@ -34,8 +34,8 @@ function CheckOutForm() {
       };
     });
   };
-  const [sellusername, setSellUserName] = useState(location.state[0].name)
-  const [sellusernumber, setSellUserNumber] = useState(location.state[0].number)
+  const [sellusername] = useState(location.state[0].name)
+  const [sellusernumber] = useState(location.state[0].number)
   const [locationvalue, setLocationvalue] = useState("");
   const [address, setAddress] = useState("");
   const [checked, setCheckedButtons] = useState(false);

@@ -23,7 +23,6 @@ import Button from '@mui/material/Button';
 function HouseInfoPage() {
     const navigate = useNavigate();
     const location = useLocation();
-    console.log(location.state);
     // const [username] = useState(location.state[0].name);
     const toggleDrawer = (anchor, open) => (event) => {
         if (

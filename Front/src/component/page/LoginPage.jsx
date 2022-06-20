@@ -28,21 +28,9 @@ function SignIn(props) {
     const [id, setId] = useState("");
     const [pw, setPw] = useState("");
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-    
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    };
-
     useEffect(() => {
         socket = io(ENDPOINT);
-    }, []);
-
-    
+    }, []);    
 
     return (
         <ThemeProvider theme={theme}>
@@ -62,7 +50,9 @@ function SignIn(props) {
                     <Typography component="h1" variant="h5">
                         로그인
                     </Typography>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <Box component="form" onSubmit={(e)=>{
+                        e.preventDefault();
+                    }} noValidate sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
                             required
@@ -77,6 +67,7 @@ function SignIn(props) {
                             fullWidth
                             label="Password"
                             type="password"
+                            autoComplete="on"
                             onChange={(e) => setPw(e.target.value)}
                         />
                         <FormControlLabel
