@@ -183,7 +183,7 @@ function Album(props) {
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Card1 cards={cards} User={location.state}></Card1>
+                    <Card1 cards={cards} user={location.state}></Card1>
                 </Container>
             </main>
             {/* Footer */}

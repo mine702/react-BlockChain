@@ -16,9 +16,7 @@ function Chatting(props){
     const [modalIsOpen, setIsOpen] = useState(false);
 
     const [sendmsg, setSendMsg] = useState("");
-    const [chatlog, setChatlog] = useState([{
-        
-    }]);
+    const [chatlog, setChatlog] = useState([{ }]);
 
 
     // 함수가 실행될때 modal의 상태를 true로 바꿔준다.
@@ -38,10 +36,10 @@ function Chatting(props){
     
 
     function SendMessage() {
-        socket.emit("Message_Send", { sendmsg });
-        socket.on("Message_Receive", (recv_msg)=>{
-            console.log(recv_msg);
-            setChatlog([...chatlog, {name: username, msg : recv_msg} ]);
+        socket.emit("Message_Send", {username, sendmsg });
+        socket.on("Message_Receive", ({username, sendmsg})=>{
+            console.log(sendmsg);
+            setChatlog([...chatlog, {name: username, msg : sendmsg} ]);
             console.log(chatlog);
             socket.off();
         })

@@ -109,7 +109,7 @@ function HouseInfoPage() {
                     </Typography>&nbsp;
                     <ShoppingCartIcon />
                     <Box sx={{ flexGrow: 1 }} />
-                    접속중인 사람 : {location.state[0].name}
+                    접속중인 사람 : {location.state[1][0].name}
                 </Toolbar>
             </AppBar>
             <Box
@@ -156,7 +156,7 @@ function HouseInfoPage() {
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
-                            <Chatting username={location.state[0].name} ></Chatting>
+                            <Chatting username={location.state[1][0].name} ></Chatting>
                         </CardActions>
                     </Card>
                 </Container>

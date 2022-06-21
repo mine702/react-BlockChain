@@ -6,7 +6,7 @@ const http = require("http");
 const server = http.createServer(app);
 const io = require('socket.io')(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -59,9 +59,9 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on('Message_Send', ({ sendmsg }) => {
-    console.log(sendmsg);
-    socket.emit("Message_Receive", sendmsg);
+  socket.on('Message_Send', ({username, sendmsg }) => {
+    console.log(username, sendmsg );
+    io.emit("Message_Receive",{username, sendmsg });
   })
 })
 
