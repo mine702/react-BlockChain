@@ -108,7 +108,7 @@ let dbcontrol =
 
     db_InsertMsg : function(to,from)
     {
-        var myobj = { from : from, to : to, msg:"",time : dayjs().format("MM월DD일HH:mm:ss") };
+        var myobj = { from : from, to : to, msg:"", time : dayjs().format("MM월DD일HH:mm:ss")};
         dbo.collection("MsgInfo").insertOne(myobj, function(err, res) {
         if (err) throw err;
         console.log("1 document inserted");
@@ -132,16 +132,31 @@ let dbcontrol =
                         newvalues = { $set: {msg: newmsg } };
                         dbo.collection("MsgInfo").updateOne(myquery, newvalues, function(err, res) {
                           if (err) throw err; 
-                    });
-                    
+                    });    
                 }
               }});
             })
     },
 
-    db_getMsgInfo : function()
+    db_getMsgInfo : function(f_name)
     {
-
+        return new Promise(resolve => {
+            dbo.collection("MsgInfo").find({}, { projection: { msg: 1, time : 1, to : 1, from : 1 } }).toArray(function(err, result) {
+                if (err) throw err;
+                for(var i = 0; i< result.length; i++)
+                {
+                    console.log(result);
+                    if(result[i].from == f_name)
+                    {
+                        resolve(result[i].msg);
+                    }
+                    // if(result[i].to ==to)
+                    // {
+                        
+                    // }
+                }
+              })
+            })
     },
 
     db_close: function()

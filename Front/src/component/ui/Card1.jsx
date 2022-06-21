@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
@@ -8,6 +8,14 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Chat from "../ui/Chat";
 
+// const socketRef = React.useRef()
+
+// async function firstchat(name){
+//         const f_name = name;
+//         const t_name = "0번째판매자"
+//         const msg = "";
+//         socketRef.current.emit('firstchat', {msg,f_name,t_name});
+// }
 
 function Card1(props) {
     const { cards } = props;

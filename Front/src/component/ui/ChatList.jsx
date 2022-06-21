@@ -29,10 +29,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function ChatList(props) {
     // 메시지
     const [ state, setState ] = React.useState({ message: "", name: "" })
-   const [ chat, setChat ] = React.useState([])
+    const [ chat, setChat ] = React.useState([])
 
+    
    const [msg, setMessage] = React.useState("");
+
+   const [lastmsg, setLastMsg] = React.useState("임시값");
+
    const socketRef = React.useRef()
+
+    const [msglist,setMsgList] = React.useState("");
+    const f_name = props.name;
+
+    
 
     React.useEffect(
       () => {
@@ -52,26 +61,27 @@ function ChatList(props) {
    const onMessageSubmit = (e) => {
       const { name, message } = state
       socketRef.current.emit("message", { name, message })
-      e.preventDefault()
+      e.preventDefault();
       setState({ message: "", name })
-   }
-
-    const renderChat = () => {
-      return chat.map(({ name, message }, index) => (
-         <div key={index}>
-            <h3>
-               <span>{message}</span>
-            </h3>
-         </div>
-      ))
    }
 
     const [open, setOpen] = React.useState(false);
 
     // 메시지창 오픈
-    const handleClickOpen = () => {
+    const handleClickOpen = (e) => {
         setOpen(true);
+        load();
     };
+
+    const load = () => {
+        socketRef.current.emit('loadchat', {f_name});
+        socketRef.current.on("chat_return",  ({result})  => {
+        setMsgList(result.split('#'));
+        const size = msglist.length-1
+        const Resultlastmsg = msglist[size];
+        setLastMsg(Resultlastmsg);
+        })   
+    }
 
     const handleClose = () => {
         setOpen(false);
@@ -110,16 +120,14 @@ function ChatList(props) {
                 fullScreen
                 open={open}
                 onClose={handleClose}
-                TransitionComponent={Transition}
-            >
+                TransitionComponent={Transition}>
                 <AppBar sx={{ position: 'relative' }}>
                     <Toolbar>
                         <IconButton
                             edge="start"
                             color="inherit"
                             onClick={handleClose}
-                            aria-label="close"
-                        >
+                            aria-label="close">
                             <CloseIcon />
                         </IconButton>
                         <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
@@ -128,13 +136,13 @@ function ChatList(props) {
                     </Toolbar>
                 </AppBar>
                 <List>
-                        <Chat></Chat>
-                        <ListItemText primary="민건" secondary="ㅎㅇ" onClick={handleClickOpen1}></ListItemText>
+                    <Chat onClick={load}></Chat>
+                        <ListItemText primary= "김민건" secondary={JSON.stringify(lastmsg)} onClick={handleClickOpen1}>{lastmsg}</ListItemText>
                         <Dialog open={open1} onClose={handleClose1} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
                         </Dialog>
                     <Divider />
                     <ListItem button>
-                        <ListItemText primary="망건" secondary="ㅎㅇ" />
+                        <ListItemText primary="박민건" secondary="임시값" />
                     </ListItem>
                 </List>
             </Dialog>

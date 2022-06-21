@@ -47,6 +47,15 @@ io.on('connection', socket => {
       socket.emit("Login_result", result);
     })()
   });
+
+  socket.on('firstchat', ({msg,t_name,f_name}) => {
+    (async ()=>{
+      console.log(msg);
+      dbcontrol.db_InsertMsg(t_name,f_name,msg);
+      socket.emit('message_return', { msg})
+    })()
+  });
+
   
   socket.on('message', ({msg,t_name,f_name}) => {
     (async ()=>{
@@ -55,6 +64,14 @@ io.on('connection', socket => {
       socket.emit('message_return', { msg})
     })()
   });
+
+  socket.on('loadchat', ({f_name}) => {
+    (async ()=> {
+      console.log("받음")
+      let result = await dbcontrol.db_getMsgInfo(f_name);
+      socket.emit("chat_return", {result})
+    })()
+  })
 
   socket.on('getMsgInfo',({}) => {
     (async ()=>{

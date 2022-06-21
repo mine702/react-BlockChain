@@ -23,7 +23,9 @@ function Chat(props) {
     const t_name = "0번째판매자"
     const [msg, setMessage] = useState("")
     const [chat, setChat] = useState([]);
+    const [msglist,setMsgList] = React.useState("");
     const socketRef = useRef();
+    
 
     useEffect(() => {
         socketRef.current = io.connect("http://localhost:8080");
@@ -31,28 +33,42 @@ function Chat(props) {
     
     async function SendMessage(){ 
             socketRef.current.emit('message', {msg,f_name,t_name});
-            console.log(msg);  
             await socketRef.current.on("message_return",  ({msg})  => {
               console.log(msg)
               setChat([...chat, { msg }])
               setMessage({msg : ""})
           })            
-
     }
+
+    const load = () => {
+      socketRef.current.emit('loadchat', {f_name});
+        socketRef.current.on("chat_return",  ({result})  => {
+        console.log(result);
+        setMsgList(result.split('#'));
+        const size = msglist.length-1
+        const Resultlastmsg = msglist[size];
+        setLastMsg(Resultlastmsg);
+    })
+  }
 
 
     const renderChat = () => {
-      return chat.map(({ msg }, index) => (
+      for(i=0; i < msglist.length; i++)
+      {
+        return chat.map(({ msg }, index) => (
         <div key={index}>
           <p>
              <span>{f_name} : {msg}</span>
+             <span>{msglist}</span>
           </p>
         </div>
       ))
+      }
   }
   
     const handleClickOpen = () => {
       setOpen(true);
+      load();
     };
   
     const handleClose = () => {
