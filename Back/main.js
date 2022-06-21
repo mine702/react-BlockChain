@@ -59,10 +59,16 @@ io.on('connection', socket => {
     })()
   })
 
+  let name;
+  let msg;
+
   socket.on('Message_Send', ({username, sendmsg }) => {
+   name=username;
+   msg= sendmsg;
     console.log(username, sendmsg );
-    io.emit("Message_Receive",{username, sendmsg });
+    io.emit("Message_Receive",{ name, msg });
   })
+
 })
 
 
