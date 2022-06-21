@@ -50,6 +50,11 @@ io.on('connection', socket => {
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
 
+  socket.on('House_Correction', ({ _id, locationvalue, address, price, files }) => {
+    dbcontrol.db_House_Correction(_id, locationvalue, address, price, files);
+    socket.emit("House_Correction_Result", "수정 완료!!!");
+  })
+
   socket.on('Location_Data', ({ locationvalue }) => {
     (async () => {
       let result = await dbcontrol.db_Location_Data(locationvalue);
@@ -58,10 +63,15 @@ io.on('connection', socket => {
   })
 
   socket.on('MyPageSell', ({ name, number }) => {
-    console.log(name, number);
     (async () => {
       let result = await dbcontrol.db_MyPageSell(name, number);
       socket.emit("MyPageSell_Result", result);
     })()
+  })
+
+  socket.on('Delete_Data', ({ card }) => {
+    console.log(card._id)
+    dbcontrol.db_Delete_Data(card._id);
+    socket.emit("Delete_Data_Result", "삭제 완료!!!");
   })
 })

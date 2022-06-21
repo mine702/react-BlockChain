@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -20,6 +20,7 @@ import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import WarningDialog from "../ui/WarningDialog"
+
 function HouseInfoPage() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -148,7 +149,7 @@ function HouseInfoPage() {
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
-                            <WarningDialog></WarningDialog>
+                            <WarningDialog warningHead={"구매 확인"} warningButton={"BUY"} warning={"정말 구매하시겠습니까?"}></WarningDialog>
                             <Button size="small" onClick={() => {
                             }}>Chatting</Button>
                         </CardActions>

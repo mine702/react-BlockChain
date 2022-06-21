@@ -1,7 +1,8 @@
 //const res = require('express/lib/response');
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb+srv://mine0702:633ehddbs@cluster0.ohw26.mongodb.net/?retryWrites=true&w=majority";
+var ObjectId = require('mongodb').ObjectId;
 
+var url = "mongodb+srv://mine0702:633ehddbs@cluster0.ohw26.mongodb.net/?retryWrites=true&w=majority";
 var dbo;
 
 let dbcontrol =
@@ -50,60 +51,35 @@ let dbcontrol =
         return new Promise(resolve => {
             dbo.collection("Member").find(query).toArray(function (err, result) {
                 if (err) throw err;
-
                 resolve(result);
-
             });
         });
     },
 
     db_House_Register: function (locationvalue, address, price, files, sellusername, sellusernumber) {
-        var myobj = { address: address, price: price, files: files, name: sellusername, number: sellusernumber };
-        dbo.collection(`${locationvalue}`).insertOne(myobj, function (err, res) {
+        var query = { location: locationvalue, address: address, price: price, files: files, name: sellusername, number: sellusernumber };
+        dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
         })
     },
 
-    db_Location_Data: function (locationvalue) {
-        return new Promise(resolve => {
-            dbo.collection(`${locationvalue}`).find({}).toArray(function (err, result) {
-                if (err) throw err;
-                resolve(result);
-                console.log("All document selected");
-            });
-        });
-    },
-
-    db_select: function (name) {
-        var query = { name: name };
-
-        return new Promise(resolve => {
-            dbo.collection("customers").find(query).toArray(function (err, result) {
-                if (err) throw err;
-                if (resuslt == "") {
-                    console.log("undefined");
-                }
-                else {
-                    console.log("1 document selected");
-                    resolve(result);
-                }
-            });
-        });
-    },
-
-    db_update: function (before_name, after_name, age) {
-        var myquery = { name: before_name };
-        var newvalues = { $set: { name: after_name, age: age } };
-        dbo.collection("customers").updateOne(myquery, newvalues, function (err, res) {
+    db_House_Correction: function (_id, locationvalue, address, price, files) {
+        var id = new ObjectId(_id);
+        var myquery = { _id: id };
+        console.log(myquery);
+        var newvalues = { $set: { location: locationvalue, address: address, price: price, files: files } };
+        console.log(newvalues);
+        dbo.collection("Registration").updateOne(myquery, newvalues, function (err, res) {
             if (err) throw err;
-            console.log("1 document updated");
-        });
+            console.log("1 document update");
+        })
     },
 
-    db_selectAll: function () {
+    db_Location_Data: function (locationvalue) {
+        var query = { location: locationvalue };
         return new Promise(resolve => {
-            dbo.collection("customers").find({}).toArray(function (err, result) {
+            dbo.collection("Registration").find(query).toArray(function (err, result) {
                 if (err) throw err;
                 resolve(result);
                 console.log("All document selected");
@@ -114,15 +90,21 @@ let dbcontrol =
     db_MyPageSell: function (name, number) {
         return new Promise(resolve => {
             var query = { name: name, number: number };
-            dbo.collection("대전").find(query).toArray(function (err, result) {
+            dbo.collection("Registration").find(query).toArray(function (err, result) {
                 if (err) throw err;
                 resolve(result);
                 console.log("All document selected");
             });
-            dbo.collection("서울").find(query).toArray(function (err, result) {
+        });
+    },
+
+    db_Delete_Data: function (_id) {
+        var id = new ObjectId(_id);        
+        return new Promise(resolve => {
+            var query = { _id: id };
+            dbo.collection("Registration").deleteOne(query, function (err, result) {
                 if (err) throw err;
-                resolve(result);
-                console.log("All document selected");
+                console.log("1 document deleted");
             });
         });
     },

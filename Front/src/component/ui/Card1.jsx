@@ -10,7 +10,6 @@ function Card1(props) {
 
     const navigate = useNavigate();
     const { cards, user } = props;
-
     return (
         <Grid container spacing={4}>
             {cards.map((card) => (
@@ -24,6 +23,8 @@ function Card1(props) {
                             sx={{
                                 // 16:9
                                 pt: '0%',
+                                minHeight:170,
+                                maxHeight:170
                             }}
                             src={card.files}
                             alt="random"

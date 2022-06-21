@@ -38,7 +38,7 @@ function Album(props) {
     const [number, setNumber] = useState()
     const [locationvalue, setLocationvalue] = useState("");
     const [username, setUsername] = useState("");
-    const [name,setName] = useState("");
+    const [name, setName] = useState("");
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
     const [state, setState] = React.useState({
         left: false
@@ -71,15 +71,14 @@ function Album(props) {
             })
         }
     }, [locationvalue])
-
+    
     function GotoMyPage() {
         socket.emit("MyPageSell", { name, number });
         socket.on("MyPageSell_Result", (Result) => {
+            navigate("/post-UserMyPage", { state: [location.state, Result] })
             
             socket.off();
         })
-
-        navigate("/post-UserMyPage", { state: location.state })
     }
 
     return (
@@ -94,7 +93,6 @@ function Album(props) {
                         edge="start"
                     >
                         <MenuIcon />
-
                     </IconButton>
                     <SwipeableDrawer
                         anchor="left"

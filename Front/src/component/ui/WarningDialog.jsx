@@ -6,7 +6,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-function WarningDialog() {
+function WarningDialog(props) {
+  const { warningHead, warning, warningButton, OkButtonClick } = props
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -19,22 +20,25 @@ function WarningDialog() {
 
   return (
     <div>
-      <Button size="small" onClick={handleClickOpen}>Buy</Button>
+      <Button size="small" onClick={handleClickOpen}>{warningButton}</Button>
       <Dialog
         open={open}
         onClose={handleClose}
       >
         <DialogTitle id="alert-dialog-title">
-          {"구매 확인"}
+          {warningHead}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            정말 구매 하시겠습니까?
+            {warning}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>아니요</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={()=>{
+            OkButtonClick()
+            handleClose()
+          }} autoFocus>
             네
           </Button>
         </DialogActions>

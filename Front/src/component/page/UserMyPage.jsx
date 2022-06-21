@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,12 +15,19 @@ import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Card2 from '../ui/Card2';
 
 function PrimarySearchAppBar() {
     const navigate = useNavigate()
-    const location = useLocation()    
+    const location = useLocation()
+    const [cards, setCardsLow] = useState([]);
+    const [username] = useState(location.state[0][0].name);
 
-    const [username] = useState(location.state[0].name);
+    useEffect(() => {
+        setCardsLow(location.state[1]);
+        console.log(location.state[1])
+    }, [location.state])
+
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -35,11 +42,10 @@ function PrimarySearchAppBar() {
         left: false
     });
     function SendMessage() {
-        navigate("/post-MainPage", { state: location.state });
+        navigate("/post-MainPage", { state: location.state[0] });
     }
 
     return (
-
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar>
@@ -114,10 +120,7 @@ function PrimarySearchAppBar() {
                             <Typography gutterBottom variant="h5" component="h2">
                                 판매내역
                             </Typography>
-                            <Typography>
-                                This is a media card. You can use this section to describe the
-                                content.
-                            </Typography>
+                            <Card2 cards={cards} user={location.state}></Card2>
                         </CardContent>
                     </Card>
                     <br />
