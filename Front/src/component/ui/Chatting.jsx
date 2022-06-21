@@ -5,15 +5,21 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
 import io from "socket.io-client";
+import LogText from "./LogText"
 
 let socket;
 const ENDPOINT = "http://localhost:8080";
 
 function Chatting(props){
     
+    const {username} =props;
     const [modalIsOpen, setIsOpen] = useState(false);
 
-    const [msg, setMsg] = useState("");
+    const [sendmsg, setSendMsg] = useState("");
+    const [chatlog, setChatlog] = useState([{
+        
+    }]);
+
 
     // 함수가 실행될때 modal의 상태를 true로 바꿔준다.
     function openModal() {
@@ -29,22 +35,26 @@ function Chatting(props){
         socket = io(ENDPOINT);
       }, []);
     
-
     
 
+    function SendMessage() {
+        socket.emit("Message_Send", { sendmsg });
+        socket.on("Message_Receive", (recv_msg)=>{
+            console.log(recv_msg);
+            setChatlog([...chatlog, {name: username, msg : recv_msg} ]);
+            console.log(chatlog);
+            socket.off();
+        })
+      }
 
+      
+
+    
     return(
         <div>
             <Button variant='contained' onClick={openModal}>채팅</Button>
             <Modal isOpen={modalIsOpen} ariaHideApp={false}>
-                <TextField
-                    id="outlined-multiline-static"
-                    label="Log"
-                    multiline
-                    fullWidth
-                    disabled
-                    rows={10}
-                    />
+                <LogText log={chatlog} ></LogText>
                 <TextField
                     margin='normal'
                     required
@@ -54,15 +64,16 @@ function Chatting(props){
                     name="Message"
                     autoComplete="Message"
                     autoFocus
-                    onChange={(e)=>setMsg(e.target.value)}
+                    onChange={(e)=>setSendMsg(e.target.value)}
                 />
                 <ButtonGroup disableElevation variant="contained">
                     <Button  variant="contained" onClick={()=>{closeModal()}}>CLOSE</Button>
-                    <Button  variant="contained" endIcon={<SendIcon />} >SEND</Button>
+                    <Button  variant="contained" endIcon={<SendIcon />} onClick={()=>{SendMessage()}} >SEND</Button>
                 </ButtonGroup>
             </Modal>
         </div>
     );
 }
+
 
 export default Chatting;

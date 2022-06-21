@@ -58,6 +58,11 @@ io.on('connection', socket => {
     socket.emit("Location_Data_Result", result);
     })()
   })
+
+  socket.on('Message_Send', ({ sendmsg }) => {
+    console.log(sendmsg);
+    socket.emit("Message_Receive", sendmsg);
+  })
 })
 
 
