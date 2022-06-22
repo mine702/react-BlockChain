@@ -18,12 +18,27 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors()); //모든 cross-origin 요청에 대해 응답
 
+
+
+
 server.listen(8080, function() {
   dbcontrol.db_init();
   console.log('listening on port 8080')
+  
 })
 
-io.on('connection', socket => {
+
+
+io.on('connection', function(socket) {
+
+  //const req = socket.request;
+  //console.log(req);
+
+  //const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  //console.log( ip + "의 새로운 유저가 접속하였습니다." );
+
+  //io.of()
+
 
   socket.on('sign_up', ({ name, id, pw, number, MetaMaskAcc}) => {
     dbcontrol.db_insert(name, id, pw, number, MetaMaskAcc);
@@ -59,15 +74,21 @@ io.on('connection', socket => {
     })()
   })
 
-  let name;
-  let msg;
+  var name;
+  var msg;
 
-  socket.on('Message_Send', ({username, sendmsg }) => {
-   name=username;
-   msg= sendmsg;
-    console.log(username, sendmsg );
-    io.emit("Message_Receive",{ name, msg });
+  socket.on('Message_Send',({username, sendmsg }) => {
+    
+    name=username;
+    msg= sendmsg;
+    console.log(username, sendmsg ); 
+    io.to(ip).emit("Message_Receive",{ name, msg });
   })
+
+  function send()
+  {
+    io.to(ip).emit("Message_Receive",{ name, msg });
+  }
 
 })
 

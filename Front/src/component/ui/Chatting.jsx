@@ -8,7 +8,7 @@ import io from "socket.io-client";
 import LogText from "./LogText"
 
 let socket;
-const ENDPOINT = "http://localhost:8080";
+const ENDPOINT = "http://192.168.39.150:8080";
 
 function Chatting(props){
     
@@ -31,15 +31,19 @@ function Chatting(props){
 
     useEffect(() => {
         socket = io(ENDPOINT);
+        
       }, []);
+
+      
     
     
 
     function SendMessage() {
-        socket.emit("Message_Send", {username, sendmsg });
-        socket.on("Message_Receive", ({username, sendmsg})=>{
+        
+        socket.emit("Message_Send", { username, sendmsg });
+        socket.on("Message_Receive", ({name, msg})=>{
             console.log(sendmsg);
-            setChatlog([...chatlog, {name: username, msg : sendmsg} ]);
+            setChatlog([...chatlog, {name: name, msg : msg} ]);
             console.log(chatlog);
             socket.off();
         })
