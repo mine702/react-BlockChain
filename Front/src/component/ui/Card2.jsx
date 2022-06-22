@@ -16,7 +16,7 @@ const ENDPOINT = "http://localhost:8080";
 
 function Card2(props) {
     const navigate = useNavigate();
-    const { cards, user, location } = props;
+    const { cards, user } = props;
     
     useEffect(() => {
         socket = io(ENDPOINT);
@@ -25,7 +25,7 @@ function Card2(props) {
     return (
         <Grid container spacing={4}>
             {cards.map((card) => (
-                <Grid item xs={5} sm={6} md={4} key={card._id}>
+                <Grid item xs={5} sm={6} md={2.9} key={card._id}>
                     <Card
                         sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                     >
@@ -35,6 +35,7 @@ function Card2(props) {
                                 // 16:9
                                 pt: '0%',
                                 maxWidth: 250,
+                                minWidth:250,
                                 minHeight: 150,
                                 maxHeight: 150
                             }}

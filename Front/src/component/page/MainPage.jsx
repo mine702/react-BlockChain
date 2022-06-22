@@ -35,10 +35,8 @@ function Album(props) {
     const navigate = useNavigate();
     const location = useLocation();
     const [cards, setCardsLow] = useState([]);
-    const [number, setNumber] = useState()
     const [locationvalue, setLocationvalue] = useState("");
     const [username, setUsername] = useState("");
-    const [name, setName] = useState("");
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
     const [state, setState] = React.useState({
         left: false
@@ -58,8 +56,7 @@ function Album(props) {
     useEffect(() => {
         socket = io(ENDPOINT);
         setUsername(location.state[0].name);
-        setNumber(location.state[0].number)
-        setName(location.state[0].name)
+        
     }, [location])
 
     useEffect(() => {
@@ -73,12 +70,13 @@ function Album(props) {
     }, [locationvalue])
     
     function GotoMyPage() {
-        socket.emit("MyPageSell", { name, number });
-        socket.on("MyPageSell_Result", (Result) => {
-            navigate("/post-UserMyPage", { state: [location.state, Result] })
+        navigate("/post-UserMyPage", { state: [location.state] })
+        // socket.emit("MyPageSell", { name, number });
+        // socket.on("MyPageSell_Result", (Result) => {
             
-            socket.off();
-        })
+            
+        //     socket.off();
+        // })
     }
 
     return (

@@ -13,7 +13,6 @@ const io = require('socket.io')(server, {
   },
 });
 
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors()); //모든 cross-origin 요청에 대해 응답

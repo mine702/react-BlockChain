@@ -16,18 +16,37 @@ import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Card2 from '../ui/Card2';
+import io from "socket.io-client";
+
+let socket;
+
+const ENDPOINT = "http://localhost:8080";
 
 function PrimarySearchAppBar() {
     const navigate = useNavigate()
     const location = useLocation()
     const [cards, setCardsLow] = useState([]);
+    const [number, setNumber] = useState()
+    const [name, setName] = useState("")
     const [username] = useState(location.state[0][0].name);
 
     useEffect(() => {
-        setCardsLow(location.state[1]);
-        console.log(location.state[1])
-    }, [location.state])
+        socket = io(ENDPOINT);
+        console.log(location);
+        setNumber(location.state[0][0].number)
+        setName(location.state[0][0].name)
+    }, [location]);    
 
+    useEffect(() => {        
+        socket.emit("MyPageSell", { name, number });
+        socket.on("MyPageSell_Result", (Result) => {
+            setCardsLow(Result);
+        })
+    }, [name, number])
+
+    useEffect(()=>{
+        
+    },[location])
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
