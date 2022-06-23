@@ -44,8 +44,8 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on('House_Register', ({ locationvalue, address, price, files, sellusername, sellusernumber }) => {
-    dbcontrol.db_House_Register(locationvalue, address, price, files, sellusername, sellusernumber);
+  socket.on('House_Register', ({ locationvalue, address, price, files, selluserId, sellusername, sellusernumber }) => {
+    dbcontrol.db_House_Register(locationvalue, address, price, files, selluserId, sellusername, sellusernumber);
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
 
@@ -69,8 +69,25 @@ io.on('connection', socket => {
   })
 
   socket.on('Delete_Data', ({ card }) => {
-    console.log(card._id)
     dbcontrol.db_Delete_Data(card._id);
     socket.emit("Delete_Data_Result", "삭제 완료!!!");
   })
+
+  socket.on('Room_Search', () => {
+    (async () => {
+      let result = await dbcontrol.db_Room_Search();
+      socket.emit("Room_Search_Result", result);
+    })()
+  })
+
+  socket.on('Room_Make', ({ Sname, Oname, j }) => {
+    dbcontrol.db_Room_Make(Sname, Oname, j);
+    socket.emit("Room_Make_Result", "Ok");
+  })
+
+  socket.on('No_Room_Make', ({ Sname, Oname }) => {
+    dbcontrol.db_No_Room_Make(Sname, Oname);
+    socket.emit("No_Room_Make_Result", "Ok");
+  })
+
 })

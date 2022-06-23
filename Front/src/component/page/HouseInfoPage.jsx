@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -20,10 +20,22 @@ import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import WarningDialog from "../ui/WarningDialog"
+import io from "socket.io-client";
+
+let socket;
+
+const ENDPOINT = "http://localhost:8080";
 
 function HouseInfoPage() {
     const navigate = useNavigate();
     const location = useLocation();
+    const [roomn, setRoomN] = useState([]);
+    const [Sname] = useState(location.state[0].name);
+    const [Oname] = useState(location.state[1][0].name);
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+    })
 
     const toggleDrawer = (anchor, open) => (event) => {
         if (
@@ -43,6 +55,44 @@ function HouseInfoPage() {
     function SendMessage() {
         navigate("/post-MainPage", { state: location.state[1] });
     }
+
+    async function MakeRoom() {
+
+        socket.emit("Room_Search");
+        await socket.on("Room_Search_Result", (Result) => {
+            if (Result.length === 0) {
+                socket.emit("No_Room_Make", { Sname, Oname });
+                socket.on("No_Room_Make_Result", (Result) => {
+                    console.log(Result)
+                })
+            }
+            else {
+                for (let i = 0; i < Result.length; i++) {
+                    // eslint-disable-next-line eqeqeq
+                    if (Result[i].Oname == Oname && Result[i].Sname == Sname) {
+                        console.log("join Room")
+                    }
+                    // eslint-disable-next-line eqeqeq
+                    else if (Result[i].Oname != Oname && Result[i].Sname != Sname) {
+                        setRoomN([Result[i].RoomN])
+                        for (let i = 0; i < roomn.length; i++) {
+                            for (let j = 1; j < 10; j++) {
+                                // eslint-disable-next-line eqeqeq
+                                if (roomn[i] != j) {
+                                    socket.emit("Room_Make", { Sname, Oname, j });
+                                    socket.on("Room_Make_Result", (Result) => {
+                                        console.log(Result)
+                                    })
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
 
     return (
 
@@ -150,8 +200,8 @@ function HouseInfoPage() {
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
                             <WarningDialog warningHead={"구매 확인"} warningButton={"BUY"} warning={"정말 구매하시겠습니까?"}></WarningDialog>
-                            <Button size="small" onClick={() => {
-                            }}>Chatting</Button>
+
+                            <Button size="small" onClick={MakeRoom}>Chatting</Button>
                         </CardActions>
                     </Card>
                 </Container>

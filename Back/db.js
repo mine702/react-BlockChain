@@ -9,30 +9,28 @@ var dbo;
 let dbcontrol =
 {
 
-    db_init :function ()
-    {
-        MongoClient.connect(url, function(err, db) {
-        dbo = db.db("Real_Estate_Project");
-        console.log('conneted!!');
-        })
-    },
-    
-    db_insert: function(name, id, pw, number, MetaMaskAcc)
-    {
-        var myobj = { name : name, id: id, pw: pw, number : number, MetaMaskAcc : MetaMaskAcc };
-        dbo.collection("Member").insertOne(myobj, function(err, res) {
-        if (err) throw err;
-        console.log("1 document inserted");
+    db_init: function () {
+        MongoClient.connect(url, function (err, db) {
+            dbo = db.db("Real_Estate_Project");
+            console.log('conneted!!');
         })
     },
 
-    db_delete: function (name)
-    {
-        var myquery = { name: name };
-        dbo.collection("Member").deleteOne(myquery, function(err, obj) {
-        if (err) throw err;
-        console.log("1 document deleted");
-        });
+    db_insert: function (name, id, pw, number, MetaMaskAcc) {
+        var myobj = { name: name, id: id, pw: pw, number: number, MetaMaskAcc: MetaMaskAcc };
+        dbo.collection("Member").insertOne(myobj, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+        })
+    },
+
+    db_delete: function (name) {
+        var myquery = { name: name }; +
+
+            dbo.collection("Member").deleteOne(myquery, function (err, obj) {
+                if (err) throw err;
+                console.log("1 document deleted");
+            });
     },
 
     db_idCheck: function (id) {
@@ -40,32 +38,30 @@ let dbcontrol =
         return new Promise(resolve => {
             dbo.collection("Member").find(query).toArray(function (err, result) {
                 if (err) throw err;
-                if(result!="")
-                {
+                if (result != "") {
                     resolve(true);
                 }
-                else
-                {  
+                else {
                     resolve(false);
                 }
-            });            
+            });
         });
     },
 
     db_Login: function (id, pw) {
-        var query = { id: id, pw : pw};
+        var query = { id: id, pw: pw };
         return new Promise(resolve => {
             dbo.collection("Member").find(query).toArray(function (err, result) {
                 if (err) throw err;
-               
+
                 resolve(result);
-                
-            });            
+
+            });
         });
     },
 
-    db_House_Register: function (locationvalue, address, price, files, sellusername, sellusernumber) {
-        var query = { location: locationvalue, address: address, price: price, files: files, name: sellusername, number: sellusernumber };
+    db_House_Register: function (locationvalue, address, price, files, selluserId, sellusername, sellusernumber) {
+        var query = { location: locationvalue, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber, room: [] };
         dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -75,9 +71,7 @@ let dbcontrol =
     db_House_Correction: function (_id, locationvalue, address, price, files) {
         var id = new ObjectId(_id);
         var myquery = { _id: id };
-        console.log(myquery);
         var newvalues = { $set: { location: locationvalue, address: address, price: price, files: files } };
-        console.log(newvalues);
         dbo.collection("Registration").updateOne(myquery, newvalues, function (err, res) {
             if (err) throw err;
             console.log("1 document update");
@@ -107,7 +101,7 @@ let dbcontrol =
     },
 
     db_Delete_Data: function (_id) {
-        var id = new ObjectId(_id);        
+        var id = new ObjectId(_id);
         return new Promise(resolve => {
             var query = { _id: id };
             dbo.collection("Registration").deleteOne(query, function (err, result) {
@@ -115,6 +109,49 @@ let dbcontrol =
                 console.log("1 document deleted");
             });
         });
+    },
+
+    db_Room_Search: function () {
+        return new Promise(resolve => {
+            dbo.collection("Room").find({}).toArray(function (err, result) {
+                if (err) throw err;
+                resolve(result);
+                console.log("All document selected");
+            });
+        });
+    },
+    db_No_Room_Make: function (Sname, Oname) {
+        var query = { Sname: Sname, Oname: Oname, RoomN: 0 };
+        console.log(query)
+        dbo.collection("Room").insertOne(query, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+        })
+
+    },
+
+    db_Room_Make: function (Sname, Oname, j) {
+        var query = { Sname: Sname, Oname: Oname, RoomN: j };
+        console.log(query)
+        dbo.collection("Room").insertOne(query, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+        })
+        var qu = { name: Sname };
+        var que = { $push: { room: j } }
+        dbo.collection("Registration").updateOne(qu, que, function (err, res) {
+            if (err) throw err;
+            console.log("1 document update");
+        })
+    },
+
+    db_Registration_Room: function () {
+        var qu = { name: Sname };
+        var que = { $push: { room: 0 } }
+        dbo.collection("Registration").updateOne(qu, que, function (err, res) {
+            if (err) throw err;
+            console.log("1 document update");
+        })
     },
 
     db_close: function () {

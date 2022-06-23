@@ -34,6 +34,7 @@ function CheckOutForm() {
       };
     });
   };
+  const [selluserId] = useState(location.state[0].id)
   const [sellusername] = useState(location.state[0].name)
   const [sellusernumber] = useState(location.state[0].number)
   const [locationvalue, setLocationvalue] = useState("");
@@ -54,7 +55,7 @@ function CheckOutForm() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else {
-      socket.emit("House_Register", { locationvalue, address, price, files, sellusername, sellusernumber });
+      socket.emit("House_Register", { locationvalue, address, price, files, selluserId, sellusername, sellusernumber });
       socket.on("House_Register_Result", (CheckMsg) => {
         alert(CheckMsg);
         navigate("/post-MainPage", { state: location.state });
