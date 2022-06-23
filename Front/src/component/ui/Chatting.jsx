@@ -8,15 +8,20 @@ import io from "socket.io-client";
 import LogText from "./LogText"
 
 let socket;
-const ENDPOINT = "http://192.168.39.150:8080";
+
 
 function Chatting(props){
     
+    const ENDPOINT = "http://localhost:8080";
+
     const {username} =props;
     const [modalIsOpen, setIsOpen] = useState(false);
 
+
     const [sendmsg, setSendMsg] = useState("");
     const [chatlog, setChatlog] = useState([{ }]);
+
+
 
 
     // 함수가 실행될때 modal의 상태를 true로 바꿔준다.
@@ -31,21 +36,25 @@ function Chatting(props){
 
     useEffect(() => {
         socket = io(ENDPOINT);
+
+     
+
         
       }, []);
 
+    
       
-    
-    
+
 
     function SendMessage() {
-        
-        socket.emit("Message_Send", { username, sendmsg });
+        const socket_id = socket.id;
+        socket.emit("id_send", {socket_id});
+        socket.emit("Message_Send", { username, sendmsg});
         socket.on("Message_Receive", ({name, msg})=>{
             console.log(sendmsg);
             setChatlog([...chatlog, {name: name, msg : msg} ]);
             console.log(chatlog);
-            socket.off();
+            //socket.off();
         })
       }
 

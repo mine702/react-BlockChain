@@ -104,7 +104,7 @@ function SignIn(props) {
                                     else
                                     {
                                         console.log(result);
-                                        navigate("/post-MainPage", {state: result});
+                                        navigate("/post-MainPage", {state: result, socket});
                                     }
                                 })
                             }}

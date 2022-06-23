@@ -13,6 +13,8 @@ const io = require('socket.io')(server, {
   },
 });
 
+// users.js
+const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -25,20 +27,17 @@ server.listen(8080, function() {
   dbcontrol.db_init();
   console.log('listening on port 8080')
   
+  
 })
 
 
+var socket_id_arr = [];
 
 io.on('connection', function(socket) {
 
-  //const req = socket.request;
-  //console.log(req);
+   
 
-  //const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  //console.log( ip + "의 새로운 유저가 접속하였습니다." );
-
-  //io.of()
-
+  
 
   socket.on('sign_up', ({ name, id, pw, number, MetaMaskAcc}) => {
     dbcontrol.db_insert(name, id, pw, number, MetaMaskAcc);
@@ -76,19 +75,24 @@ io.on('connection', function(socket) {
 
   var name;
   var msg;
+  
+
+  socket.on("id_send", ({socket_id})=>{
+    socket_id_arr.push(socket_id);
+    //console.log(socket_id_arr);
+  })
 
   socket.on('Message_Send',({username, sendmsg }) => {
-    
     name=username;
     msg= sendmsg;
     console.log(username, sendmsg ); 
-    io.to(ip).emit("Message_Receive",{ name, msg });
-  })
+    for(let i =0; i<socket_id_arr.length; i++)
+    {
+      console.log(socket_id_arr[i]);
+      io.to(socket_id_arr[i]).emit("Message_Receive",{ name, msg })
+    }
 
-  function send()
-  {
-    io.to(ip).emit("Message_Receive",{ name, msg });
-  }
+  })
 
 })
 
