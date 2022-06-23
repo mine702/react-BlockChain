@@ -14,9 +14,10 @@ function Chatting(props){
     
     const ENDPOINT = "http://localhost:8080";
 
-    const {username} =props;
+    const {username,userid} =props;
     const [modalIsOpen, setIsOpen] = useState(false);
 
+    
 
     const [sendmsg, setSendMsg] = useState("");
     const [chatlog, setChatlog] = useState([{ }]);
@@ -37,18 +38,20 @@ function Chatting(props){
     useEffect(() => {
         socket = io(ENDPOINT);
 
-     
-
-        
-      }, []);
+        socket.emit('connect_check',{});
+        socket.on('connect_success', ({})=>{
+            console.log(socket.id);
+            const socket_id = socket.id;
+            socket.emit('socket_id_update',{userid, socket_id});
+        })
+    }, [ENDPOINT])
 
     
       
 
 
     function SendMessage() {
-        const socket_id = socket.id;
-        socket.emit("id_send", {socket_id});
+       
         socket.emit("Message_Send", { username, sendmsg});
         socket.on("Message_Receive", ({name, msg})=>{
             console.log(sendmsg);

@@ -17,7 +17,7 @@ let dbcontrol =
 
     db_insert: function(name, id, pw, number, MetaMaskAcc)
     {
-        var myobj = { name : name, id: id, pw: pw, number : number, MetaMaskAcc : MetaMaskAcc };
+        var myobj = { name : name, id: id, pw: pw, number : number, MetaMaskAcc : MetaMaskAcc, socket_id : "" };
         dbo.collection("Member").insertOne(myobj, function(err, res) {
         if (err) throw err;
         console.log("1 document inserted");
@@ -100,11 +100,11 @@ let dbcontrol =
         });
     },
 
-    db_update: function (before_name, after_name, age)
+    db_update: function (userid, socket_id)
     {
-        var myquery = { name: before_name };
-        var newvalues = { $set: {name: after_name, age: age } };
-        dbo.collection("customers").updateOne(myquery, newvalues, function(err, res) {
+        var myquery = { id : userid };
+        var newvalues = { $set: { socket_id: socket_id} };
+        dbo.collection("Member").updateOne(myquery, newvalues, function(err, res) {
         if (err) throw err;
         console.log("1 document updated");
         });

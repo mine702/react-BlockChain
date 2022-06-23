@@ -156,7 +156,7 @@ function HouseInfoPage() {
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
-                            <Chatting username={location.state[1][0].name} ></Chatting>
+                            <Chatting username={location.state[1][0].name} userid={location.state[1][0].id}></Chatting>
                         </CardActions>
                     </Card>
                 </Container>

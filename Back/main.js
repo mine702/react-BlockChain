@@ -13,8 +13,7 @@ const io = require('socket.io')(server, {
   },
 });
 
-// users.js
-const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -27,17 +26,19 @@ server.listen(8080, function() {
   dbcontrol.db_init();
   console.log('listening on port 8080')
   
-  
 })
 
 
-var socket_id_arr = [];
+
 
 io.on('connection', function(socket) {
-
-   
-
   
+   
+  socket.on('connect_check',()=>{
+    console.log("성공");
+    socket.emit("connect_success", {});
+  })
+ 
 
   socket.on('sign_up', ({ name, id, pw, number, MetaMaskAcc}) => {
     dbcontrol.db_insert(name, id, pw, number, MetaMaskAcc);
@@ -77,9 +78,9 @@ io.on('connection', function(socket) {
   var msg;
   
 
-  socket.on("id_send", ({socket_id})=>{
-    socket_id_arr.push(socket_id);
-    //console.log(socket_id_arr);
+  socket.on("socket_id_update", ({userid, socket_id})=>{
+    console.log(userid, socket_id);
+    dbcontrol.db_update(userid, socket_id);
   })
 
   socket.on('Message_Send',({username, sendmsg }) => {

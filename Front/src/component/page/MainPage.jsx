@@ -28,7 +28,7 @@ import io from "socket.io-client";
 const theme = createTheme();
 
 let socket;
-const ENDPOINT = "http://localhost:8080";
+
 
 function Album(props) {
 
@@ -41,7 +41,9 @@ function Album(props) {
     const [locationvalue, setLocationvalue] = useState("");
 
     const [username, setUsername] = useState("");
-    // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
+    const [userid, setUserid] = useState("");
+
+    
     const [state, setState] = React.useState({
         left: false
     });
@@ -58,10 +60,8 @@ function Album(props) {
         setState({ ...state, [anchor]: open });
     };
 
-    useEffect(() => {
-        socket = io(ENDPOINT);
-        setUsername(location.state[0].name);
-    }, [location])
+    const ENDPOINT = "http://localhost:8080";
+ 
 
     useEffect(() => {
 
@@ -81,7 +81,19 @@ function Album(props) {
 
     }, [locationvalue])
 
-    
+    useEffect(() => {
+        socket = io(ENDPOINT);
+
+        socket.emit('connect_check',{});
+        socket.on('connect_success', ({})=>{
+            setUsername(location.state[0].name);
+            setUserid(location.state[0].id);
+            console.log(socket.id);
+            const socket_id = socket.id;
+            socket.emit('socket_id_update',{userid, socket_id});
+        })
+    }, [location])
+        
 
     return (
         <ThemeProvider theme={theme}>

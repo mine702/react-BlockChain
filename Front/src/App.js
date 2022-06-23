@@ -13,12 +13,16 @@ import LoginPage from './component/page/LoginPage';
 import Checkout from "./component/page/registration/CheckOutForm";
 import UserMyPage from "./component/page/UserMyPage";
 import HouseInfoPage from "./component/page/HouseInfoPage"
+
 //import TestPage from './component/page/TestPage';
 function App(props) {
+
+    
+
     return (
         <BrowserRouter>
             <Routes>
-                <Route index element={<LoginPage />} />
+                <Route index element={<LoginPage  />} />
                 <Route path="post-NewMemberPage" element={<NewMemberPage />} />
                 <Route path="post-MainPage" element={<MainPage />} />
                 <Route path="post-Checkout" element={<Checkout />} />

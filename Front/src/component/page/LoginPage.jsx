@@ -19,9 +19,11 @@ const theme = createTheme();
 
 let socket;
 
-const ENDPOINT = "http://localhost:8080";
+
 
 function SignIn(props) {
+
+    const ENDPOINT = "http://localhost:8080";
 
     const navigate = useNavigate();
 
@@ -31,7 +33,9 @@ function SignIn(props) {
 
     useEffect(() => {
         socket = io(ENDPOINT);
-      }, []);
+        
+        
+        }, [ENDPOINT]); 
 
      
         
@@ -103,8 +107,9 @@ function SignIn(props) {
                                     }
                                     else
                                     {
+                                        //console.log(socket_state);
                                         console.log(result);
-                                        navigate("/post-MainPage", {state: result, socket});
+                                        navigate("/post-MainPage", {state: result});
                                     }
                                 })
                             }}
