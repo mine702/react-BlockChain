@@ -43,6 +43,7 @@ function CheckOutForm() {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
   const [userid, serUserid] = useState("");
+  const [sellerid, setSellerid] = useState("");
   const [checked, setCheckedButtons] = useState(false);
 
   const ENDPOINT = "http://localhost:8080";
@@ -57,6 +58,7 @@ function CheckOutForm() {
         setName(location.state[0].name);
         setNumber(location.state[0].number);
         serUserid(location.state[0].id);
+        setSellerid(location.state[0].id);
         console.log(socket.id);
         const socket_id = socket.id;
         socket.emit('socket_id_update',{userid, socket_id});
@@ -73,7 +75,7 @@ function CheckOutForm() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else {
-      socket.emit("House_Register", { locationvalue, address, files, name, number, userid });
+      socket.emit("House_Register", { locationvalue, address, files, name, number, sellerid });
       socket.on("House_Register_Result", (CheckMsg) => {
         alert(CheckMsg);
         socket.off();

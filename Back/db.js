@@ -62,8 +62,8 @@ let dbcontrol =
         });
     },
 
-    db_House_Register: function (locationvalue, address, files, name, number, userid ) {
-        var myobj = { address: address, files: files, name: name, number: number, userid: userid };
+    db_House_Register: function (locationvalue, address, files, name, number, sellerid ) {
+        var myobj = { address: address, files: files, name: name, number: number, sellerid: sellerid, buyerid: '' };
         dbo.collection(`${ locationvalue }`).insertOne(myobj, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -81,14 +81,53 @@ let dbcontrol =
         });
     },
 
-    db_IdSelect: function (sellerid) {
-        var query = { id: sellerid };
+    // db_IdSelect: function (sellerid) {
+    //     var query = { id: sellerid };
 
-        return new Promise(resolve => {
-            dbo.collection("Member").find(query,{ projection: { socket_id : 1 } }).toArray(function (err, result) {
+    //     return new Promise(resolve => {
+    //         dbo.collection("Member").find(query,{ projection: { socket_id : 1 } }).toArray(function (err, result) {
+    //             if (err) throw err;
+    //             console.log(result);
+    //             resolve(result);  
+    //             });            
+    //     });
+    // },
+
+    db_returnid : function (address) {
+            var query = { address : address}
+            dbo.collection("대전").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray(function (err, result) {
                 if (err) throw err;
-                console.log(result);
-                resolve(result);  
+                sellerid = result[0].sellerid;
+                buyerid = result[0].buyerid;
+            })
+           },
+
+
+    
+    db_IdSelect: function (address) {
+        return new Promise(resolve => {
+            var query = { address : address}
+            dbo.collection("Member").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray(function (err, result) {
+                if (err) throw err;
+                sellerid = result[0].sellerid;
+                buyerid = result[0].buyerid;
+
+                let socket_arr= [];
+                for(i =0; i< result.length; i++)
+                {
+                    if(result[i].id == userid)
+                    {
+                        socket_arr.push(result[i].socket_id);
+                        console.log(result[i].socket_id);
+                    }
+                    if(result[i].id == sellerid)
+                    {
+                        socket_arr.push(result[i].socket_id);
+                        console.log(result[i].socket_id);
+                    }
+                }
+               // console.log(socket_arr);
+                resolve(socket_arr);  
                 });            
         });
     },
@@ -97,6 +136,16 @@ let dbcontrol =
     {
         var myquery = { id : userid };
         var newvalues = { $set: { socket_id: socket_id} };
+        dbo.collection("Member").updateOne(myquery, newvalues, function(err, res) {
+        if (err) throw err;
+        console.log("1 document updated");
+        });
+    },
+
+    db_buyerid_update: function (address, userid)
+    {
+        var myquery = { address : address };
+        var newvalues = { $set: { buyerid: userid} };
         dbo.collection("Member").updateOne(myquery, newvalues, function(err, res) {
         if (err) throw err;
         console.log("1 document updated");

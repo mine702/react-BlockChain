@@ -61,8 +61,8 @@ io.on('connection', function(socket) {
     })()
   })
 
-  socket.on('House_Register', ({ locationvalue, address, files, name, number, userid  }) => {
-    dbcontrol.db_House_Register(locationvalue, address, files, name, number, userid );
+  socket.on('House_Register', ({ locationvalue, address, files, name, number, sellerid  }) => {
+    dbcontrol.db_House_Register(locationvalue, address, files, name, number, sellerid );
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
 
@@ -82,17 +82,37 @@ io.on('connection', function(socket) {
     console.log(userid, socket_id);
     dbcontrol.db_update(userid, socket_id);
   })
+  
+  socket.on("buyerid_update", ({address, userid})=>{
+    dbcontrol.db_buyerid_update(address, userid);
+  })
+  
+  // async function socketdb(sellerid, userid)
+  // {
+  //   let socket_arr=[];
+  //   let result1 = await dbcontrol.db_IdSelect(sellerid);
+  //   let result2 = await dbcontrol.db_IdSelect(userid);
+  //   socket_arr.push(result1[0].socket_id);
+  //   socket_arr.push(result2[0].socket_id);
+  //   return socket_arr;
+  // }
 
-  socket.on('Message_Send',({sellerid, username, sendmsg }) => {
-    (async ()=> {
-    let result =await dbcontrol.db_IdSelect(sellerid);
-    name=username;
-    msg= sendmsg;
-    seller_socket_id = result[0].socket_id;
-    console.log(seller_socket_id);
-    console.log(username, sendmsg ); 
-    io.to(seller_socket_id).emit("Message_Receive",{ name, msg })
+  socket.on('Message_Send',({address, username, sendmsg }) => {
+    (async () =>{
+      let socket_arr = await dbcontrol.db_IdSelect(address);
+       name=username;
+       msg= sendmsg;
+       console.log(username, sendmsg ); 
+       console.log(socket_arr); 
+       for(i=0; i<socket_arr.length; i++)
+       {
+          console.log("!!");
+          socket.to(socket_arr[i]).emit("Message_Receive",{ name, msg })
+       }
     })()
+    // (async ()=> {
+    //  result2 = await dbcontrol.db_IdSelect(userid);
+    // })()
   })
 
 })

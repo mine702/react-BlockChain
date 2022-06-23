@@ -14,7 +14,7 @@ function Chatting(props){
     
     const ENDPOINT = "http://localhost:8080";
 
-    const {username,userid, sellerid} =props;
+    const {username, address, userid, sellerid} =props;
     const [modalIsOpen, setIsOpen] = useState(false);
 
     
@@ -27,7 +27,11 @@ function Chatting(props){
 
     // 함수가 실행될때 modal의 상태를 true로 바꿔준다.
     function openModal() {
-        setIsOpen(true);
+        setIsOpen(true);   
+     }
+
+     function buy(){
+        socket.emit('buyerid_update',{address, userid});
      }
 
     // 함수가 실행될때 modal의 상태를 false로 바꿔준다.
@@ -47,28 +51,34 @@ function Chatting(props){
         })
     }, [ENDPOINT])
 
-    
-      
 
-
-    function SendMessage() {
-       console.log(sellerid);
-        socket.emit("Message_Send", {sellerid ,username, sendmsg});
-        console.log(socket);
+    useEffect( ()=>{
         socket.on("Message_Receive", ({name, msg})=>{
             console.log(sendmsg);
             setChatlog([...chatlog, {name: name, msg : msg} ]);
             console.log(chatlog);
-            //socket.off();
+            socket.off();
         })
-      }
 
-      
+        socket.on("12345", ({name, msg})=>{
+            console.log(sendmsg);
+            setChatlog([...chatlog, {name: name, msg : msg} ]);
+            console.log(chatlog);
+            socket.off();
+        })
+    },[chatlog]);
+
+    function SendMessage() {
+        //console.log(sellerid);
+        socket.emit("Message_Send", {address ,username, sendmsg});
+        console.log(socket);
+    }
 
     
     return(
         <div>
-            <Button variant='contained' onClick={openModal}>채팅</Button>
+            <Button variant='contained' onClick={openModal}>구매</Button>
+            <Button variant='contained' onClick={buy}>채팅</Button>
             <Modal isOpen={modalIsOpen} ariaHideApp={false}>
                 <LogText log={chatlog} ></LogText>
                 <TextField
