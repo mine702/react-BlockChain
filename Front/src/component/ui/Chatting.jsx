@@ -14,7 +14,7 @@ function Chatting(props){
     
     const ENDPOINT = "http://localhost:8080";
 
-    const {username,userid} =props;
+    const {username,userid, sellerid} =props;
     const [modalIsOpen, setIsOpen] = useState(false);
 
     
@@ -40,6 +40,7 @@ function Chatting(props){
 
         socket.emit('connect_check',{});
         socket.on('connect_success', ({})=>{
+
             console.log(socket.id);
             const socket_id = socket.id;
             socket.emit('socket_id_update',{userid, socket_id});
@@ -51,8 +52,9 @@ function Chatting(props){
 
 
     function SendMessage() {
-       
-        socket.emit("Message_Send", { username, sendmsg});
+       console.log(sellerid);
+        socket.emit("Message_Send", {sellerid ,username, sendmsg});
+        console.log(socket);
         socket.on("Message_Receive", ({name, msg})=>{
             console.log(sendmsg);
             setChatlog([...chatlog, {name: name, msg : msg} ]);

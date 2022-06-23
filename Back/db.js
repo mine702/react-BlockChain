@@ -62,8 +62,8 @@ let dbcontrol =
         });
     },
 
-    db_House_Register: function (locationvalue, address, files, name, number ) {
-        var myobj = { address: address, files: files, name: name, number: number };
+    db_House_Register: function (locationvalue, address, files, name, number, userid ) {
+        var myobj = { address: address, files: files, name: name, number: number, userid: userid };
         dbo.collection(`${ locationvalue }`).insertOne(myobj, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -81,22 +81,15 @@ let dbcontrol =
         });
     },
 
-    db_select: function (name) {
-        var query = { name: name };
+    db_IdSelect: function (sellerid) {
+        var query = { id: sellerid };
 
         return new Promise(resolve => {
-            dbo.collection("customers").find(query).toArray(function (err, result) {
+            dbo.collection("Member").find(query,{ projection: { socket_id : 1 } }).toArray(function (err, result) {
                 if (err) throw err;
-                if(result=="")
-                {
-                    console.log("undefined");
-                }
-                else
-                {
-                    console.log("1 document selected");
-                    resolve(result);
-                }
-            });            
+                console.log(result);
+                resolve(result);  
+                });            
         });
     },
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,11 +15,20 @@ import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import io from "socket.io-client";
+
+let socket;
 
 function PrimarySearchAppBar() {
+
     const navigate = useNavigate();
     const location = useLocation();
-    const [username] = useState(location.state[0].name);
+
+    const ENDPOINT = "http://localhost:8080";
+
+    const [username, setUsername] = useState("");
+    const [userid, setUserid] = useState("");
+
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -30,9 +39,24 @@ function PrimarySearchAppBar() {
         }
         setState({ ...state, [anchor]: open });
     };
+
     const [state, setState] = React.useState({
         left: false
     });
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+
+        socket.emit('connect_check',{});
+        socket.on('connect_success', ({})=>{
+            setUsername(location.state[0].name);
+            setUserid(location.state[0].id);
+            console.log(socket.id);
+            const socket_id = socket.id;
+            socket.emit('socket_id_update',{userid, socket_id});
+        })
+    }, [location])
+
     function SendMessage() {
         navigate("/post-MainPage", { state: location.state });            
     }

@@ -42,16 +42,28 @@ function CheckOutForm() {
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
+  const [userid, serUserid] = useState("");
   const [checked, setCheckedButtons] = useState(false);
 
   const ENDPOINT = "http://localhost:8080";
 
+  
+
   useEffect(() => {
     socket = io(ENDPOINT);
-    console.log(location.state);
-    setName(location.state[0].name);
-    setNumber(location.state[0].number);
-  }, []);
+
+    socket.emit('connect_check',{});
+    socket.on('connect_success', ({})=>{
+        setName(location.state[0].name);
+        setNumber(location.state[0].number);
+        serUserid(location.state[0].id);
+        console.log(socket.id);
+        const socket_id = socket.id;
+        socket.emit('socket_id_update',{userid, socket_id});
+    })
+}, [ENDPOINT])
+
+  
 
   function SendMessage() {
     if (checked === false) {
@@ -61,7 +73,7 @@ function CheckOutForm() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else {
-      socket.emit("House_Register", { locationvalue, address, files, name, number });
+      socket.emit("House_Register", { locationvalue, address, files, name, number, userid });
       socket.on("House_Register_Result", (CheckMsg) => {
         alert(CheckMsg);
         socket.off();

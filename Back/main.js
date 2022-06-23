@@ -61,8 +61,8 @@ io.on('connection', function(socket) {
     })()
   })
 
-  socket.on('House_Register', ({ locationvalue, address, files, name, number  }) => {
-    dbcontrol.db_House_Register(locationvalue, address, files, name, number );
+  socket.on('House_Register', ({ locationvalue, address, files, name, number, userid  }) => {
+    dbcontrol.db_House_Register(locationvalue, address, files, name, number, userid );
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
 
@@ -83,16 +83,16 @@ io.on('connection', function(socket) {
     dbcontrol.db_update(userid, socket_id);
   })
 
-  socket.on('Message_Send',({username, sendmsg }) => {
+  socket.on('Message_Send',({sellerid, username, sendmsg }) => {
+    (async ()=> {
+    let result =await dbcontrol.db_IdSelect(sellerid);
     name=username;
     msg= sendmsg;
+    seller_socket_id = result[0].socket_id;
+    console.log(seller_socket_id);
     console.log(username, sendmsg ); 
-    for(let i =0; i<socket_id_arr.length; i++)
-    {
-      console.log(socket_id_arr[i]);
-      io.to(socket_id_arr[i]).emit("Message_Receive",{ name, msg })
-    }
-
+    io.to(seller_socket_id).emit("Message_Receive",{ name, msg })
+    })()
   })
 
 })

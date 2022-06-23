@@ -30,6 +30,7 @@ function Card1(props) {
                             }}
                             src={card.files}
                             alt="random"
+                            
                         />
 
                         <CardActions>

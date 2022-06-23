@@ -32,7 +32,8 @@ function HouseInfoPage() {
     const location = useLocation();
 
     
-    // const [username] = useState(location.state[0].name);
+    const [userid ,setUserid] = useState("");
+
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -49,8 +50,18 @@ function HouseInfoPage() {
 
     useEffect(() => {
         socket = io(ENDPOINT);
-        console.log(location.state);
-      }, []);
+
+        socket.emit('connect_check',{});
+        socket.on('connect_success', ({})=>{
+            setUserid(location.state[0].id);
+            console.log(socket.id);
+            const socket_id = socket.id;
+            socket.emit('socket_id_update',{userid, socket_id});
+            socket.off();
+        })
+    }, [location])
+
+   
 
     function SendMessage() {
         navigate("/post-MainPage", { state: location.state[1] });
@@ -128,7 +139,16 @@ function HouseInfoPage() {
                                 판매자 정보
                             </Typography>
                             <Typography>
-                                {location.state[0].name}
+                                이름 : {location.state[0].name}
+                            </Typography><br/>
+                            <Typography>
+                                ID : {location.state[0].userid}
+                            </Typography><br/>
+                            <Typography>
+                                주소 : {location.state[0].address}
+                            </Typography><br/>
+                            <Typography>
+                                전화번호 : {location.state[0].number}
                             </Typography><br/>
                             <Typography gutterBottom variant="h5" component="h2">
                                 Picture
@@ -156,7 +176,7 @@ function HouseInfoPage() {
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
-                            <Chatting username={location.state[1][0].name} userid={location.state[1][0].id}></Chatting>
+                            <Chatting username={location.state[1][0].name} userid={location.state[1][0].id} sellerid={location.state[0].userid}></Chatting>
                         </CardActions>
                     </Card>
                 </Container>
