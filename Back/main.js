@@ -91,4 +91,18 @@ io.on('connection', socket => {
     socket.emit("Update_Registration_Result", "Ok");
   })
 
+  socket.on('Chatting_Join', ({ Oname, roomnumber }) => {
+    console.log(Oname, roomnumber);
+    socket.join(`${roomnumber}번방`);
+  })
+
+  socket.on('Message_Send', ({ Oname, sendmsg, RoomNumber }) => {
+    try {
+      console.log(Oname, sendmsg, RoomNumber);
+      socket.join(`${RoomNumber}번방`);
+      io.to(`${RoomNumber}번방`).emit('Mes_return', { Oname, sendmsg });
+    } catch (error) {
+      console.log(error);
+    }
+  })
 })
