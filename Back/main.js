@@ -103,11 +103,11 @@ io.on('connection', function(socket) {
        name=username;
        msg= sendmsg;
        console.log(username, sendmsg ); 
-       console.log(socket_arr); 
+       //console.log(socket_arr); 
        for(i=0; i<socket_arr.length; i++)
        {
           console.log("!!");
-          socket.to(socket_arr[i]).emit("Message_Receive",{ name, msg })
+          io.to(socket_arr[i]).emit("Message_Receive",{ name, msg })
        }
     })()
     // (async ()=> {

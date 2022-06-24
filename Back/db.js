@@ -81,53 +81,75 @@ let dbcontrol =
         });
     },
 
-    // db_IdSelect: function (sellerid) {
-    //     var query = { id: sellerid };
+    db_SocketId: function (id) {
+        var query = { id: id };
 
-    //     return new Promise(resolve => {
-    //         dbo.collection("Member").find(query,{ projection: { socket_id : 1 } }).toArray(function (err, result) {
-    //             if (err) throw err;
-    //             console.log(result);
-    //             resolve(result);  
-    //             });            
-    //     });
-    // },
-
-    db_returnid : function (address) {
-            var query = { address : address}
-            dbo.collection("대전").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray(function (err, result) {
+        return new Promise(resolve => {
+            dbo.collection("Member").find(query,{ projection: { socket_id : 1 } }).toArray(function (err, result) {
                 if (err) throw err;
-                sellerid = result[0].sellerid;
-                buyerid = result[0].buyerid;
-            })
-           },
+                //console.log(result[0].socket_id);
+                resolve(result[0].socket_id);  
+                });            
+        });
+    },
+
+    // db_returnid : function (address) {
+    //         var query = { address : address}
+    //         dbo.collection("대전").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray(function (err, result) {
+    //             if (err) throw err;
+    //             sellerid = result[0].sellerid;
+    //             buyerid = result[0].buyerid;
+    //         })
+    //        },
+
+    //  db_IdSelect: async function (address){
+
+    //     var query = { address : address}
+    //     let socket_arr= [];
+    //     dbo.collection("대전").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray( async function (err, result) {
+    //         if (err) throw err;
+            
+    //         sellerid = result[0].sellerid;
+    //         buyerid = result[0].buyerid;
+    //         console.log(sellerid, buyerid);
+
+    //        await dbcontrol.db_SocketId(sellerid).then((socketid)=>{
+    //             socket_arr.push(socketid)
+    //         });
+
+    //         await dbcontrol.db_SocketId(buyerid).then(function(socketid){
+    //             socket_arr.push(socketid)
+    //         });
+      
+    //         console.log(socket_arr);
+
+    //     });
+    //     return socket_arr;
+    // },
 
 
     
-    db_IdSelect: function (address) {
+     db_IdSelect:  (address)=> {
         return new Promise(resolve => {
             var query = { address : address}
-            dbo.collection("Member").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray(function (err, result) {
+            dbo.collection("대전").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray(async function (err, result) {
                 if (err) throw err;
+                let socket_arr= [];
                 sellerid = result[0].sellerid;
                 buyerid = result[0].buyerid;
+                console.log(sellerid, buyerid);
 
-                let socket_arr= [];
-                for(i =0; i< result.length; i++)
-                {
-                    if(result[i].id == userid)
-                    {
-                        socket_arr.push(result[i].socket_id);
-                        console.log(result[i].socket_id);
-                    }
-                    if(result[i].id == sellerid)
-                    {
-                        socket_arr.push(result[i].socket_id);
-                        console.log(result[i].socket_id);
-                    }
-                }
-               // console.log(socket_arr);
-                resolve(socket_arr);  
+                await dbcontrol.db_SocketId(sellerid).then((socketid)=>{
+                    socket_arr.push(socketid)
+                });
+
+                await dbcontrol.db_SocketId(buyerid).then(function(socketid){
+                    socket_arr.push(socketid)
+                });
+          
+                console.log(socket_arr);
+                resolve(socket_arr);
+
                 });            
         });
     },
@@ -146,7 +168,7 @@ let dbcontrol =
     {
         var myquery = { address : address };
         var newvalues = { $set: { buyerid: userid} };
-        dbo.collection("Member").updateOne(myquery, newvalues, function(err, res) {
+        dbo.collection("대전").updateOne(myquery, newvalues, function(err, res) {
         if (err) throw err;
         console.log("1 document updated");
         });

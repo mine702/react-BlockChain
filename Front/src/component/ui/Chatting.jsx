@@ -77,8 +77,8 @@ function Chatting(props){
     
     return(
         <div>
-            <Button variant='contained' onClick={openModal}>구매</Button>
-            <Button variant='contained' onClick={buy}>채팅</Button>
+            <Button variant='contained' onClick={buy}>구매</Button>
+            <Button variant='contained' onClick={openModal}>채팅</Button>
             <Modal isOpen={modalIsOpen} ariaHideApp={false}>
                 <LogText log={chatlog} ></LogText>
                 <TextField
