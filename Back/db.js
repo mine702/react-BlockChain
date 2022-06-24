@@ -120,35 +120,21 @@ let dbcontrol =
             });
         });
     },
-    db_No_Room_Make: function (Sname, Oname) {
-        var query = { Sname: Sname, Oname: Oname, RoomN: 0 };
+
+    db_Room_Make: function (Sname, Oname, roomnumber) {
+        var query = { Sname: Sname, Oname: Oname, RoomN: roomnumber };
         console.log(query)
         dbo.collection("Room").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
         })
-
     },
 
-    db_Room_Make: function (Sname, Oname, j) {
-        var query = { Sname: Sname, Oname: Oname, RoomN: j };
-        console.log(query)
-        dbo.collection("Room").insertOne(query, function (err, res) {
-            if (err) throw err;
-            console.log("1 document inserted");
-        })
-        var qu = { name: Sname };
-        var que = { $push: { room: j } }
-        dbo.collection("Registration").updateOne(qu, que, function (err, res) {
-            if (err) throw err;
-            console.log("1 document update");
-        })
-    },
-
-    db_Registration_Room: function () {
-        var qu = { name: Sname };
-        var que = { $push: { room: 0 } }
-        dbo.collection("Registration").updateOne(qu, que, function (err, res) {
+    db_Update_Registration: function (_id, roomnumber) {
+        var id = new ObjectId(_id);
+        var myquery = { _id: id };
+        var que = { $push: { room: roomnumber } }   
+        dbo.collection("Registration").updateOne(myquery, que, function (err, res) {
             if (err) throw err;
             console.log("1 document update");
         })

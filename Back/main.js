@@ -80,14 +80,15 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on('Room_Make', ({ Sname, Oname, j }) => {
-    dbcontrol.db_Room_Make(Sname, Oname, j);
+  socket.on('Room_Make', ({ Sname, Oname, roomnumber }) => {
+    dbcontrol.db_Room_Make(Sname, Oname, roomnumber);
     socket.emit("Room_Make_Result", "Ok");
   })
 
-  socket.on('No_Room_Make', ({ Sname, Oname }) => {
-    dbcontrol.db_No_Room_Make(Sname, Oname);
-    socket.emit("No_Room_Make_Result", "Ok");
+
+  socket.on('Update_Registration', ({ S_id, roomnumber }) => {
+    dbcontrol.db_Update_Registration(S_id, roomnumber);
+    socket.emit("Update_Registration_Result", "Ok");
   })
 
 })
