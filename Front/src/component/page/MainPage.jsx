@@ -37,6 +37,7 @@ function Album(props) {
     const [cards, setCardsLow] = useState([]);
     const [locationvalue, setLocationvalue] = useState("");
     const [username, setUsername] = useState("");
+    const [usernumber ] = useState(location.state[0].number)
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
     const [state, setState] = React.useState({
         left: false
@@ -119,7 +120,7 @@ function Album(props) {
                             </List>
                         </Box>
                     </SwipeableDrawer>
-                    <FullScreenDialog></FullScreenDialog>
+                    <FullScreenDialog name={username} number={usernumber}></FullScreenDialog>
                     <Box sx={{ flexGrow: 1 }} />
                     접속중인 사람 : {username}
                 </Toolbar>

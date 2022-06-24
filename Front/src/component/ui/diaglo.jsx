@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
@@ -12,14 +12,20 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import Badge from '@mui/material/Badge'
 import MailIcon from '@mui/icons-material/Mail';
+import io from "socket.io-client";
+
+let socket;
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 function FullScreenDialog(props) {
-    const [open, setOpen] = React.useState(false);
 
+    const ENDPOINT = "http://localhost:8080";
+
+    const [open, setOpen] = React.useState(false);
+ 
     const handleClickOpen = () => {
         setOpen(true);
     };
