@@ -30,13 +30,21 @@ function Chatting(props) {
 
     useEffect(() => {
         socket = io(ENDPOINT);
-    }, []);
+    }, [ENDPOINT]);
 
+    useEffect(() => {
+        socket.on("Mes_return", ({ Oname, sendmsg }) => {
+            console.log(sendmsg);
+            setChatlog([...chatlog, { name: Oname, msg: sendmsg }]);
+            console.log(chatlog);            
+        })
+    },[chatlog])
+    
     const roomn = []
     let makeroom = []
     let roomnumber = 0;
 
-    function MakeRoom() {        
+    function MakeRoom() {
         socket.emit("Room_Search");
         socket.on("Room_Search_Result", (Result) => {
             for (let i = 0; i < Result.length; i++) {
@@ -70,27 +78,21 @@ function Chatting(props) {
                         socket.emit("Room_Make", { Sname, Oname, roomnumber });
                         // eslint-disable-next-line no-loop-func
                         socket.on("Room_Make_Result", () => {
-                            socket.emit("Chatting_Join", { Oname, roomnumber });
+                            socket.emit("Chatting_Join", { roomnumber });
                         })
-                       
                     }
                 }
             }
         })
     }
 
-    function SendMessage() {        
-        socket.emit("Message_Send", { Oname, sendmsg , RoomNumber});
-        socket.on("Mes_return", ({ Oname, sendmsg }) => {
-            console.log(sendmsg);
-            setChatlog([...chatlog, { name: Oname, msg: sendmsg }]);
-            console.log(chatlog);
-        })
+    function SendMessage() {
+        socket.emit("Message_Send", { Oname, sendmsg, RoomNumber });
     }
 
     return (
         <div>
-            <Button  onClick={() => {
+            <Button onClick={() => {
                 openModal()
                 MakeRoom()
             }}>CHATTING</Button>

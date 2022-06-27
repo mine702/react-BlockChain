@@ -121,8 +121,8 @@ let dbcontrol =
         });
     },
 
-    db_Room_Make: function (Sname, Oname, roomnumber) {
-        var query = { Sname: Sname, Oname: Oname, RoomN: roomnumber };
+    db_Room_Make: function (Sname, Oname, roomnumber,Msg) {
+        var query = { Sname: Sname, Oname: Oname, RoomN: roomnumber, Msg : Msg };
         console.log(query)
         dbo.collection("Room").insertOne(query, function (err, res) {
             if (err) throw err;
@@ -146,6 +146,30 @@ let dbcontrol =
                 }
                 resolve(Oname_arr);
             })
+        })
+    },
+
+    db_LoadMsg : function(RoomNumber) {
+        return new Promise(resolve => {
+            dbo.collection("Room").find(RoomNumber,{ projection: { Msg: 1 } }).toArray(function (err, result) {
+                if (err) throw err;
+                let Msg_Arr = [];
+                console.log(result[0].Msg);
+                Msg_Arr = result[0].Msg 
+                resolve(Msg_Arr);
+            })
+        })
+    },
+
+    db_SaveMsg : function (chatlog,RoomNumber) {
+        var query = { RoomN :RoomNumber }
+        var newvalues = { $set: { Msg : chatlog} };
+        return new Promise(resolve => {
+            console.log(chatlog);
+            dbo.collection("Room").updateOne(query, newvalues, function (err, res) {
+                if (err) throw err;     
+                console.log("메세지 저장성공");
+            })          
         })
     },
 

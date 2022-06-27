@@ -14,7 +14,6 @@ import Checkout from "./component/page/registration/CheckOutForm";
 import UserMyPage from "./component/page/UserMyPage";
 import HouseInfoPage from "./component/page/HouseInfoPage";
 import CorrectionForm from "./component/page/registration/CorrectionForm"
-import TestPage from "./component/page/TestPage"
 function App(props) {
     return (
         <BrowserRouter>
