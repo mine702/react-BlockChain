@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -23,12 +23,20 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Divider from '@mui/material/Divider';
 import FullScreenDialog from '../ui/diaglo';
 import Card1 from '../ui/Card1';
+import io from "socket.io-client";
 
 const theme = createTheme();
+
+let socket;
+const ENDPOINT = "http://localhost:8080";
+
 function Album(props) {
+
     const navigate = useNavigate();
-    const [cards, setCardsLow] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const location = useLocation();
+    const [cards, setCardsLow] = useState([]);
     const [locationvalue, setLocationvalue] = useState("");
+    const [username, setUsername] = useState("");
     // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
     const [state, setState] = React.useState({
         left: false
@@ -42,18 +50,33 @@ function Album(props) {
         ) {
             return;
         }
-
         setState({ ...state, [anchor]: open });
     };
+
     useEffect(() => {
-        // eslint-disable-next-line eqeqeq
-        if (locationvalue == "대전") {
-            setCardsLow([1, 2, 3, 4, 5, 6]);
+        socket = io(ENDPOINT);
+        setUsername(location.state[0].name);  
+    }, [location])
+
+    useEffect(() => {
+        if (locationvalue !== "") {
+            socket.emit("Location_Data", { locationvalue });
+            socket.on("Location_Data_Result", (Result) => {
+                setCardsLow(Result);
+                socket.off();
+            })
         }
-        else (
-            setCardsLow([1, 2, 3, 4, 5, 6, 7, 8, 9])
-        )
     }, [locationvalue])
+    
+    function GotoMyPage() {
+        navigate("/post-UserMyPage", { state: [location.state] })
+        // socket.emit("MyPageSell", { name, number });
+        // socket.on("MyPageSell_Result", (Result) => {
+            
+            
+        //     socket.off();
+        // })
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -84,7 +107,7 @@ function Album(props) {
                                 <ListItem key="마이페이지" disablePadding sx={{ display: 'block' }}>
                                     <Divider />
                                     <ListItemButton>
-                                        <ListItemText primary="MyPage" />
+                                        <ListItemText onClick={GotoMyPage} primary="MyPage" />
                                     </ListItemButton>
                                     <ListItemButton>
                                         <ListItemText onClick={() => {
@@ -94,8 +117,10 @@ function Album(props) {
                                 </ListItem>
                             </List>
                         </Box>
-                    </SwipeableDrawer> 
-                    <FullScreenDialog></FullScreenDialog>
+                    </SwipeableDrawer>
+                    <FullScreenDialog UserName={username}></FullScreenDialog>
+                    <Box sx={{ flexGrow: 1 }} />
+                    접속중인 사람 : {username}
                 </Toolbar>
 
             </AppBar>
@@ -141,7 +166,7 @@ function Album(props) {
                                 </FormControl>
                             </Box>
                             <Button variant="contained" onClick={() => {
-                                navigate("/post-Checkout")
+                                navigate("/post-Checkout", { state: location.state })
                             }}>판매 등록</Button>
                             <Button variant="outlined">매물 검색</Button>
                         </Stack>
@@ -149,7 +174,7 @@ function Album(props) {
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Card1 cards={cards}></Card1>
+                    <Card1 cards={cards} user={location.state}></Card1>
                 </Container>
             </main>
             {/* Footer */}

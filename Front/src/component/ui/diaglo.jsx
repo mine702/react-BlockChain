@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
@@ -12,16 +12,36 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import Badge from '@mui/material/Badge'
 import MailIcon from '@mui/icons-material/Mail';
+import io from "socket.io-client";
+import ListText_1 from "./ListText_1";
+
+let socket;
+
+const ENDPOINT = "http://localhost:8080";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 function FullScreenDialog(props) {
+    let test = [];
+    const [rn,setRN] = React.useState("")
+    const [RoomNumbers , setRoomN] = React.useState([]);
     const [open, setOpen] = React.useState(false);
+    const {UserName} = props;
+
+    useEffect( ()=>{
+        socket = io(ENDPOINT)
+    });
 
     const handleClickOpen = () => {
         setOpen(true);
+        socket.emit("RoomNumber" , {UserName});
+        socket.on("RoomNuber_Result" ,(res)=>{
+            setRoomN([...RoomNumbers,res]);
+            console.log(res);
+            setRN(res.result[0]);
+        });
     };
 
     const handleClose = () => {
@@ -57,13 +77,7 @@ function FullScreenDialog(props) {
                     </Toolbar>
                 </AppBar>
                 <List>
-                    <ListItem button>
-                        <ListItemText primary="민건" secondary="ㅎㅇ" />
-                    </ListItem>
-                    <Divider />
-                    <ListItem button>
-                        <ListItemText primary="망건" secondary="ㅎㅇ" />
-                    </ListItem>
+                    <ListText_1 value ={RoomNumbers}></ListText_1>
                 </List>
             </Dialog>
         </div>

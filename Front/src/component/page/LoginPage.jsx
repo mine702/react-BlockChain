@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from "react";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,20 +13,24 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
 
 const theme = createTheme();
 
+let socket;
+
+const ENDPOINT = "http://localhost:8080";
+
 function SignIn(props) {
+
     const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    };
+    const [id, setId] = useState("");
+    const [pw, setPw] = useState("");
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+    }, []);    
 
     return (
         <ThemeProvider theme={theme}>
@@ -46,26 +50,25 @@ function SignIn(props) {
                     <Typography component="h1" variant="h5">
                         로그인
                     </Typography>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <Box component="form" onSubmit={(e)=>{
+                        e.preventDefault();
+                    }} noValidate sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
                             label="ID"
-                            name="email"
-                            autoComplete="email"
                             autoFocus
+                            onChange={(e) => setId(e.target.value)}
                         />
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            name="password"
                             label="Password"
                             type="password"
-                            id="password"
-                            autoComplete="current-password"
+                            autoComplete="on"
+                            onChange={(e) => setPw(e.target.value)}
                         />
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
@@ -76,8 +79,19 @@ function SignIn(props) {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
-                            onClick={()=>{
-                                navigate("/post-MainPage")
+                            onClick={async () => {
+                                socket.emit("Login", { id, pw });
+                                await socket.on("Login_result", (result) => {
+                                    // eslint-disable-next-line eqeqeq
+                                    if (result == "" || undefined) {
+                                        alert("아이디와 비밀번호를 확인하세요");
+                                        setId("");
+                                    }
+                                    else {
+                                        //console.log(result);
+                                        navigate("/post-MainPage", { state: result });
+                                    }
+                                })
                             }}
                         >
                             로그인
