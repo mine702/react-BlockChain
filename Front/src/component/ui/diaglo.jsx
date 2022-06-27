@@ -12,20 +12,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import Badge from '@mui/material/Badge'
 import MailIcon from '@mui/icons-material/Mail';
-import io from "socket.io-client";
-
-let socket;
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 function FullScreenDialog(props) {
-
-    const ENDPOINT = "http://localhost:8080";
-
+    
     const [open, setOpen] = React.useState(false);
- 
+    
     const handleClickOpen = () => {
         setOpen(true);
     };
