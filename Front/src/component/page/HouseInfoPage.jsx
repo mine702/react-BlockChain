@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -19,24 +19,13 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
 import WarningDialog from "../ui/WarningDialog"
-import io from "socket.io-client";
 import Chatting from "../ui/Chatting";
-
-let socket;
-
-const ENDPOINT = "http://localhost:8080";
 
 function HouseInfoPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const [Sname] = useState(location.state[0].name);
     const [Oname] = useState(location.state[1][0].name);
-    const [S_id] = useState(location.state[0]._id)
-    
-
-    useEffect(() => {
-        socket = io(ENDPOINT);
-    })
 
     const toggleDrawer = (anchor, open) => (event) => {
         if (
@@ -162,7 +151,7 @@ function HouseInfoPage() {
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
                             <WarningDialog warningHead={"구매 확인"} warningButton={"BUY"} warning={"정말 구매하시겠습니까?"}></WarningDialog>
-                            <Chatting Oname={Oname} Sname={Sname} S_id={S_id}></Chatting>
+                            <Chatting Oname={Oname} Sname={Sname}></Chatting>
                         </CardActions>
                     </Card>
                 </Container>

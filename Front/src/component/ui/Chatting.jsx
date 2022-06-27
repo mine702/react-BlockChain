@@ -10,7 +10,7 @@ import LogText from "./LogText"
 let socket;
 
 function Chatting(props) {
-    const { Sname, Oname, S_id } = props;
+    const { Sname, Oname } = props;
     const ENDPOINT = "http://localhost:8080";
     const [modalIsOpen, setIsOpen] = useState(false);
     const [roommax] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
@@ -50,12 +50,7 @@ function Chatting(props) {
                 socket.emit("Room_Make", { Sname, Oname, roomnumber });
                 // eslint-disable-next-line no-loop-func
                 socket.on("Room_Make_Result", () => {
-                    socket.emit("Update_Registration", { S_id, roomnumber });
-                    socket.on("Update_Registration_Result", (Result) => {
-                        console.log(Result)
-                        console.log(roomnumber);
-                        socket.emit("Chatting_Join", { Oname, roomnumber });
-                    })
+                    socket.emit("Chatting_Join", { Oname, roomnumber });
                 })
             }
 
@@ -75,13 +70,9 @@ function Chatting(props) {
                         socket.emit("Room_Make", { Sname, Oname, roomnumber });
                         // eslint-disable-next-line no-loop-func
                         socket.on("Room_Make_Result", () => {
-                            socket.emit("Update_Registration", { S_id, roomnumber });
-                            socket.on("Update_Registration_Result", (Result) => {
-                                console.log(Result)
-                                console.log(roomnumber);                                
-                            })
+                            socket.emit("Chatting_Join", { Oname, roomnumber });
                         })
-                        socket.emit("Chatting_Join", { Oname, roomnumber });
+                       
                     }
                 }
             }

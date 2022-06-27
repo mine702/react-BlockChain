@@ -1,55 +1,59 @@
-import React,{useState,useEffect} from 'react';
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import CssBaseline from '@mui/material/CssBaseline';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import MessageIcon from '@mui/icons-material/Message';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import axios from 'axios';
+import TextField from '@mui/material/TextField';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import SendIcon from '@mui/icons-material/Send';
 
-export default function FullScreenDialog() {
+const theme = createTheme();
 
-  useEffect(()=>{
-    preview();
-    return()=>preview();
-  })
-  const preview = ()=>{
-    if(!files)return false;
-    const imgEl=document.querySelector('.img__box');
-    const reader = new FileReader();
-    reader.onload=()=>(imgEl.style.backgroundImage = `url(${reader.result})`);
-    reader.readAsDataURL(files[0]);
-  }
-  const [files,setFiles] = useState('');
-  
-  const onLoadFile = (e) =>{
-    const file = e.target.files;
-    console.log(file);
-    setFiles(file);
-  }
-
-  const handleClick=(e)=>{
-    const formdata = new FormData();
-    formdata.append('uploadImage',files[0]);
-    const config = {
-      Headers: {
-        'content-type':'multipart/form-data'
-      }
-    }
-
-    axios.post('api',formdata,config);
-  }
-
+export default function Album() {
   return (
-    <div>
-      <div>
-        <strong>업로드된 이미지</strong>
-        <div>
-          <img src='' alt=''/>
-        </div>
-      </div>
-      <form>
-        <input type="file" accept="img/*" onChange={onLoadFile}/>
-        <label htmlFor='imgae'>파일 선택하기</label>
-      </form>
-      <Button variant="outlined" onChange={handleClick}>
-        저장하기
-      </Button>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppBar position="relative">
+        <Toolbar>
+          <MessageIcon sx={{ mr: 2 }} />
+          <Typography variant="h6" color="inherit" noWrap>
+            Message
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          '& > :not(style)': {
+            m: 1,
+            width: '60%'
+          },
+        }}
+        justifyContent="center"
+      >
+        <Paper elevation={3} >dksdug
+        <TextField
+                    margin='normal'
+                    required
+                    fullWidth
+                    id="Message"
+                    label="Message"
+                    name="Message"
+                    autoComplete="Message"
+                    autoFocus
+                />
+                <ButtonGroup disableElevation variant="contained">
+                    <Button variant="contained" >CLOSE</Button>
+                    <Button variant="contained" endIcon={<SendIcon />}  >SEND</Button>
+                </ButtonGroup>
+        </Paper>
+      </Box>
+    </ThemeProvider>
   );
 }

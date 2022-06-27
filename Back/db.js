@@ -61,7 +61,7 @@ let dbcontrol =
     },
 
     db_House_Register: function (locationvalue, address, price, files, selluserId, sellusername, sellusernumber) {
-        var query = { location: locationvalue, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber, room: [] };
+        var query = { location: locationvalue, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber };
         dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -130,13 +130,22 @@ let dbcontrol =
         })
     },
 
-    db_Update_Registration: function (_id, roomnumber) {
-        var id = new ObjectId(_id);
-        var myquery = { _id: id };
-        var que = { $push: { room: roomnumber } }   
-        dbo.collection("Registration").updateOne(myquery, que, function (err, res) {
-            if (err) throw err;
-            console.log("1 document update");
+    db_GetRoomNum: function (UserName) {
+        return new Promise(resolve => {
+            dbo.collection("Room").find({}, { projection: { Sname: 1, Oname: 1, RoomN: 1 } }).toArray(function (err, result) {
+
+                if (err) throw err;
+                let Oname_arr = [];
+                for (i = 0; i < result.length; i++) {
+                    if (result[i].Oname == UserName) {
+                        Oname_arr.push(result[i].RoomN);
+                    }
+                    else if (result[i].Sname == UserName) {
+                        Oname_arr.push(result[i].RoomN);
+                    }
+                }
+                resolve(Oname_arr);
+            })
         })
     },
 

@@ -85,12 +85,6 @@ io.on('connection', socket => {
     socket.emit("Room_Make_Result", "Ok");
   })
 
-
-  socket.on('Update_Registration', ({ S_id, roomnumber }) => {
-    dbcontrol.db_Update_Registration(S_id, roomnumber);
-    socket.emit("Update_Registration_Result", "Ok");
-  })
-
   socket.on('Chatting_Join', ({ Oname, roomnumber }) => {
     console.log(Oname, roomnumber);
     socket.join(`${roomnumber}번방`);
@@ -104,5 +98,12 @@ io.on('connection', socket => {
     } catch (error) {
       console.log(error);
     }
+  })
+
+  socket.on('RoomNumber' , ({name})=>{    
+    (async() =>{
+      let result = await dbcontrol.db_GetRoomNum(name);
+      socket.emit('RoomNuber_Result' , ({result}) );
+    })()
   })
 })
