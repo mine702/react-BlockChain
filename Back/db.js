@@ -121,8 +121,8 @@ let dbcontrol =
         });
     },
 
-    db_Room_Make: function (Sname, Oname, roomnumber,Msg) {
-        var query = { Sname: Sname, Oname: Oname, RoomN: roomnumber, Msg : Msg };
+    db_Room_Make: function (Sname, Oname, roomnumber) {
+        var query = { Sname: Sname, Oname: Oname, RoomN: roomnumber, Msg : [] };
         console.log(query)
         dbo.collection("Room").insertOne(query, function (err, res) {
             if (err) throw err;
@@ -172,7 +172,15 @@ let dbcontrol =
             })          
         })
     },
-
+    db_GetOutRoom: function (value) {
+        return new Promise(resolve => {
+            var query = { RoomN: value };
+            dbo.collection("Room").deleteOne(query, function (err, result) {
+                if (err) throw err;
+                console.log("1 document deleted");
+            });
+        });
+    },
     db_close: function () {
         db.close();
     }

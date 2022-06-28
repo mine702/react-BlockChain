@@ -81,8 +81,8 @@ io.on('connection', socket => {
   })
 
   socket.on('Room_Make', ({ Sname, Oname, roomnumber }) => {
-    const Msg = ""
-    dbcontrol.db_Room_Make(Sname, Oname, roomnumber,Msg);
+    
+    dbcontrol.db_Room_Make(Sname, Oname, roomnumber);
     socket.emit("Room_Make_Result", "Ok");
   })
 
@@ -122,4 +122,10 @@ io.on('connection', socket => {
       //socket.emit('RoomNuber_Result' , ({result}) );
     })()
   })
+
+  socket.on('GetOutRoom',({value})=>{
+    dbcontrol.db_GetOutRoom(value);
+    socket.emit("GetOutRoom_Result", "삭제 완료!!!");
+  })
+
 })

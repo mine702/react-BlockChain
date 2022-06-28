@@ -23,7 +23,6 @@ const style = {
 };
 
 let socket;
-let roomnum;
 
 function Chatting1(props) {
     const { value , Oname } = props
