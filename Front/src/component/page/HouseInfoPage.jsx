@@ -1,11 +1,15 @@
+//#region react
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router";
+//#endregion
+
+//#region mui
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useNavigate, useLocation } from "react-router";
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -18,14 +22,21 @@ import CardContent from '@mui/material/CardContent';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
-import WarningDialog from "../ui/WarningDialog"
-import Chatting from "../ui/Chatting";
+//#endregion
+
+//#region component
+import Notify_Dialog from "../ui/Notify_Dialog"
+import Make_Chatting from "../ui/Make_Chatting";
+//#endregion
 
 function HouseInfoPage() {
+
     const navigate = useNavigate();
     const location = useLocation();
-    const [Sname] = useState(location.state[0].name);
-    const [Oname] = useState(location.state[1][0].name);
+
+    const [sellername] = useState(location.state[0].name);
+    const [buyername] = useState(location.state[1][0].name);
+    
 
     const toggleDrawer = (anchor, open) => (event) => {
         if (
@@ -42,9 +53,7 @@ function HouseInfoPage() {
         left: false
     });
 
-    function SendMessage() {
-        navigate("/post-MainPage", { state: location.state[1] });
-    }
+   
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -79,7 +88,9 @@ function HouseInfoPage() {
                                         }} primary="LogOut" />
                                     </ListItemButton>
                                     <ListItemButton>
-                                        <ListItemText onClick={SendMessage} primary="MainPage" />
+                                        <ListItemText onClick={()=>{
+                                            navigate("/post-MainPage", { state: location.state[1] });
+                                        }} primary="MainPage" />
                                     </ListItemButton>
                                 </ListItem>
                             </List>
@@ -112,20 +123,20 @@ function HouseInfoPage() {
                     >
                         <CardContent sx={{ flexGrow: 1 }}>
                             <Typography gutterBottom variant="h5" component="h2">
-                                Seller information
+                                판매자 정보
                             </Typography>
                             <Typography gutterBottom variant="h6">
-                                &nbsp;&nbsp;name: {location.state[0].name}<br />
-                                &nbsp;&nbsp;number : {location.state[0].number}
+                                &nbsp;&nbsp;이름 : {location.state[0].name}<br />
+                                &nbsp;&nbsp;전화번호 : {location.state[0].number}
                             </Typography>
                             <Typography gutterBottom variant="h5" component="h2">
-                                Price
+                                가격
                             </Typography>
                             <Typography gutterBottom variant="h6">
                                 &nbsp;&nbsp;{location.state[0].price} (ETH)
                             </Typography>
                             <Typography gutterBottom variant="h5" component="h2">
-                                Picture
+                                사진
                             </Typography>
                         </CardContent>
                         <Container><Container><Container><Container><Container><Container><Container><Container><Container>
@@ -142,7 +153,7 @@ function HouseInfoPage() {
                         </Container></Container></Container></Container></Container></Container></Container></Container></Container>
                         <CardContent sx={{ flexGrow: 1 }}>
                             <Typography gutterBottom variant="h5" component="h2">
-                                Address
+                                주소
                             </Typography>
                             <Typography>
                                 &nbsp;&nbsp;{location.state[0].address}
@@ -150,8 +161,8 @@ function HouseInfoPage() {
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
-                            <WarningDialog warningHead={"구매 확인"} warningButton={"BUY"} warning={"정말 구매하시겠습니까?"}></WarningDialog>
-                            <Chatting Oname={Oname} Sname={Sname}></Chatting>
+                            <Notify_Dialog warningHead={"구매 확인"} warningButton={"BUY"} warning={"정말 구매하시겠습니까?"}></Notify_Dialog>
+                            <Make_Chatting sellername={sellername} buyername={buyername} ></Make_Chatting>
                         </CardActions>
                     </Card>
                 </Container>

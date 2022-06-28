@@ -7,8 +7,8 @@ function LogText(props){
 
     return (        
         <div>
-            {log.map((log) => (
-            <p key={"msg"+ log}>{log.name} : {log.msg}</p>
+            {log.map((log, index) => (
+            <p key={index}>{log.name} : {log.msg}</p>
             ))}
         </div>
     )

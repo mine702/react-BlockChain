@@ -1,4 +1,9 @@
+//#region react
 import React, { useState, useEffect } from 'react';
+import io from "socket.io-client";
+//#endregion
+
+//#region mui
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,16 +20,23 @@ import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Card2 from '../ui/Card2';
-import io from "socket.io-client";
+//#endregion
+
+//#region component
+import Mypage_Card from '../ui/Mypage_Card';
+//#endregion
 
 let socket;
 
-const ENDPOINT = "http://localhost:8080";
+
 
 function PrimarySearchAppBar() {
+
+    const ENDPOINT = "http://localhost:8080";
+
     const navigate = useNavigate()
     const location = useLocation()
+    
     const [cards, setCardsLow] = useState([]);
     const [number, setNumber] = useState()
     const [name, setName] = useState("")
@@ -139,7 +151,7 @@ function PrimarySearchAppBar() {
                             <Typography gutterBottom variant="h5" component="h2">
                                 판매내역
                             </Typography>
-                            <Card2 cards={cards} user={location.state}></Card2>
+                            <Mypage_Card cards={cards} user={location.state}></Mypage_Card>
                         </CardContent>
                     </Card>
                     <br />

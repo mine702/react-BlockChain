@@ -44,20 +44,20 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on('House_Register', ({ locationvalue, address, price, files, selluserId, sellusername, sellusernumber }) => {
-    dbcontrol.db_House_Register(locationvalue, address, price, files, selluserId, sellusername, sellusernumber);
+  socket.on('House_Register', ({ area, address, price, files, selluserId, sellusername, sellusernumber }) => {
+    dbcontrol.db_House_Register( area, address, price, files, selluserId, sellusername, sellusernumber);
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
 
-  socket.on('House_Correction', ({ _id, locationvalue, address, price, files }) => {
-    dbcontrol.db_House_Correction(_id, locationvalue, address, price, files);
+  socket.on('House_Correction', ({ _id, area, address, price, files }) => {
+    dbcontrol.db_House_Correction(_id, area, address, price, files);
     socket.emit("House_Correction_Result", "수정 완료!!!");
   })
 
-  socket.on('Location_Data', ({ locationvalue }) => {
+  socket.on('Area_Data', ({ area }) => {
     (async () => {
-      let result = await dbcontrol.db_Location_Data(locationvalue);
-      socket.emit("Location_Data_Result", result);
+      let result = await dbcontrol.db_Location_Data(area);
+      socket.emit("Area_Data_Result", result);
     })()
   })
 
@@ -74,33 +74,35 @@ io.on('connection', socket => {
   })
 
   socket.on('Room_Search', () => {
-    (async () => {
+    (async () => {  //합격
       let result = await dbcontrol.db_Room_Search();
+      console.log(result);
       socket.emit("Room_Search_Result", result);
     })()
   })
 
-  socket.on('Room_Make', ({ Sname, Oname, roomnumber }) => {
+  socket.on('Room_Make', ({ sellername, buyername, roomnumber }) => {
     
-    dbcontrol.db_Room_Make(Sname, Oname, roomnumber);
+    dbcontrol.db_Room_Make(sellername, buyername, roomnumber);
     socket.emit("Room_Make_Result", "Ok");
   })
 
-  socket.on('Chatting_Join', ({ RoomNumber }) => {
-    socket.join(`${RoomNumber}번방`);
-    io.to(`${RoomNumber}번방`).emit('Join_return', {RoomNumber} );
+  socket.on('Chatting_Join', ({ roomnumber }) => {
+    socket.join(`${roomnumber}번방`);
+    io.to(`${roomnumber}번방`).emit('Join_return', {roomnumber} );
   })
 
-  socket.on('Message_Send', ({ Oname, sendmsg, RoomNumber }) => {
+  socket.on('Message_Send', ({ buyername, sendmsg, RoomNumber }) => {
     try {
-      console.log(Oname, sendmsg, RoomNumber);
-      socket.join(`${RoomNumber}번방`);
-      io.to(`${RoomNumber}번방`).emit('Mes_return', { Oname, sendmsg });
-      //socket.broadcast.to(`${RoomNumber}번방`).emit('Mes_return',{ Oname, sendmsg })
-    } catch (error) {
+      console.log(buyername, sendmsg, RoomNumber);
+      //socket.join(`${RoomNumber}번방`);
+      io.to(`${RoomNumber}번방`).emit('Msg_return', { buyername, sendmsg });
+    }
+    catch (error) {
       console.log(error);
     }
   })
+
 
   socket.on('RoomNumber' , ({name})=>{    
     (async() =>{
@@ -109,10 +111,19 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on("Load_Msg",({RoomNumber})=> {
+  socket.on("Load_Msg_Makechat",({roomnumber})=> {
     (async() =>{
+      console.log(roomnumber)
+      let result = await dbcontrol.db_LoadMsg(roomnumber);
+      socket.emit("Return_Load_Msg_Makechat", ({result}));
+    })()
+  })
+
+  socket.on("Load_Msg_Chat",({RoomNumber})=> {
+    (async() =>{
+      console.log(RoomNumber)
       let result = await dbcontrol.db_LoadMsg(RoomNumber);
-      socket.emit("Return_Load_Msg", ({result}));
+      socket.emit("Return_Load_Msg_Chat", ({result}));
     })()
   })
 

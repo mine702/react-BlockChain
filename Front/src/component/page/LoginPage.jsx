@@ -1,4 +1,10 @@
+//#region react
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
+//#endregion
+
+//#region mui
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,16 +18,17 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from "react-router-dom";
-import io from "socket.io-client";
+//#endregion
+
 
 const theme = createTheme();
 
 let socket;
 
-const ENDPOINT = "http://localhost:8080";
 
-function SignIn(props) {
+function Login(props) {
+
+    const ENDPOINT = "http://localhost:8080";
 
     const navigate = useNavigate();
 
@@ -87,8 +94,7 @@ function SignIn(props) {
                                         alert("아이디와 비밀번호를 확인하세요");
                                         setId("");
                                     }
-                                    else {
-                                        //console.log(result);
+                                    else { 
                                         navigate("/post-MainPage", { state: result });
                                     }
                                 })
@@ -117,4 +123,4 @@ function SignIn(props) {
     );
 }
 
-export default SignIn;
+export default Login;

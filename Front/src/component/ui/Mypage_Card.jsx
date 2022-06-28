@@ -1,4 +1,8 @@
+//#region react
 import React, { useEffect } from 'react';
+//#endregion
+
+//#region mui
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
@@ -8,14 +12,23 @@ import { useNavigate } from "react-router-dom";
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import WarningDialog from "./WarningDialog";
+//#endregion
+
+//#region component
+import Notify_Dialog from "../ui/Notify_Dialog";
 import io from "socket.io-client";
+//#endregion
 
 let socket;
-const ENDPOINT = "http://localhost:8080";
 
-function Card2(props) {
+
+
+function Mypage_Card(props) {
+
+    const ENDPOINT = "http://localhost:8080";
+
     const navigate = useNavigate();
+
     const { cards, user } = props;
     
     useEffect(() => {
@@ -58,7 +71,7 @@ function Card2(props) {
                             <Button size="small" onClick={() => {
                                 navigate("/post-CorrectionForm", { state: [card, user[0]] })
                             }}>정보 수정</Button>
-                            <WarningDialog
+                            <Notify_Dialog
                                 warningHead={"게시글을 삭제"}
                                 warningButton={"삭제"}
                                 warning={"정말 게시글을 삭제 하시겠습니까?"}
@@ -70,7 +83,7 @@ function Card2(props) {
                                         window.location.replace("/post-UserMyPage")                                    
                                     })
                                 }}
-                            ></WarningDialog>
+                            ></Notify_Dialog>
                         </CardActions>
                     </Card>
                 </Grid>
@@ -78,4 +91,4 @@ function Card2(props) {
         </Grid>)
 }
 
-export default Card2;
+export default Mypage_Card;

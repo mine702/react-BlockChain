@@ -1,15 +1,23 @@
+//#region react
 import React from "react";
+import { useNavigate } from "react-router-dom";
+//#endregion
+
+//#region mui
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { useNavigate } from "react-router-dom";
 import Box from '@mui/material/Box';
-function Card1(props) {
+//#endregion
+
+function Mainpage_Card(props) {
 
     const navigate = useNavigate();
+
     const { cards, user } = props;
+
     return (
         <Grid container spacing={4}>
             {cards.map((card) => (
@@ -18,7 +26,6 @@ function Card1(props) {
                         sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                     >
                         <CardMedia
-
                             component="img"
                             sx={{
                                 // 16:9
@@ -29,7 +36,6 @@ function Card1(props) {
                             src={card.files}
                             alt="random"
                         />
-
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
                             <Button size="small" onClick={() => {
@@ -42,4 +48,4 @@ function Card1(props) {
         </Grid>)
 }
 
-export default Card1;
+export default Mainpage_Card;

@@ -1,4 +1,8 @@
+//#region react
 import React, { useEffect, useState } from 'react';
+//#endregion
+
+//#region mui
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -8,23 +12,28 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import Badge from '@mui/material/Badge'
 import MailIcon from '@mui/icons-material/Mail';
+//#endregion
+
+//#region component
 import io from "socket.io-client";
-import ListText1 from "./ListText1";
+import RoomList from "./RoomList";
+//#endregion
 
 let socket;
-
-const ENDPOINT = "http://localhost:8080";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-
-
 function FullScreenDialog(props) {
+
+    const ENDPOINT = "http://localhost:8080";
+
     const [RoomNumbers , setRoomN] = useState([]);
     const [open, setOpen] = useState(false);
+
     const {name} = props;
+
     useEffect( ()=>{
         socket = io(ENDPOINT)
     });
@@ -32,6 +41,7 @@ function FullScreenDialog(props) {
     const handleClickOpen = () => {
         socket.emit("RoomNumber" , {name});
         socket.on("RoomNuber_Result" ,(res)=>{
+            console.log(res.result);
             setRoomN(res.result);
         });
         setOpen(true);
@@ -53,7 +63,7 @@ function FullScreenDialog(props) {
                 open={open}
                 onClose={handleClose}
                 TransitionComponent={Transition}
-                children={ListText1}
+                children={RoomList}
             >
                 <AppBar sx={{ position: 'relative' }}>
                     <Toolbar>
@@ -70,7 +80,7 @@ function FullScreenDialog(props) {
                         </Typography>
                     </Toolbar>
                 </AppBar>
-                <ListText1 value ={RoomNumbers} username={name}></ListText1>                 
+                <RoomList value ={RoomNumbers} username={name}></RoomList>                 
             </Dialog>
         </div>
     );

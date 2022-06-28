@@ -1,4 +1,10 @@
+//#region react
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from "react-router";
+import io from "socket.io-client";
+//#endregion
+
+//#region mui
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -8,7 +14,6 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { useNavigate, useLocation } from "react-router";
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import images1 from '../../images/house.jpg'
@@ -16,13 +21,18 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import io from "socket.io-client";
+//#endregion
 
 let socket;
 
-function CheckOutForm() {
+function HouseInfo_insert() {
+
+  const ENDPOINT = "http://localhost:8080";
+
   const navigate = useNavigate();
   const location = useLocation();
+
+  //#region 이미지 인코딩
   const [files, setFiles] = useState(images1);
   const encodeFileToBase64 = (fileBlob) => {
     const reader = new FileReader();
@@ -34,28 +44,34 @@ function CheckOutForm() {
       };
     });
   };
+  //#endregion
+
   const [selluserId] = useState(location.state[0].id)
   const [sellusername] = useState(location.state[0].name)
   const [sellusernumber] = useState(location.state[0].number)
-  const [locationvalue, setLocationvalue] = useState("");
+  const [area, setArea] = useState("");
   const [address, setAddress] = useState("");
-  const [checked, setCheckedButtons] = useState(false);
+  const [agree, setAgree] = useState(false);
   const [price, setPrice] = useState();
-  const ENDPOINT = "http://localhost:8080";
+
+  
+
 
   useEffect(() => {
     socket = io(ENDPOINT);
   }, []);
 
-  function SendMessage() {
-    if (checked === false) {
+
+  function House_register() {
+
+    if (agree === false) {
       alert("개인정보 동의를 하세요");
     }
-    else if (locationvalue === "" || address === "") {
+    else if (area === "" || address === "") {
       alert("입력하지 않은 정보가 있습니다");
     }
     else {
-      socket.emit("House_Register", { locationvalue, address, price, files, selluserId, sellusername, sellusernumber });
+      socket.emit("House_Register", { area, address, price, files, selluserId, sellusername, sellusernumber });
       socket.on("House_Register_Result", (CheckMsg) => {
         alert(CheckMsg);
         navigate("/post-MainPage", { state: location.state });
@@ -64,13 +80,14 @@ function CheckOutForm() {
   }
 
   function CheckBoxBool() {
-    if (checked === false) {
-      setCheckedButtons(true);
+    if (agree === false) {
+      setAgree(true);
     }
-    else if (checked === true) {
-      setCheckedButtons(false);
+    else if (agree === true) {
+      setAgree(false);
     }
   }
+  
   return (
     <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
       <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
@@ -92,9 +109,9 @@ function CheckOutForm() {
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
                       label="locationv"
-                      value={locationvalue}
+                      value={area}
                       onChange={(e) =>
-                        setLocationvalue(e.target.value)
+                        setArea(e.target.value)
                       }
                     >
                       <MenuItem value={"대전"}>대전</MenuItem>
@@ -167,7 +184,7 @@ function CheckOutForm() {
             <Button
               variant="contained"
               sx={{ mt: 3, ml: 1 }}
-              onClick={SendMessage}
+              onClick={House_register}
             >등록
             </Button>
           </Box>
@@ -177,4 +194,4 @@ function CheckOutForm() {
   );
 }
 
-export default CheckOutForm;
+export default HouseInfo_insert;

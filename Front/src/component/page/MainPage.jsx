@@ -1,4 +1,9 @@
+//#region react
 import React, { useState, useEffect } from 'react';
+import io from "socket.io-client";
+//#endregion
+
+//#region mui
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -21,24 +26,29 @@ import ListItemText from '@mui/material/ListItemText';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import Divider from '@mui/material/Divider';
-import FullScreenDialog from '../ui/diaglo';
-import Card1 from '../ui/Card1';
-import io from "socket.io-client";
+//#endregion
+
+//#region component
+import RoomList_Dialog from '../ui/RoomList_Dialog';
+import Mainpage_Card from '../ui/Mainpage_Card';
+//#endregion
+
 
 const theme = createTheme();
 
 let socket;
-const ENDPOINT = "http://localhost:8080";
 
-function Album(props) {
+function Mainpage(props) {
+
+    const ENDPOINT = "http://localhost:8080";
 
     const navigate = useNavigate();
     const location = useLocation();
+
     const [cards, setCardsLow] = useState([]);
-    const [locationvalue, setLocationvalue] = useState("");
+    const [area, setArea] = useState("");
     const [username, setUsername] = useState("");
-    const [usernumber ] = useState(location.state[0].number)
-    // 나중에 데이터 베이스 연동해서 대전 데이터베이스에 6개의 매물이 들어있으면 use
+
     const [state, setState] = React.useState({
         left: false
     });
@@ -57,29 +67,18 @@ function Album(props) {
     useEffect(() => {
         socket = io(ENDPOINT);
         setUsername(location.state[0].name);
-        
     }, [location])
 
     useEffect(() => {
-        if (locationvalue !== "") {
-            socket.emit("Location_Data", { locationvalue });
-            socket.on("Location_Data_Result", (Result) => {
+        if (area !== "") {
+            socket.emit("Area_Data", { area });
+            socket.on("Area_Data_Result", (Result) => {
                 setCardsLow(Result);
                 socket.off();
             })
         }
-    }, [locationvalue])
+    }, [area])
     
-    function GotoMyPage() {
-        navigate("/post-UserMyPage", { state: [location.state] })
-        // socket.emit("MyPageSell", { name, number });
-        // socket.on("MyPageSell_Result", (Result) => {
-            
-            
-        //     socket.off();
-        // })
-    }
-
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -109,7 +108,9 @@ function Album(props) {
                                 <ListItem key="마이페이지" disablePadding sx={{ display: 'block' }}>
                                     <Divider />
                                     <ListItemButton>
-                                        <ListItemText onClick={GotoMyPage} primary="MyPage" />
+                                        <ListItemText onClick={()=>{
+                                            navigate("/post-UserMyPage", { state: [location.state] })
+                                        }} primary="MyPage" />
                                     </ListItemButton>
                                     <ListItemButton>
                                         <ListItemText onClick={() => {
@@ -120,7 +121,7 @@ function Album(props) {
                             </List>
                         </Box>
                     </SwipeableDrawer>
-                    <FullScreenDialog name={username} number={usernumber}></FullScreenDialog>
+                    <RoomList_Dialog name={username}></RoomList_Dialog>
                     <Box sx={{ flexGrow: 1 }} />
                     접속중인 사람 : {username}
                 </Toolbar>
@@ -157,10 +158,10 @@ function Album(props) {
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={locationvalue}
+                                        value={area}
                                         label="locationv"
                                         onChange={(e) =>
-                                            setLocationvalue(e.target.value)}
+                                            setArea(e.target.value)}
                                     >
                                         <MenuItem value={"대전"}>대전</MenuItem>
                                         <MenuItem value={"서울"}>서울</MenuItem>
@@ -176,7 +177,7 @@ function Album(props) {
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Card1 cards={cards} user={location.state}></Card1>
+                    <Mainpage_Card cards={cards} user={location.state}></Mainpage_Card>
                 </Container>
             </main>
             {/* Footer */}
@@ -189,7 +190,6 @@ function Album(props) {
                     color="text.secondary"
                     component="p"
                 >
-                    @비트고급
                 </Typography>
             </Box>
             {/* End footer */}
@@ -197,4 +197,4 @@ function Album(props) {
     );
 }
 
-export default Album;
+export default Mainpage;

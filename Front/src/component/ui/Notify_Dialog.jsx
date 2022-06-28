@@ -1,12 +1,17 @@
+//#region react
 import React from 'react';
+//#endregion
+
+//#region mui
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+//#endregion
 
-function WarningDialog(props) {
+function Notify_Dialog(props) {
   const { warningHead, warning, warningButton, OkButtonClick } = props
   const [open, setOpen] = React.useState(false);
 
@@ -47,4 +52,4 @@ function WarningDialog(props) {
   );
 }
 
-export default WarningDialog;
+export default Notify_Dialog;

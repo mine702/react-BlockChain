@@ -1,4 +1,9 @@
+//#region react
 import React, { useState, useEffect } from 'react';
+import io from "socket.io-client";
+//#endregion
+
+//#region mui
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -15,15 +20,24 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import io from "socket.io-client";
+//#endregion
 
 let socket;
 
 function CheckOutForm() {
+
+    const ENDPOINT = "http://localhost:8080";
+
     const navigate = useNavigate();
     const location = useLocation();
+
     const [_id] = useState(location.state[0]._id);
     const [files, setFiles] = useState(location.state[0].files);
+    const [area, setArea] = useState(location.state[0].location);
+    const [address, setAddress] = useState(location.state[0].address);
+    const [checked, setCheckedButtons] = useState(false);
+    const [price, setPrice] = useState(location.state[0].price);
+
     const encodeFileToBase64 = (fileBlob) => {
         const reader = new FileReader();
         reader.readAsDataURL(fileBlob);
@@ -34,26 +48,20 @@ function CheckOutForm() {
             };
         });
     };
-    
-    const [locationvalue, setLocationvalue] = useState(location.state[0].location);
-    const [address, setAddress] = useState(location.state[0].address);
-    const [checked, setCheckedButtons] = useState(false);
-    const [price, setPrice] = useState(location.state[0].price);
-    const ENDPOINT = "http://localhost:8080";
 
     useEffect(() => {
         socket = io(ENDPOINT);
     }, []);
 
-    function SendMessage() {
+    function House_Correction() {
         if (checked === false) {
             alert("개인정보 동의를 하세요");
         }
-        else if (locationvalue === "" || address === "") {
+        else if (area === "" || address === "") {
             alert("입력하지 않은 정보가 있습니다");
         }
         else {
-            socket.emit("House_Correction", { _id, locationvalue, address, price, files });
+            socket.emit("House_Correction", { _id, area, address, price, files });
             socket.on("House_Correction_Result", (CheckMsg) => {
                 alert(CheckMsg);
                 navigate("/post-MainPage", { state: location.state });
@@ -61,7 +69,7 @@ function CheckOutForm() {
         }
     }
 
-    function CheckBoxBool() {
+    function CheckBoxControl() {
         if (checked === false) {
             setCheckedButtons(true);
         }
@@ -90,9 +98,9 @@ function CheckOutForm() {
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
                                             label="locationv"
-                                            value={locationvalue}
+                                            value={area}
                                             onChange={(e) =>
-                                                setLocationvalue(e.target.value)
+                                                setArea(e.target.value)
                                             }
                                         >
                                             <MenuItem value={"대전"}>대전</MenuItem>
@@ -155,7 +163,7 @@ function CheckOutForm() {
                             </Grid>
                             <Grid item xs={12}>
                                 <FormControlLabel
-                                    control={<Checkbox color="secondary" onClick={CheckBoxBool} />}
+                                    control={<Checkbox color="secondary" onClick={CheckBoxControl} />}
                                     label="판매 게시글에 올리시겠습니까?"
                                 />
                             </Grid>
@@ -165,7 +173,7 @@ function CheckOutForm() {
                         <Button
                             variant="contained"
                             sx={{ mt: 3, ml: 1 }}
-                            onClick={SendMessage}
+                            onClick={House_Correction}
                         >수정
                         </Button>
                     </Box>

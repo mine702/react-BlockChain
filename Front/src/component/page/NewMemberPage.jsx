@@ -1,4 +1,10 @@
+//#region react
 import React, { useState, useEffect }  from 'react';
+import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
+//#endregion
+
+//#region mui
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,43 +18,44 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from "react-router-dom";
-import io from "socket.io-client";
+//#endregion
 
 let socket;
 
 const theme = createTheme();
 
-const Chat = ({ location }) => {
+const NewMember = () => {
+
+    const ENDPOINT = "http://localhost:8080";
 
     const [name, setName] = useState("");
     const [id, setId] = useState("");
     const [pw, setPw] = useState("");
-    const [number, setNumber] = useState("");
+    const [phoneNum, setPhoneNum] = useState("");
     const [MetaMaskAcc, setMetaMaskAcc] = useState("");
 
     const [idcheck, setIdCheck] = useState(false);
-    const [checked, setCheckedButtons] = useState(false);
+    const [infocheck, setInfocheck] = useState(false);
 
-    const ENDPOINT = "http://localhost:8080";
+    
     const navigate = useNavigate();
 
     useEffect(() => {
         socket = io(ENDPOINT);
       }, []);
     
-    function SendMessage(){
-        if(checked === false){
+    function Sign_up(){
+        if(infocheck === false){
             alert("개인정보 동의를 하세요");
         }
-        else if(name === "" || id === "" || pw ==="" || number==="" || MetaMaskAcc===""){
+        else if(name === "" || id === "" || pw ==="" || phoneNum==="" || MetaMaskAcc===""){
             alert("입력하지 않은 정보가 있습니다");
         }
         else if(idcheck === false){
             alert("ID 중복 체크 하세요!");
         }
         else{
-            socket.emit("sign_up", { name, id, pw, number, MetaMaskAcc });
+            socket.emit("sign_up", { name, id, pw, phoneNum, MetaMaskAcc });
             socket.on("MemberCheck" , (CheckMsg)=>{
                 alert(CheckMsg);
             })
@@ -57,48 +64,33 @@ const Chat = ({ location }) => {
     }
 
     function CheckBoxBool(){
-        if(checked === false){
-            setCheckedButtons(true);
+        if(infocheck === false){
+            setInfocheck(true);
         }
-        else if(checked ===true){
-            setCheckedButtons(false);
+        else if(infocheck ===true){
+            setInfocheck(false);
         }
     }
 
-    function idCheck() {
+    function IdCheck() {
 
-        if (id !== "") 
-        {
+        if (id !== "") {
             socket.emit("idCheck", { id });
             socket.on( "idCheck_rusult", (result)=>{
-                if(result.result === true)
-                {
+                if(result.result === true){
                     alert("중복된 ID 입니다.")
                     setIdCheck(false);
                 }
-                else if(result.result === false)
-                {
+                else if(result.result === false){
                     setIdCheck(true);
                     alert("사용가능한 ID 입니다.")
                 }
             });
         }
-        else
-        {
+        else {
             alert("ID를 입력하세요");
         }
     }
-
-   
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -118,7 +110,7 @@ const Chat = ({ location }) => {
                     <Typography component="h1" variant="h5">
                         회원가입
                     </Typography>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" noValidate  sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
@@ -151,7 +143,7 @@ const Chat = ({ location }) => {
                                     variant="outlined"
                                     sx={{ mt: 1, mb: 2 }}
                                     onClick={() => {
-                                        idCheck();
+                                        IdCheck();
                                     }}
                                 >
                                     id 중복체크
@@ -177,7 +169,7 @@ const Chat = ({ location }) => {
                                     label="전화번호"
                                     name="number"
                                     autoComplete="number"
-                                    onChange={(e) => setNumber(e.target.value)}
+                                    onChange={(e) => setPhoneNum(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -204,7 +196,7 @@ const Chat = ({ location }) => {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                             onClick={() => {
-                                SendMessage();
+                                Sign_up();
                             }}
                         >
                             회원가입
@@ -225,4 +217,4 @@ const Chat = ({ location }) => {
     );
 }
 
-export default Chat;
+export default NewMember;

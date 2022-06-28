@@ -16,8 +16,8 @@ let dbcontrol =
         })
     },
 
-    db_insert: function (name, id, pw, number, MetaMaskAcc) {
-        var myobj = { name: name, id: id, pw: pw, number: number, MetaMaskAcc: MetaMaskAcc };
+    db_insert: function (name, id, pw, phoneNum, MetaMaskAcc) {
+        var myobj = { name: name, id: id, pw: pw, number: phoneNum, MetaMaskAcc: MetaMaskAcc };
         dbo.collection("Member").insertOne(myobj, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -60,26 +60,26 @@ let dbcontrol =
         });
     },
 
-    db_House_Register: function (locationvalue, address, price, files, selluserId, sellusername, sellusernumber) {
-        var query = { location: locationvalue, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber };
+    db_House_Register: function (area, address, price, files, selluserId, sellusername, sellusernumber) {
+        var query = { location: area, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber };
         dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
         })
     },
 
-    db_House_Correction: function (_id, locationvalue, address, price, files) {
+    db_House_Correction: function (_id, area, address, price, files) {
         var id = new ObjectId(_id);
         var myquery = { _id: id };
-        var newvalues = { $set: { location: locationvalue, address: address, price: price, files: files } };
+        var newvalues = { $set: { location: area, address: address, price: price, files: files } };
         dbo.collection("Registration").updateOne(myquery, newvalues, function (err, res) {
             if (err) throw err;
             console.log("1 document update");
         })
     },
 
-    db_Location_Data: function (locationvalue) {
-        var query = { location: locationvalue };
+    db_Location_Data: function (area) {
+        var query = { location: area };
         return new Promise(resolve => {
             dbo.collection("Registration").find(query).toArray(function (err, result) {
                 if (err) throw err;
@@ -121,8 +121,8 @@ let dbcontrol =
         });
     },
 
-    db_Room_Make: function (Sname, Oname, roomnumber) {
-        var query = { Sname: Sname, Oname: Oname, RoomN: roomnumber, Msg : [] };
+    db_Room_Make: function (sellername, buyername, roomnumber) {
+        var query = { Sellername: sellername, Buyername: buyername, RoomN: roomnumber, Msg : [] };
         console.log(query)
         dbo.collection("Room").insertOne(query, function (err, res) {
             if (err) throw err;
@@ -132,30 +132,30 @@ let dbcontrol =
 
     db_GetRoomNum: function (UserName) {
         return new Promise(resolve => {
-            dbo.collection("Room").find({}, { projection: { Sname: 1, Oname: 1, RoomN: 1 } }).toArray(function (err, result) {
+            dbo.collection("Room").find({}, { projection: { Sellername: 1, Buyername: 1, RoomN: 1 } }).toArray(function (err, result) {
 
                 if (err) throw err;
-                let Oname_arr = [];
+                let Buyername_arr = [];
                 for (i = 0; i < result.length; i++) {
-                    if (result[i].Oname == UserName) {
-                        Oname_arr.push(result[i].RoomN);
+                    if (result[i].Buyername == UserName) {
+                        Buyername_arr.push(result[i].RoomN);
                     }
-                    else if (result[i].Sname == UserName) {
-                        Oname_arr.push(result[i].RoomN);
+                    else if (result[i].Sellername == UserName) {
+                        Buyername_arr.push(result[i].RoomN);
                     }
                 }
-                resolve(Oname_arr);
+                resolve(Buyername_arr);
             })
         })
     },
 
     db_LoadMsg : function(RoomNumber) {
+        const query = { RoomN : RoomNumber}
         return new Promise(resolve => {
-            dbo.collection("Room").find(RoomNumber,{ projection: { Msg: 1 } }).toArray(function (err, result) {
+            dbo.collection("Room").find(query).toArray(function (err, result) {
                 if (err) throw err;
                 let Msg_Arr = [];
-                console.log(result[0].Msg);
-                Msg_Arr = result[0].Msg 
+                Msg_Arr = result[0].Msg;
                 resolve(Msg_Arr);
             })
         })
@@ -165,10 +165,9 @@ let dbcontrol =
         var query = { RoomN :RoomNumber }
         var newvalues = { $set: { Msg : chatlog} };
         return new Promise(resolve => {
-            console.log(chatlog);
             dbo.collection("Room").updateOne(query, newvalues, function (err, res) {
                 if (err) throw err;     
-                console.log("메세지 저장성공");
+                resolve();
             })          
         })
     },

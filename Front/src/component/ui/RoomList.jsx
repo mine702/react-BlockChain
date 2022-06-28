@@ -1,18 +1,25 @@
+//#region react
 import React, { useEffect } from "react";
+import io from "socket.io-client";
+//#endregion
+
+//#region mui
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
-import Chatting1 from "./Chatting1"
+import Chatting from "./Chatting"
 import ListItemButton from '@mui/material/ListItemButton';
 import { Button } from "@mui/material";
-import io from "socket.io-client";
+//#endregion
 
 let socket;
 
-function ListText1(props) {
-    const { value, username } = props;
+function RoomList(props) {
+
     const ENDPOINT = "http://localhost:8080";
+
+    const { value, username } = props;
 
     useEffect(() => {
         socket = io(ENDPOINT);
@@ -26,7 +33,7 @@ function ListText1(props) {
                         <ListItemButton>
                             <ListItemText primary={value} secondary="메세지내용" />
                         </ListItemButton>
-                        <Chatting1 value={value} Oname={username}></Chatting1>
+                        <Chatting value={value} buyername={username}></Chatting>
                         <Button
                             onClick={() => {
                                 socket.emit("GetOutRoom", { value });
@@ -45,4 +52,4 @@ function ListText1(props) {
 
 }
 
-export default ListText1;
+export default RoomList;
