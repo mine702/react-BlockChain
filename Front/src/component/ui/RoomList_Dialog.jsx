@@ -43,8 +43,8 @@ function FullScreenDialog(props) {
         socket.on("RoomNuber_Result" ,(res)=>{
             console.log(res.result);
             setRoomN(res.result);
+            setOpen(true);
         });
-        setOpen(true);
     };
 
     const handleClose = () => {
