@@ -1,5 +1,5 @@
 //#region react
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import io from "socket.io-client";
 //#endregion
 
@@ -34,11 +34,14 @@ import Mainpage_Card from '../ui/Mainpage_Card';
 //#endregion
 
 
+
 const theme = createTheme();
 
 let socket;
 
 function Mainpage(props) {
+
+    //const { account } =props;
 
     const ENDPOINT = "http://localhost:8080";
 
@@ -67,6 +70,7 @@ function Mainpage(props) {
     useEffect(() => {
         socket = io(ENDPOINT);
         setUsername(location.state[0].name);
+        //console.log(account);
     }, [location])
 
     useEffect(() => {
@@ -78,7 +82,9 @@ function Mainpage(props) {
             })
         }
     }, [area])
-    
+
+   
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -172,6 +178,7 @@ function Mainpage(props) {
                                 navigate("/post-Checkout", { state: location.state })
                             }}>판매 등록</Button>
                             <Button variant="outlined">매물 검색</Button>
+                            <Button variant="outlined" >구매</Button>
                         </Stack>
                     </Container>
                 </Box>
