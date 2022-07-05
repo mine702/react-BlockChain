@@ -39,7 +39,9 @@ function HouseInfoPage() {
 
     const [sellername] = useState(location.state[0].name);
     const [sellerAddress] = useState(location.state[0].MetaMaskAcc)
-    const [sellerPrice] = useState(location.state[0].price)
+    const [housePrice] = useState(location.state[0].price)
+    const [houseAddress] = useState(location.state[0].address)
+    const [locations] = useState(location.state[0].location)
     const [buyername] = useState(location.state[1][0].name);
     const toggleDrawer = (anchor, open) => (event) => {
         if (
@@ -60,7 +62,7 @@ function HouseInfoPage() {
     const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545')
 
     useEffect(() => {
-        async function load() {            
+        async function load() {
             setAccounts(await web3.eth.getAccounts());
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = BuyHouseContract.networks[networkId];
@@ -73,12 +75,14 @@ function HouseInfoPage() {
     });
 
     async function BuyHouse() {
-        console.log(instance)
-        await instance.methods.buyRealEstate(sellerAddress).send({
-            from : accounts[0],
-            value : web3.utils.toWei(sellerPrice,"ether"),    //wei
-            gas : 90000,
-      })
+        await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({
+            from: accounts[0],
+            value: web3.utils.toWei(housePrice, "ether"),    //wei
+            gas: 150000,
+        })
+        
+        // const value = await instance.methods.readRealEstate(locations).call()
+        // console.log(value)
     }
 
     return (

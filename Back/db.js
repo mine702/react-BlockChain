@@ -8,7 +8,6 @@ var dbo;
 
 let dbcontrol =
 {
-
     db_init: function () {
         MongoClient.connect(url, function (err, db) {
             dbo = db.db("Real_Estate_Project");
@@ -53,9 +52,7 @@ let dbcontrol =
         return new Promise(resolve => {
             dbo.collection("Member").find(query).toArray(function (err, result) {
                 if (err) throw err;
-
                 resolve(result);
-
             });
         });
     },
