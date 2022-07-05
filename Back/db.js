@@ -60,8 +60,8 @@ let dbcontrol =
         });
     },
 
-    db_House_Register: function (area, address, price, files, selluserId, sellusername, sellusernumber) {
-        var query = { location: area, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber };
+    db_House_Register: function (area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress) {
+        var query = { location: area, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc : sellerMetaAddress };
         dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
