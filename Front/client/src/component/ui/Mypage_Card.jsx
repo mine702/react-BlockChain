@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useEffect } from 'react';
 //#endregion

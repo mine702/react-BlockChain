@@ -54,6 +54,7 @@ function MakeChatting(props) {
         {
             socket.emit("Save_Msg",({chatlog, RoomNumber}));
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chatlog])
 
     const roomn = []

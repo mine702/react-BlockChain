@@ -72,8 +72,13 @@ function HouseInfoPage() {
         load();
     });
 
-    function BuyHouse() {
-        instance.methods.buyRealEstate(sellerAddress).send({ from: accounts[0],value:web3.toWei(sellerPrice,"ether")});
+    async function BuyHouse() {
+        console.log(instance)
+        await instance.methods.buyRealEstate(sellerAddress).send({
+            from : accounts[0],
+            value : web3.utils.toWei(sellerPrice,"ether"),    //wei
+            gas : 90000,
+      })
     }
 
     return (

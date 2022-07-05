@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-pascal-case */
 //#region react
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 import io from "socket.io-client";
 //#endregion
 

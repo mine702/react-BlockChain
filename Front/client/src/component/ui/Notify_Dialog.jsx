@@ -25,7 +25,7 @@ function Notify_Dialog(props) {
 
   return (
     <div>
-      <Button size="small" onClick={()=>{handleClickOpen(); OkButtonClick()}}>{warningButton}</Button>
+      <Button size="small" onClick={handleClickOpen}>{warningButton}</Button>
       <Dialog
         open={open}
         onClose={handleClose}

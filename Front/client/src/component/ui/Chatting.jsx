@@ -80,6 +80,7 @@ function Chatting(props) {
         {
             socket.emit("Save_Msg",({chatlog, RoomNumber}));
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[chatlog]);
 
     function SendMessage() {
