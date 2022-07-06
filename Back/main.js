@@ -139,4 +139,21 @@ io.on('connection', socket => {
     socket.emit("GetOutRoom_Result", "삭제 완료!!!");
   })
 
+  socket.on('Search_Room' , ({value})=>{    
+    (async() =>{
+      let result = await dbcontrol.db_Search_Room(value);
+      socket.emit('Search_Room_Result' , ({result}) );
+    })()
+  })
+
+  socket.on('GetOutRoom_Buyername',({value, username})=>{
+    dbcontrol.db_GetOutRoom_Buyername(value, username);
+    socket.emit('GetOutRoom_Buyername_Result' , "삭제 완료!!!" );
+  })
+
+  socket.on('GetOutRoom_Sellername',({value, username})=>{
+    dbcontrol.db_GetOutRoom_Sellername(value, username);
+    socket.emit('GetOutRoom_Sellername_Result' , "삭제 완료!!!" );
+  })
+
 })

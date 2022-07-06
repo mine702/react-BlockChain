@@ -63,9 +63,6 @@ function Mypage_Card(props) {
                             <Typography sx={{ fontSize: 14 }} gutterBottom>
                                 Price : {card.price}
                             </Typography>
-                            <Typography sx={{ fontSize: 14 }} gutterBottom>
-                                room : {card.room}
-                            </Typography>
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />

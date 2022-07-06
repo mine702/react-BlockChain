@@ -41,7 +41,6 @@ function FullScreenDialog(props) {
     const handleClickOpen = () => {
         socket.emit("RoomNumber" , {name});
         socket.on("RoomNuber_Result" ,(res)=>{
-            console.log(res.result);
             setRoomN(res.result);
             setOpen(true);
         });

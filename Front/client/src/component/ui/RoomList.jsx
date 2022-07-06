@@ -25,6 +25,57 @@ function RoomList(props) {
         socket = io(ENDPOINT);
     }, []);
 
+    async function RoomSerach(value) {
+        socket.emit("Search_Room", { value });
+        await socket.on('Search_Room_Result', (result) => {
+            if (result.result[0].Buyername === username) {
+                socket.emit("GetOutRoom_Buyername", { value, username });
+                socket.on('GetOutRoom_Buyername_Result', () => {
+                    socket.emit("Search_Room", { value });
+                    socket.on('Search_Room_Result', (result) => {
+                        if (result.result[0].Sellername === null) {
+                            socket.emit("GetOutRoom", { value });
+                            socket.on('GetOutRoom_Result', (result) => {
+                                alert(result)
+                                window.location.replace("/post-MainPage")
+                            })
+                        }
+                        else{
+                            alert("삭제완료")
+                            window.location.replace("/post-MainPage")
+                        }
+                    })
+                })
+            }
+            else if (result.result[0].Sellername === username) {
+                socket.emit("GetOutRoom_Sellername", { value, username });
+                socket.on('GetOutRoom_Sellername_Result', () => {
+                    socket.emit("Search_Room", { value });
+                    socket.on('Search_Room_Result', (result) => {
+                        if (result.result[0].Buyername === null) {
+                            socket.emit("GetOutRoom", { value });
+                            socket.on('GetOutRoom_Result', (result) => {
+                                alert(result)
+                                window.location.replace("/post-MainPage")
+                            })
+                        }
+                        else{
+                            alert("삭제완료")
+                            window.location.replace("/post-MainPage")
+                        }
+                    })
+                })
+            }
+        })
+    }
+
+    function RoomOut(value) {
+        socket.emit("GetOutRoom", { value });
+        socket.on('GetOutRoom_Result', (result) => {
+            alert(result)
+            window.location.replace("/post-MainPage")
+        })
+    }
     return (
         <div>
             {value.map((value) => (
@@ -36,11 +87,7 @@ function RoomList(props) {
                         <Chatting value={value} buyername={username}></Chatting>
                         <Button
                             onClick={() => {
-                                socket.emit("GetOutRoom", { value });
-                                socket.on('GetOutRoom_Result', (result) => {
-                                    alert(result)
-                                    window.location.replace("/post-MainPage")   
-                                })
+                                RoomSerach(value)
                             }}
                         >OUT</Button>
                     </ListItem>
@@ -49,7 +96,6 @@ function RoomList(props) {
             ))}
         </div>
     );
-
 }
 
 export default RoomList;
