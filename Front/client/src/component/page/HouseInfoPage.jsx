@@ -75,14 +75,20 @@ function HouseInfoPage() {
     });
 
     async function BuyHouse() {
-        await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({
-            from: accounts[0],
-            value: web3.utils.toWei(housePrice, "ether"),    //wei
-            gas: 150000,
-        })
-        
-        // const value = await instance.methods.readRealEstate(locations).call()
-        // console.log(value)
+        try {
+            await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({
+                from: accounts[0],
+                value: web3.utils.toWei(housePrice, "ether"),    //wei
+                gas: 150000,
+            })
+            alert("구매 완료")
+            navigate("/post-MainPage", { state: location.state[1] });
+        }
+        catch (err) {
+            alert(err.message)
+            window.location.replace("/post-HouseInfoPage")
+        }
+
     }
 
     return (
