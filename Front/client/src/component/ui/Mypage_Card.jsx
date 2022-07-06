@@ -22,8 +22,6 @@ import io from "socket.io-client";
 
 let socket;
 
-
-
 function Mypage_Card(props) {
 
     const ENDPOINT = "http://localhost:8080";
@@ -40,51 +38,51 @@ function Mypage_Card(props) {
         <Grid container spacing={4}>
             {cards.map((card) => (
                 <Grid item xs={5} sm={6} md={2.9} key={card._id}>
-                    <Card
-                        sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                    >
-                        <CardMedia
-                            component="img"
-                            sx={{
-                                // 16:9
-                                pt: '0%',
-                                maxWidth: 250,
-                                minWidth:250,
-                                minHeight: 150,
-                                maxHeight: 150
+                <Card
+                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                >
+                    <CardMedia
+                        component="img"
+                        sx={{
+                            // 16:9
+                            pt: '0%',
+                            maxWidth: 250,
+                            minWidth:250,
+                            minHeight: 150,
+                            maxHeight: 150
+                        }}
+                        src={card.files}
+                        alt="random"
+                    />
+                    <CardContent>
+                        <Typography sx={{ fontSize: 14 }} gutterBottom>
+                            Location : {card.location}
+                        </Typography>
+                        <Typography sx={{ fontSize: 14 }} gutterBottom>
+                            Price : {card.price}
+                        </Typography>
+                    </CardContent>
+                    <CardActions>
+                        <Box sx={{ flexGrow: 1 }} />
+                        <Button size="small" onClick={() => {
+                            navigate("/post-CorrectionForm", { state: [card, user[0]] })
+                        }}>정보 수정</Button>
+                        <Notify_Dialog
+                            warningHead={"게시글을 삭제"}
+                            warningButton={"삭제"}
+                            warning={"정말 게시글을 삭제 하시겠습니까?"}
+                            OkButtonClick={() => {
+                                socket.emit("Delete_Data", { card });
+                                socket.on("Delete_Data_Result", (Result) => {
+                                    alert(Result);
+                                    socket.off(); 
+                                    window.location.replace("/post-UserMyPage")                                    
+                                })
                             }}
-                            src={card.files}
-                            alt="random"
-                        />
-                        <CardContent>
-                            <Typography sx={{ fontSize: 14 }} gutterBottom>
-                                Location : {card.location}
-                            </Typography>
-                            <Typography sx={{ fontSize: 14 }} gutterBottom>
-                                Price : {card.price}
-                            </Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Box sx={{ flexGrow: 1 }} />
-                            <Button size="small" onClick={() => {
-                                navigate("/post-CorrectionForm", { state: [card, user[0]] })
-                            }}>정보 수정</Button>
-                            <Notify_Dialog
-                                warningHead={"게시글을 삭제"}
-                                warningButton={"삭제"}
-                                warning={"정말 게시글을 삭제 하시겠습니까?"}
-                                OkButtonClick={() => {
-                                    socket.emit("Delete_Data", { card });
-                                    socket.on("Delete_Data_Result", (Result) => {
-                                        alert(Result);
-                                        socket.off(); 
-                                        window.location.replace("/post-UserMyPage")                                    
-                                    })
-                                }}
-                            ></Notify_Dialog>
-                        </CardActions>
-                    </Card>
-                </Grid>
+                        ></Notify_Dialog>
+                    </CardActions>
+                </Card>
+            </Grid> 
             ))}
         </Grid>)
 }

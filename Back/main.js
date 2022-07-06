@@ -29,6 +29,11 @@ io.on('connection', socket => {
     socket.emit("MemberCheck", "회원 가입 완료!!!");
   })
 
+  socket.on('UserUpdate', ({ name, id, pw, phoneNum, MetaMaskAcc }) => {
+    dbcontrol.db_UserUpdate(name, id, pw, phoneNum, MetaMaskAcc);
+    socket.emit("UserUpdate_Result", "회원 정보 수정 완료!!!");
+  })
+
   socket.on('idCheck', ({ id }) => {
     (async () => {
       let result = await dbcontrol.db_idCheck(id);

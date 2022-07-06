@@ -23,6 +23,15 @@ let dbcontrol =
         })
     },
 
+    db_UserUpdate: function (name, id, pw, phoneNum, MetaMaskAcc) {
+        var myquery = { id: id };
+        var newvalues = { $set: { name: name, pw: pw, number: phoneNum, MetaMaskAcc: MetaMaskAcc } };
+        dbo.collection("Member").updateOne(myquery, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log("1 document update");
+        })
+    },
+
     db_delete: function (name) {
         var myquery = { name: name }; +
 

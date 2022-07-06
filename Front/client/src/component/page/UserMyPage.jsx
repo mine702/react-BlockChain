@@ -21,6 +21,7 @@ import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
 //#endregion
 
 //#region component
@@ -37,29 +38,27 @@ function PrimarySearchAppBar() {
 
     const navigate = useNavigate()
     const location = useLocation()
-    
+
     const [cards, setCardsLow] = useState([]);
-    const [number, setNumber] = useState()
-    const [name, setName] = useState("")
+    let number = 0;
+    let name = 0;
     const [username] = useState(location.state[0][0].name);
 
     useEffect(() => {
         socket = io(ENDPOINT);
-        console.log(location);
-        setNumber(location.state[0][0].number)
-        setName(location.state[0][0].name)
-    }, [location]);    
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        number = location.state[0][0].number
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        name = location.state[0][0].name
+    }, [location]);
 
-    useEffect(() => {        
+    useEffect(() => {
         socket.emit("MyPageSell", { name, number });
         socket.on("MyPageSell_Result", (Result) => {
             setCardsLow(Result);
         })
     }, [name, number])
 
-    useEffect(()=>{
-        
-    },[location])
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -76,7 +75,6 @@ function PrimarySearchAppBar() {
     function SendMessage() {
         navigate("/post-MainPage", { state: location.state[0] });
     }
-
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -111,6 +109,11 @@ function PrimarySearchAppBar() {
                                     </ListItemButton>
                                     <ListItemButton>
                                         <ListItemText onClick={SendMessage} primary="MainPage" />
+                                    </ListItemButton>
+                                    <ListItemButton>
+                                        <ListItemText onClick={() => {
+                                            navigate("/post-UserUpdatePage", { state: location.state })
+                                        }} primary="Profile Update" />
                                     </ListItemButton>
                                 </ListItem>
                             </List>
@@ -170,7 +173,9 @@ function PrimarySearchAppBar() {
                         </CardContent>
                     </Card>
                 </Container>
+                
             </Box>
+            
         </Box>
     );
 }
