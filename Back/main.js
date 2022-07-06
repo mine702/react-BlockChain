@@ -13,148 +13,130 @@ const io = require('socket.io')(server, {
   },
 });
 
-
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors()); //모든 cross-origin 요청에 대해 응답
 
-
-
-
-server.listen(8080, function() {
+server.listen(8080, function () {
   dbcontrol.db_init();
   console.log('listening on port 8080')
-  
 })
 
+io.on('connection', socket => {
 
-
-
-io.on('connection', function(socket) {
-  
-   
-  socket.on('connect_check',()=>{
-    console.log("성공");
-    socket.emit("connect_success", {});
-  })
- 
-
-  socket.on('sign_up', ({ name, id, pw, number, MetaMaskAcc}) => {
+  socket.on('sign_up', ({ name, id, pw, number, MetaMaskAcc }) => {
     dbcontrol.db_insert(name, id, pw, number, MetaMaskAcc);
     socket.emit("MemberCheck", "회원 가입 완료!!!");
   })
 
   socket.on('idCheck', ({ id }) => {
-    (async ()=>{
+    (async () => {
       let result = await dbcontrol.db_idCheck(id);
       console.log(result);
-      socket.emit("idCheck_rusult", {result});
+      socket.emit("idCheck_rusult", { result });
     })()
   })
 
   socket.on('Login', ({ id, pw }) => {
-    (async ()=>{
+    (async () => {
       let result = await dbcontrol.db_Login(id, pw);
-      console.log(result);
       socket.emit("Login_result", result);
     })()
   })
 
-  socket.on('House_Register', ({ locationvalue, address, files, name, number, sellerid  }) => {
-    dbcontrol.db_House_Register(locationvalue, address, files, name, number, sellerid );
+  socket.on('House_Register', ({ area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress }) => {
+    dbcontrol.db_House_Register( area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress);
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
 
-  socket.on('Location_Data', ({ locationvalue }) => {
-    (async ()=> {
-    let result = await dbcontrol.db_Location_Data(locationvalue);
-    console.log(result);
-    socket.emit("Location_Data_Result", result);
+  socket.on('House_Correction', ({ _id, area, address, price, files }) => {
+    dbcontrol.db_House_Correction(_id, area, address, price, files);
+    socket.emit("House_Correction_Result", "수정 완료!!!");
+  })
+
+  socket.on('Area_Data', ({ area }) => {
+    (async () => {
+      let result = await dbcontrol.db_Location_Data(area);
+      socket.emit("Area_Data_Result", result);
     })()
   })
 
-  var name;
-  var msg;
-  
-
-  socket.on("socket_id_update", ({userid, socket_id})=>{
-    console.log(userid, socket_id);
-    dbcontrol.db_update(userid, socket_id);
-  })
-  
-  socket.on("buyerid_update", ({address, userid})=>{
-    dbcontrol.db_buyerid_update(address, userid);
-  })
-  
-  // async function socketdb(sellerid, userid)
-  // {
-  //   let socket_arr=[];
-  //   let result1 = await dbcontrol.db_IdSelect(sellerid);
-  //   let result2 = await dbcontrol.db_IdSelect(userid);
-  //   socket_arr.push(result1[0].socket_id);
-  //   socket_arr.push(result2[0].socket_id);
-  //   return socket_arr;
-  // }
-
-  socket.on('Message_Send',({address, username, sendmsg }) => {
-    (async () =>{
-      let socket_arr = await dbcontrol.db_IdSelect(address);
-       name=username;
-       msg= sendmsg;
-       console.log(username, sendmsg ); 
-       //console.log(socket_arr); 
-       for(i=0; i<socket_arr.length; i++)
-       {
-          console.log("!!");
-          io.to(socket_arr[i]).emit("Message_Receive",{ name, msg })
-       }
+  socket.on('MyPageSell', ({ name, number }) => {
+    (async () => {
+      let result = await dbcontrol.db_MyPageSell(name, number);
+      socket.emit("MyPageSell_Result", result);
     })()
-    // (async ()=> {
-    //  result2 = await dbcontrol.db_IdSelect(userid);
-    // })()
+  })
+
+  socket.on('Delete_Data', ({ card }) => {
+    dbcontrol.db_Delete_Data(card._id);
+    socket.emit("Delete_Data_Result", "삭제 완료!!!");
+  })
+
+  socket.on('Room_Search', () => {
+    (async () => {  //합격
+      let result = await dbcontrol.db_Room_Search();
+      console.log(result);
+      socket.emit("Room_Search_Result", result);
+    })()
+  })
+
+  socket.on('Room_Make', ({ sellername, buyername, roomnumber }) => {
+    
+    dbcontrol.db_Room_Make(sellername, buyername, roomnumber);
+    socket.emit("Room_Make_Result", "Ok");
+  })
+
+  socket.on('Chatting_Join', ({ roomnumber }) => {
+    socket.join(`${roomnumber}번방`);
+    io.to(`${roomnumber}번방`).emit('Join_return', {roomnumber} );
+  })
+
+  socket.on('Message_Send', ({ buyername, sendmsg, RoomNumber }) => {
+    try {
+      console.log(buyername, sendmsg, RoomNumber);
+      //socket.join(`${RoomNumber}번방`);
+      io.to(`${RoomNumber}번방`).emit('Msg_return', { buyername, sendmsg });
+    }
+    catch (error) {
+      console.log(error);
+    }
+  })
+
+
+  socket.on('RoomNumber' , ({name})=>{    
+    (async() =>{
+      let result = await dbcontrol.db_GetRoomNum(name);
+      socket.emit('RoomNuber_Result' , ({result}) );
+    })()
+  })
+
+  socket.on("Load_Msg_Makechat",({roomnumber})=> {
+    (async() =>{
+      console.log(roomnumber)
+      let result = await dbcontrol.db_LoadMsg(roomnumber);
+      socket.emit("Return_Load_Msg_Makechat", ({result}));
+    })()
+  })
+
+  socket.on("Load_Msg_Chat",({RoomNumber})=> {
+    (async() =>{
+      console.log(RoomNumber)
+      let result = await dbcontrol.db_LoadMsg(RoomNumber);
+      socket.emit("Return_Load_Msg_Chat", ({result}));
+    })()
+  })
+
+  socket.on('Save_Msg',({chatlog,RoomNumber}) => {
+    (async() =>{
+      await dbcontrol.db_SaveMsg(chatlog,RoomNumber);
+      //socket.emit('RoomNuber_Result' , ({result}) );
+    })()
+  })
+
+  socket.on('GetOutRoom',({value})=>{
+    dbcontrol.db_GetOutRoom(value);
+    socket.emit("GetOutRoom_Result", "삭제 완료!!!");
   })
 
 })
-
-
-
-
-// app.get('/', function(req, res){
-//     //res.sendFile(__dirname + '/main.html')
-//     res.status(200).json({
-//       status: "succ",
-//       message: "여기는 홈페이지입니다.",
-//     });
-// });
-
-// app.post('/insert', function(req, res){
-//    dbcontrol.db_insert(req.body.name, req.body.age);
-// });
-
-// app.post('/delete', function(req, res){
-//   dbcontrol.db_delete(req.body.name);
-// });
-
-// //const text = document.getElementsByName("after_name").value;
-
-// app.post('/select', function(req, res){
-//   (async ()=>{
-//     let result = await dbcontrol.db_select(req.body.name);
-//     console.log(result[0]);
-//     res.send(result[0]);
-//   })()
-// });
-
-// app.post('/update', function(req, res){
-//   dbcontrol.db_update(req.body.before_name, req.body.after_name, req.body.age);
-// });
-
-// app.post('/selectAll', function(req, res){
-//   (async ()=>{
-//     let result = await dbcontrol.db_selectAll();
-//     console.log(result[0]);  
-//     res.send(result[0]);
-//   })()
-// });
-

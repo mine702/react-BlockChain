@@ -1,36 +1,36 @@
 //const res = require('express/lib/response');
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb+srv://wb35:1234@cluster.yau6n.mongodb.net/?retryWrites=true&w=majority";
+var ObjectId = require('mongodb').ObjectId;
+
+var url = "mongodb+srv://mine702:633ehddbs@cluster0.ohw26.mongodb.net/?retryWrites=true&w=majority";
 
 var dbo;
 
-let dbcontrol = 
+let dbcontrol =
 {
-    
-    db_init :function ()
-    {
-        MongoClient.connect(url, function(err, db) {
-        dbo = db.db("Real_Estate_Project");
-        console.log('conneted!!');
+
+    db_init: function () {
+        MongoClient.connect(url, function (err, db) {
+            dbo = db.db("Real_Estate_Project");
+            console.log('conneted!!');
         })
     },
 
-    db_insert: function(name, id, pw, number, MetaMaskAcc)
-    {
-        var myobj = { name : name, id: id, pw: pw, number : number, MetaMaskAcc : MetaMaskAcc, socket_id : "" };
-        dbo.collection("Member").insertOne(myobj, function(err, res) {
-        if (err) throw err;
-        console.log("1 document inserted");
+    db_insert: function (name, id, pw, phoneNum, MetaMaskAcc) {
+        var myobj = { name: name, id: id, pw: pw, number: phoneNum, MetaMaskAcc: MetaMaskAcc };
+        dbo.collection("Member").insertOne(myobj, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
         })
     },
 
-    db_delete: function (name)
-    {
-        var myquery = { name: name };
-        dbo.collection("Member").deleteOne(myquery, function(err, obj) {
-        if (err) throw err;
-        console.log("1 document deleted");
-        });
+    db_delete: function (name) {
+        var myquery = { name: name }; +
+
+            dbo.collection("Member").deleteOne(myquery, function (err, obj) {
+                if (err) throw err;
+                console.log("1 document deleted");
+            });
     },
 
     db_idCheck: function (id) {
@@ -38,158 +38,151 @@ let dbcontrol =
         return new Promise(resolve => {
             dbo.collection("Member").find(query).toArray(function (err, result) {
                 if (err) throw err;
-                if(result!="")
-                {
+                if (result != "") {
                     resolve(true);
                 }
-                else
-                {  
+                else {
                     resolve(false);
                 }
-            });            
+            });
         });
     },
 
     db_Login: function (id, pw) {
-        var query = { id: id, pw : pw};
+        var query = { id: id, pw: pw };
         return new Promise(resolve => {
             dbo.collection("Member").find(query).toArray(function (err, result) {
                 if (err) throw err;
-               
+
                 resolve(result);
-                
-            });            
+
+            });
         });
     },
 
-    db_House_Register: function (locationvalue, address, files, name, number, sellerid ) {
-        var myobj = { address: address, files: files, name: name, number: number, sellerid: sellerid, buyerid: '' };
-        dbo.collection(`${ locationvalue }`).insertOne(myobj, function (err, res) {
+    db_House_Register: function (area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress) {
+        var query = { location: area, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc : sellerMetaAddress };
+        dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
         })
     },
 
-    db_Location_Data: function (locationvalue)
-    {
+    db_House_Correction: function (_id, area, address, price, files) {
+        var id = new ObjectId(_id);
+        var myquery = { _id: id };
+        var newvalues = { $set: { location: area, address: address, price: price, files: files } };
+        dbo.collection("Registration").updateOne(myquery, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log("1 document update");
+        })
+    },
+
+    db_Location_Data: function (area) {
+        var query = { location: area };
         return new Promise(resolve => {
-            dbo.collection(`${locationvalue}`).find({}).toArray(function(err,result){
-                if(err) throw err;
+            dbo.collection("Registration").find(query).toArray(function (err, result) {
+                if (err) throw err;
                 resolve(result);
                 console.log("All document selected");
-            });           
+            });
         });
     },
 
-    db_SocketId: function (id) {
-        var query = { id: id };
-
+    db_MyPageSell: function (name, number) {
         return new Promise(resolve => {
-            dbo.collection("Member").find(query,{ projection: { socket_id : 1 } }).toArray(function (err, result) {
+            var query = { name: name, number: number };
+            dbo.collection("Registration").find(query).toArray(function (err, result) {
                 if (err) throw err;
-                //console.log(result[0].socket_id);
-                resolve(result[0].socket_id);  
-                });            
-        });
-    },
-
-    // db_returnid : function (address) {
-    //         var query = { address : address}
-    //         dbo.collection("대전").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray(function (err, result) {
-    //             if (err) throw err;
-    //             sellerid = result[0].sellerid;
-    //             buyerid = result[0].buyerid;
-    //         })
-    //        },
-
-    //  db_IdSelect: async function (address){
-
-    //     var query = { address : address}
-    //     let socket_arr= [];
-    //     dbo.collection("대전").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray( async function (err, result) {
-    //         if (err) throw err;
-            
-    //         sellerid = result[0].sellerid;
-    //         buyerid = result[0].buyerid;
-    //         console.log(sellerid, buyerid);
-
-    //        await dbcontrol.db_SocketId(sellerid).then((socketid)=>{
-    //             socket_arr.push(socketid)
-    //         });
-
-    //         await dbcontrol.db_SocketId(buyerid).then(function(socketid){
-    //             socket_arr.push(socketid)
-    //         });
-      
-    //         console.log(socket_arr);
-
-    //     });
-    //     return socket_arr;
-    // },
-
-
-    
-     db_IdSelect:  (address)=> {
-        return new Promise(resolve => {
-            var query = { address : address}
-            dbo.collection("대전").find(query,{ projection: { sellerid : 1, buyerid : 1 } }).toArray(async function (err, result) {
-                if (err) throw err;
-                let socket_arr= [];
-                sellerid = result[0].sellerid;
-                buyerid = result[0].buyerid;
-                console.log(sellerid, buyerid);
-
-                await dbcontrol.db_SocketId(sellerid).then((socketid)=>{
-                    socket_arr.push(socketid)
-                });
-
-                await dbcontrol.db_SocketId(buyerid).then(function(socketid){
-                    socket_arr.push(socketid)
-                });
-          
-                console.log(socket_arr);
-                resolve(socket_arr);
-
-                });            
-        });
-    },
-
-    db_update: function (userid, socket_id)
-    {
-        var myquery = { id : userid };
-        var newvalues = { $set: { socket_id: socket_id} };
-        dbo.collection("Member").updateOne(myquery, newvalues, function(err, res) {
-        if (err) throw err;
-        console.log("1 document updated");
-        });
-    },
-
-    db_buyerid_update: function (address, userid)
-    {
-        var myquery = { address : address };
-        var newvalues = { $set: { buyerid: userid} };
-        dbo.collection("대전").updateOne(myquery, newvalues, function(err, res) {
-        if (err) throw err;
-        console.log("1 document updated");
-        });
-    },
-
-    db_selectAll: function ()
-    {
-        return new Promise(resolve => {
-            dbo.collection("customers").find({}).toArray(function(err,result){
-                if(err) throw err;
                 resolve(result);
                 console.log("All document selected");
-            });           
+            });
         });
     },
 
-    db_close: function()
-    {
+    db_Delete_Data: function (_id) {
+        var id = new ObjectId(_id);
+        return new Promise(resolve => {
+            var query = { _id: id };
+            dbo.collection("Registration").deleteOne(query, function (err, result) {
+                if (err) throw err;
+                console.log("1 document deleted");
+            });
+        });
+    },
+
+    db_Room_Search: function () {
+        return new Promise(resolve => {
+            dbo.collection("Room").find({}).toArray(function (err, result) {
+                if (err) throw err;
+                resolve(result);
+                console.log("All document selected");
+            });
+        });
+    },
+
+    db_Room_Make: function (sellername, buyername, roomnumber) {
+        var query = { Sellername: sellername, Buyername: buyername, RoomN: roomnumber, Msg : [] };
+        console.log(query)
+        dbo.collection("Room").insertOne(query, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+        })
+    },
+
+    db_GetRoomNum: function (UserName) {
+        return new Promise(resolve => {
+            dbo.collection("Room").find({}, { projection: { Sellername: 1, Buyername: 1, RoomN: 1 } }).toArray(function (err, result) {
+
+                if (err) throw err;
+                let Buyername_arr = [];
+                for (i = 0; i < result.length; i++) {
+                    if (result[i].Buyername == UserName) {
+                        Buyername_arr.push(result[i].RoomN);
+                    }
+                    else if (result[i].Sellername == UserName) {
+                        Buyername_arr.push(result[i].RoomN);
+                    }
+                }
+                resolve(Buyername_arr);
+            })
+        })
+    },
+
+    db_LoadMsg : function(RoomNumber) {
+        const query = { RoomN : RoomNumber}
+        return new Promise(resolve => {
+            dbo.collection("Room").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                let Msg_Arr = [];
+                Msg_Arr = result[0].Msg;
+                resolve(Msg_Arr);
+            })
+        })
+    },
+
+    db_SaveMsg : function (chatlog,RoomNumber) {
+        var query = { RoomN :RoomNumber }
+        var newvalues = { $set: { Msg : chatlog} };
+        return new Promise(resolve => {
+            dbo.collection("Room").updateOne(query, newvalues, function (err, res) {
+                if (err) throw err;     
+                resolve();
+            })          
+        })
+    },
+    db_GetOutRoom: function (value) {
+        return new Promise(resolve => {
+            var query = { RoomN: value };
+            dbo.collection("Room").deleteOne(query, function (err, result) {
+                if (err) throw err;
+                console.log("1 document deleted");
+            });
+        });
+    },
+    db_close: function () {
         db.close();
     }
 }
-
 module.exports = dbcontrol;
 //export {db_init, db_insert, db_delete, db_close };
