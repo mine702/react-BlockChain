@@ -2,6 +2,7 @@
 //#region react
 import React, { useState, useEffect } from 'react';
 import io from "socket.io-client";
+import Web3 from 'web3'; // 
 //#endregion
 
 //#region mui
@@ -21,15 +22,18 @@ import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 //#endregion
 
 //#region component
-import Mypage_Card from '../ui/Mypage_Card';
+import Mypage_SellCard from '../ui/Mypage_SellCard';
+import Mypage_BuyCard from '../ui/Mypage_BuyCard';
+import BuyHouseContract from "../../contracts/BuyHouse.json" //
 //#endregion
 
 let socket;
-
+let web3; //
+let instance; //
+let area = ["대전", "서울"] //
 
 
 function PrimarySearchAppBar() {
@@ -40,23 +44,70 @@ function PrimarySearchAppBar() {
     const location = useLocation()
 
     const [cards, setCardsLow] = useState([]);
+    const [newdetails, setNewdetails] = useState([]); //
+    const [accounts, setAccounts] = useState(); //
     let number = 0;
     let name = 0;
+
+    let count = 0; //
+    let newcards = []; //
     const [username] = useState(location.state[0][0].name);
 
     useEffect(() => {
-        socket = io(ENDPOINT);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        number = location.state[0][0].number
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        name = location.state[0][0].name
+        async function load() {
+            socket = io(ENDPOINT);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            number = location.state[0][0].number
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            name = location.state[0][0].name
+            web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
+            const networkId = await web3.eth.net.getId();
+            const deployedNetwork = await BuyHouseContract.networks[networkId];
+            const accounts = await web3.eth.getAccounts();
+            setAccounts(accounts);
+            instance = new web3.eth.Contract(BuyHouseContract.abi, deployedNetwork.address);
+            loaddata();
+        }
+        load();        
     }, [location]);
+
+    
+    async function loaddata() {
+        // const value = await instance.methods.readRealEstate(area[0]).call()
+        // console.log(value)
+        let value =[];
+        for (let i = 0; i < area.length; i++) {
+            value.push( await instance.methods.readRealEstate(area[i]).call()); 
+        }
+        for(let i = 0; i < value.length; i++) {
+            console.log(value);
+            if (value[i][0].buyerName == location.state[0][0].name) {
+                const houseAddress = value[i][0].houseAddress;
+                socket.emit('LoadImg', ({ houseAddress }));
+                socket.on("LoadImg_Result", ({ result }) => {
+                    newcards.push({
+                        "id": count, "seller": value[i][0].sellerName, "buyer": value[i][0].buyerName,
+                        "price": value[i][0].housePrice, "address": value[i][0].houseAddress, "img": result
+                    });
+                    setNewdetails(newcards);
+                })
+            }
+            
+        }
+        
+        count++
+    }
+
+
+    
+
 
     useEffect(() => {
         socket.emit("MyPageSell", { name, number });
         socket.on("MyPageSell_Result", (Result) => {
             setCardsLow(Result);
         })
+        
     }, [name, number])
 
     const toggleDrawer = (anchor, open) => (event) => {
@@ -75,6 +126,9 @@ function PrimarySearchAppBar() {
     function SendMessage() {
         navigate("/post-MainPage", { state: location.state[0] });
     }
+
+
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -155,7 +209,7 @@ function PrimarySearchAppBar() {
                             <Typography gutterBottom variant="h5" component="h2">
                                 판매내역
                             </Typography>
-                            <Mypage_Card cards={cards} user={location.state}></Mypage_Card>
+                            <Mypage_SellCard cards={cards} user={location.state}></Mypage_SellCard>
                         </CardContent>
                     </Card>
                     <br />
@@ -166,16 +220,13 @@ function PrimarySearchAppBar() {
                             <Typography gutterBottom variant="h5" component="h2">
                                 구매내역
                             </Typography>
-                            <Typography>
-                                This is a media card. You can use this section to describe the
-                                content.
-                            </Typography>
+                            <Mypage_BuyCard details={newdetails}></Mypage_BuyCard>
                         </CardContent>
                     </Card>
                 </Container>
-                
+
             </Box>
-            
+
         </Box>
     );
 }

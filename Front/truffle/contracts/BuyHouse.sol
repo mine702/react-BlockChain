@@ -11,6 +11,8 @@ contract BuyHouse {
     uint256 housePrice;
   }
 
+  event BuyLogText(string sellerName, string buyerName, string houseAddress, uint256 housePrice);
+
   HouseInfo[] public Deajeon;
   HouseInfo[] public Seoul;
   
@@ -23,6 +25,8 @@ contract BuyHouse {
     else if(keccak256(bytes(locations)) == keccak256("서울")){
       Seoul.push(HouseInfo(sellerName,buyerName,houseAddress,housePrice));
     }
+
+    emit BuyLogText(sellerName ,buyerName , houseAddress , housePrice );
   }
 
   function readRealEstate(string locations)  public view returns(HouseInfo[] memory){

@@ -161,4 +161,11 @@ io.on('connection', socket => {
     socket.emit('GetOutRoom_Sellername_Result' , "삭제 완료!!!" );
   })
 
+  socket.on('LoadImg',({houseAddress})=>{
+    (async() =>{
+      let result = await dbcontrol.db_LoadImg(houseAddress);
+      socket.emit("LoadImg_Result", {result});
+    })()
+  })
+
 })

@@ -219,6 +219,16 @@ let dbcontrol =
         })
     },
 
+    db_LoadImg: function (houseAddress) {
+        return new Promise(resolve => {
+            var query = { address: houseAddress };
+            dbo.collection("Registration").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                resolve(result[0].files)   
+            })
+        })
+    },
+
     db_close: function () {
         db.close();
     }

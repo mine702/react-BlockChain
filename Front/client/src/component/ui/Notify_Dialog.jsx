@@ -1,5 +1,5 @@
 //#region react
-import React from 'react';
+import React,{useState, useEffect} from 'react';
 //#endregion
 
 //#region mui
@@ -10,10 +10,48 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 //#endregion
+import BuyHouse from "../../contracts/BuyHouse.json"
+import Web3 from 'web3';
+
+let web3;
+let instance;
+let buyhouse = BuyHouse
 
 function Notify_Dialog(props) {
-  const { warningHead, warning, warningButton, OkButtonClick } = props
+
+  const { warningHead, warning, warningButton, value} = props
   const [open, setOpen] = React.useState(false);
+
+  const [sellername] = useState(value[0].name);
+  const [sellerAddress] = useState(value[0].MetaMaskAcc);
+  const [housePrice] = useState(value[0].price);
+  const [houseAddress] = useState(value[0].address);
+  const [locations] = useState(value[0].location);
+  const [buyername] = useState(value[1][0].name);
+
+  const [accounts, setAccounts] = useState("");
+
+  useEffect(()=>{
+    async function load() {        
+        web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
+        setAccounts(await web3.eth.getAccounts());
+
+        const networkId = await web3.eth.net.getId();
+        const deployedNetwork = buyhouse.networks[networkId];
+  
+        instance =  new web3.eth.Contract(buyhouse.abi, deployedNetwork.address);
+        //console.log(value);
+    }
+    load();
+  },[]);
+
+  async function BuyHouse() {
+      await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({
+          from: accounts[0],
+          value: web3.utils.toWei(housePrice, "ether"),    //wei
+          gas: 150000,
+      })
+  }
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -41,7 +79,7 @@ function Notify_Dialog(props) {
         <DialogActions>
           <Button onClick={handleClose}>아니요</Button>
           <Button onClick={()=>{
-            OkButtonClick()
+            BuyHouse()
             handleClose()
           }} autoFocus>
             네

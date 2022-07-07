@@ -16,13 +16,13 @@ import Typography from '@mui/material/Typography';
 //#endregion
 
 //#region component
-import Notify_Dialog from "../ui/Notify_Dialog";
+//import Notify_Dialog from "./Notify_Dialog";
 import io from "socket.io-client";
 //#endregion
 
 let socket;
 
-function Mypage_Card(props) {
+function Mypage_SellCard(props) {
 
     const ENDPOINT = "http://localhost:8080";
 
@@ -67,7 +67,7 @@ function Mypage_Card(props) {
                         <Button size="small" onClick={() => {
                             navigate("/post-CorrectionForm", { state: [card, user[0]] })
                         }}>정보 수정</Button>
-                        <Notify_Dialog
+                        {/* <Notify_Dialog
                             warningHead={"게시글을 삭제"}
                             warningButton={"삭제"}
                             warning={"정말 게시글을 삭제 하시겠습니까?"}
@@ -79,7 +79,7 @@ function Mypage_Card(props) {
                                     window.location.replace("/post-UserMyPage")                                    
                                 })
                             }}
-                        ></Notify_Dialog>
+                        ></Notify_Dialog> */}
                     </CardActions>
                 </Card>
             </Grid> 
@@ -87,4 +87,4 @@ function Mypage_Card(props) {
         </Grid>)
 }
 
-export default Mypage_Card;
+export default Mypage_SellCard;

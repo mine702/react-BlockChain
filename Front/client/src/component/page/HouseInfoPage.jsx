@@ -27,10 +27,16 @@ import CardMedia from '@mui/material/CardMedia';
 //#endregion
 
 //#region component
-import Notify_Dialog from "../ui/Notify_Dialog"
 import Make_Chatting from "../ui/Make_Chatting";
+import Transaction_log from "../ui/TransactionText"
 import BuyHouseContract from "../../contracts/BuyHouse.json"
 //#endregion
+
+let web3;
+let instance;
+let arr= [];
+
+
 
 function HouseInfoPage() {
 
@@ -43,6 +49,7 @@ function HouseInfoPage() {
     const [houseAddress] = useState(location.state[0].address)
     const [locations] = useState(location.state[0].location)
     const [buyername] = useState(location.state[1][0].name);
+
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -58,37 +65,54 @@ function HouseInfoPage() {
         left: false
     });
     const [accounts, setAccounts] = useState()
-    const [instance, setInstance] = useState()
-    const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545')
+    const [transaction_record, setTransaction_record] = useState([])
+    const [transaction_textlog, setTransaction_textlog] = useState([])
+   
+
+ 
+    useEffect(()=>{
+     
+        for(let i=0; i<transaction_record.length; i++)
+        {
+            if(transaction_record[i].houseAddress===houseAddress)
+            {
+                arr.push({sellerName : transaction_record[i][0], buyerName: transaction_record[i][1], housePrice : transaction_record[i][3]})
+                setTransaction_textlog(arr);
+            }
+        }
+        
+
+    },[transaction_record])
+    
 
     useEffect(() => {
-        async function load() {
-            setAccounts(await web3.eth.getAccounts());
+        async function load() {            
+            console.log(location.state);
+            
+            web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             const networkId = await web3.eth.net.getId();
-            const deployedNetwork = BuyHouseContract.networks[networkId];
-            setInstance(new web3.eth.Contract(
-                BuyHouseContract.abi,      // abi 값을 넣어준거임
-                deployedNetwork && deployedNetwork.address,     // 위에 주소값을 넣는다.
-            ))
+            const deployedNetwork = await BuyHouseContract.networks[networkId];
+            const accounts = await web3.eth.getAccounts();
+            setAccounts(accounts);
+            console.log(accounts);
+            
+            instance = new web3.eth.Contract(BuyHouseContract.abi, deployedNetwork.address);
+            console.log(instance);
+
+            setTransaction_record(await instance.methods.readRealEstate(locations).call());
         }
         load();
-    });
+       
+    }, [location]);
+
+   
 
     async function BuyHouse() {
-        try {
-            await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({
-                from: accounts[0],
-                value: web3.utils.toWei(housePrice, "ether"),    //wei
-                gas: 150000,
-            })
-            alert("구매 완료")
-            navigate("/post-MainPage", { state: location.state[1] });
-        }
-        catch (err) {
-            alert(err.message)
-            window.location.replace("/post-HouseInfoPage")
-        }
-
+        await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({
+            from: accounts[0],
+            value: web3.utils.toWei(housePrice, "ether"),    //wei
+            gas: 150000,
+        })
     }
 
     return (
@@ -194,10 +218,14 @@ function HouseInfoPage() {
                             <Typography>
                                 &nbsp;&nbsp;{location.state[0].address}
                             </Typography>
+                            <br/>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                거래 기록
+                            </Typography>
+                            <Transaction_log log={transaction_textlog}></Transaction_log>
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
-                            <Notify_Dialog warningHead={"구매 확인"} warningButton={"BUY"} warning={"정말 구매하시겠습니까?"} OkButtonClick={BuyHouse}></Notify_Dialog>
                             <Make_Chatting sellername={sellername} buyername={buyername} ></Make_Chatting>
                         </CardActions>
                     </Card>
