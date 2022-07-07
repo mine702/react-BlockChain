@@ -27,13 +27,16 @@ import CardMedia from '@mui/material/CardMedia';
 //#endregion
 
 //#region component
-import Notify_Dialog from "../ui/Notify_Dialog"
 import Make_Chatting from "../ui/Make_Chatting";
+import Transaction_log from "../ui/TransactionText"
 import BuyHouseContract from "../../contracts/BuyHouse.json"
 //#endregion
 
 let web3;
 let instance;
+let arr= [];
+
+
 
 function HouseInfoPage() {
 
@@ -62,19 +65,29 @@ function HouseInfoPage() {
         left: false
     });
     const [accounts, setAccounts] = useState()
-    //const [instance, setInstance] = useState()
+    const [transaction_record, setTransaction_record] = useState([])
+    const [transaction_textlog, setTransaction_textlog] = useState([])
+   
+
+ 
+    useEffect(()=>{
+     
+        for(let i=0; i<transaction_record.length; i++)
+        {
+            if(transaction_record[i].houseAddress===houseAddress)
+            {
+                arr.push({sellerName : transaction_record[i][0], buyerName: transaction_record[i][1], housePrice : transaction_record[i][3]})
+                setTransaction_textlog(arr);
+            }
+        }
+        
+
+    },[transaction_record])
     
 
     useEffect(() => {
         async function load() {            
-            // if (typeof web3 !== 'undefined') {
-            //     // Use Mist/MetaMask's provider
-            //     web3 = new Web3(web3.currentProvider);
-            // } else {
-                //console.log('No web3? You should consider trying MetaMask!');
-                // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-                //web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
-            //}
+            console.log(location.state);
             
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             const networkId = await web3.eth.net.getId();
@@ -85,20 +98,21 @@ function HouseInfoPage() {
             
             instance = new web3.eth.Contract(BuyHouseContract.abi, deployedNetwork.address);
             console.log(instance);
+
+            setTransaction_record(await instance.methods.readRealEstate(locations).call());
         }
         load();
        
     }, [location]);
 
-      async function BuyHouse() {
+   
+
+    async function BuyHouse() {
         await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({
             from: accounts[0],
             value: web3.utils.toWei(housePrice, "ether"),    //wei
             gas: 150000,
         })
-        
-        const value = await instance.methods.readRealEstate(locations).call()
-        console.log(value)
     }
 
     return (
@@ -204,10 +218,14 @@ function HouseInfoPage() {
                             <Typography>
                                 &nbsp;&nbsp;{location.state[0].address}
                             </Typography>
+                            <br/>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                거래 기록
+                            </Typography>
+                            <Transaction_log log={transaction_textlog}></Transaction_log>
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
-                            <Notify_Dialog warningHead={"구매 확인"} warningButton={"BUY"} warning={"정말 구매하시겠습니까?"} OkButtonClick={BuyHouse}></Notify_Dialog>
                             <Make_Chatting sellername={sellername} buyername={buyername} ></Make_Chatting>
                         </CardActions>
                     </Card>

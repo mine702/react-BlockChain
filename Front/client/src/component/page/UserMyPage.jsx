@@ -2,6 +2,7 @@
 //#region react
 import React, { useState, useEffect } from 'react';
 import io from "socket.io-client";
+import Web3 from 'web3'; // 
 //#endregion
 
 //#region mui
@@ -24,11 +25,16 @@ import CardContent from '@mui/material/CardContent';
 //#endregion
 
 //#region component
-import Mypage_Card from '../ui/Mypage_Card';
+import Mypage_SellCard from '../ui/Mypage_SellCard';
+import Mypage_BuyCard from '../ui/Mypage_BuyCard';
+import BuyHouseContract from "../../contracts/BuyHouse.json" //
 //#endregion
 
 let socket;
-
+let web3; //
+let instance; //
+let area = ["대전", "서울"] //
+let newcards = []; 
 
 
 function PrimarySearchAppBar() {
@@ -37,29 +43,94 @@ function PrimarySearchAppBar() {
 
     const navigate = useNavigate()
     const location = useLocation()
-    
+
     const [cards, setCardsLow] = useState([]);
-    const [number, setNumber] = useState()
-    const [name, setName] = useState("")
+    const [newdetails, setNewdetails] = useState([]); //
+    const [accounts, setAccounts] = useState(); //
+    let number = 0;
+    let name = 0;
+
+    let count = 0; //
+    //
     const [username] = useState(location.state[0][0].name);
 
     useEffect(() => {
-        socket = io(ENDPOINT);
-        console.log(location);
-        setNumber(location.state[0][0].number)
-        setName(location.state[0][0].name)
-    }, [location]);    
+        
+    }, [newcards])
 
-    useEffect(() => {        
+    useEffect(()=>{
+        
+        async function img(){
+    
+           
+            let value =[];
+    
+            for (let i = 0; i < area.length; i++) {
+                value.push( await instance.methods.readRealEstate(area[i]).call()); 
+            }
+    
+            for(let i = 0; i < value.length; i++) {
+                if (value[i][0].buyerName == location.state[0][0].name) 
+                {
+                    const houseAddress = value[i][0].houseAddress; 
+                    socket.emit('LoadImg', ({ houseAddress }));
+                    // eslint-disable-next-line no-loop-func
+                    socket.on("LoadImg_Result", ({address, result }) => {
+                        if(address==houseAddress)
+                        {
+                        console.log(address);
+                        newcards.push({
+                            seller: value[i][0].sellerName, buyer: value[i][0].buyerName,
+                            price: value[i][0].housePrice, address: value[i][0].houseAddress, img: result
+                        }); 
+                        
+                        socket.emit('temp', ({newcards}));
+                        // eslint-disable-next-line no-loop-func
+                        socket.on("temp_Result", ({newcards}) => {
+                            setNewdetails(newcards);
+                            }
+                        )
+                        }
+                    })
+                }  
+                
+            }
+            
+        }
+        if(instance!==undefined)
+        {
+            img();
+        }
+        
+            
+        },[instance])  
+
+    useEffect(() => {
+        async function load() {
+            socket = io(ENDPOINT);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            number = location.state[0][0].number
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            name = location.state[0][0].name
+            web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
+            const networkId = await web3.eth.net.getId();
+            const deployedNetwork = await BuyHouseContract.networks[networkId];
+            const accounts = await web3.eth.getAccounts();
+            setAccounts(accounts);
+            instance = new web3.eth.Contract(BuyHouseContract.abi, deployedNetwork.address);
+            
+        }
+        load();        
+    }, [location]);
+
+    useEffect(() => {
         socket.emit("MyPageSell", { name, number });
         socket.on("MyPageSell_Result", (Result) => {
             setCardsLow(Result);
         })
     }, [name, number])
 
-    useEffect(()=>{
-        
-    },[location])
+
     const toggleDrawer = (anchor, open) => (event) => {
         if (
             event &&
@@ -76,6 +147,8 @@ function PrimarySearchAppBar() {
     function SendMessage() {
         navigate("/post-MainPage", { state: location.state[0] });
     }
+
+
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -111,6 +184,11 @@ function PrimarySearchAppBar() {
                                     </ListItemButton>
                                     <ListItemButton>
                                         <ListItemText onClick={SendMessage} primary="MainPage" />
+                                    </ListItemButton>
+                                    <ListItemButton>
+                                        <ListItemText onClick={() => {
+                                            navigate("/post-UserUpdatePage", { state: location.state })
+                                        }} primary="Profile Update" />
                                     </ListItemButton>
                                 </ListItem>
                             </List>
@@ -152,7 +230,7 @@ function PrimarySearchAppBar() {
                             <Typography gutterBottom variant="h5" component="h2">
                                 판매내역
                             </Typography>
-                            <Mypage_Card cards={cards} user={location.state}></Mypage_Card>
+                            <Mypage_SellCard cards={cards} user={location.state}></Mypage_SellCard>
                         </CardContent>
                     </Card>
                     <br />
@@ -163,14 +241,13 @@ function PrimarySearchAppBar() {
                             <Typography gutterBottom variant="h5" component="h2">
                                 구매내역
                             </Typography>
-                            <Typography>
-                                This is a media card. You can use this section to describe the
-                                content.
-                            </Typography>
+                            <Mypage_BuyCard details={newdetails}></Mypage_BuyCard>
                         </CardContent>
                     </Card>
                 </Container>
+
             </Box>
+
         </Box>
     );
 }

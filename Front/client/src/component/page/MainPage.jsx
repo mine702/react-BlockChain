@@ -32,17 +32,24 @@ import Divider from '@mui/material/Divider';
 //#region component
 import RoomList_Dialog from '../ui/RoomList_Dialog';
 import Mainpage_Card from '../ui/Mainpage_Card';
+import BuyLogText from '../ui/BuyLogText';
 //#endregion
 
-
+import Web3 from 'web3';
+import RealEstate from '../../contracts/BuyHouse.json';
 
 const theme = createTheme();
 
 let socket;
+let web3;
+let instance;
 
 function Mainpage(props) {
 
     //const { account } =props;
+
+    let Arr_BuyLogText = [];
+
 
     const ENDPOINT = "http://localhost:8080";
 
@@ -55,6 +62,7 @@ function Mainpage(props) {
     const [state, setState] = React.useState({
         left: false
     });
+    const [ALL_BuyLogText, setBuyLogText] = useState([]);
 
     const toggleDrawer = (anchor, open) => (event) => {
         if (
@@ -67,11 +75,32 @@ function Mainpage(props) {
         setState({ ...state, [anchor]: open });
     };
 
-    useEffect(() => {
+    // useEffect(() => {
+    //     socket = io(ENDPOINT);
+    //     setUsername(location.state[0].name);
+    // }, [location])
+
+    useEffect(()=>{
         socket = io(ENDPOINT);
         setUsername(location.state[0].name);
-        //console.log(account);
-    }, [location])
+        
+        async function load() {            
+            web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
+            //setAccounts(await web3.eth.getAccounts());
+      
+            const networkId = await web3.eth.net.getId();
+            const deployedNetwork = RealEstate.networks[networkId];
+            
+            instance =  new web3.eth.Contract(RealEstate.abi, deployedNetwork.address);
+            instance.events.BuyLogText({},{fromBlock:0 , toBlock:'latest'}, (err,res)=>{  //처음부터 끝까지 검색
+                Arr_BuyLogText.push(`${res.returnValues.buyerName}님이 ${res.returnValues.sellerName}님의 ${res.returnValues.houseAddress}를 ${res.returnValues.housePrice}eth로 매입하셨습니다.`);
+                console.log(Arr_BuyLogText);
+                setBuyLogText(Arr_BuyLogText);
+            })
+          }
+
+          load();
+    },[socket])
 
     useEffect(() => {
         if (area !== "") {
@@ -188,7 +217,7 @@ function Mainpage(props) {
                 </Container>
             </main>
             {/* Footer */}
-            <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+            {/* <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
                 <Typography variant="h6" align="center" gutterBottom>
                 </Typography>
                 <Typography
@@ -198,6 +227,9 @@ function Mainpage(props) {
                     component="p"
                 >
                 </Typography>
+            </Box> */}
+            <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+                <BuyLogText LogText={ALL_BuyLogText}></BuyLogText>
             </Box>
             {/* End footer */}
         </ThemeProvider>

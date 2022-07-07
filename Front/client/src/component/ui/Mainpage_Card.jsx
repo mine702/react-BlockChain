@@ -12,11 +12,15 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 //#endregion
 
+import Notify_Dialog from "./Notify_Dialog";
+
 function Mainpage_Card(props) {
 
     const navigate = useNavigate();
 
     const { cards, user } = props;
+
+    var buy_State = 'buy_Possible'
 
     return (
         <Grid container spacing={4}>
@@ -38,10 +42,29 @@ function Mainpage_Card(props) {
                         />
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
+                            <div>
+                                {
+                                    {
+                                        buy_Possible : <Notify_Dialog
+                                            warningHead={"구매 확인"} 
+                                            warningButton={"구매"} 
+                                            warning={"정말 구매하시겠습니까?"} 
+                                            value={[card, user]}
+                                           
+                                            ></Notify_Dialog>,
+                                        buy_Impossible : <Notify_Dialog
+                                            warningButton={"판매완료"} 
+                                            warning={"판매 완료된 매물입니다."} 
+                                            value={[card, user]}
+                                            ></Notify_Dialog>
+                                    }[buy_State]
+                                }
+                            </div>
                             <Button size="small" onClick={() => {
                                 navigate("/post-HouseInfoPage", { state: [card, user] });
                             }}>보기</Button>
                         </CardActions>
+
                     </Card>
                 </Grid>
             ))}

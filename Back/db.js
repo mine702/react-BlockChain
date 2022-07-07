@@ -8,7 +8,6 @@ var dbo;
 
 let dbcontrol =
 {
-
     db_init: function () {
         MongoClient.connect(url, function (err, db) {
             dbo = db.db("Real_Estate_Project");
@@ -21,6 +20,15 @@ let dbcontrol =
         dbo.collection("Member").insertOne(myobj, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
+        })
+    },
+
+    db_UserUpdate: function (name, id, pw, phoneNum, MetaMaskAcc) {
+        var myquery = { id: id };
+        var newvalues = { $set: { name: name, pw: pw, number: phoneNum, MetaMaskAcc: MetaMaskAcc } };
+        dbo.collection("Member").updateOne(myquery, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log("1 document update");
         })
     },
 
@@ -53,15 +61,13 @@ let dbcontrol =
         return new Promise(resolve => {
             dbo.collection("Member").find(query).toArray(function (err, result) {
                 if (err) throw err;
-
                 resolve(result);
-
             });
         });
     },
 
     db_House_Register: function (area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress) {
-        var query = { location: area, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc : sellerMetaAddress };
+        var query = { location: area, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc: sellerMetaAddress };
         dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -122,7 +128,7 @@ let dbcontrol =
     },
 
     db_Room_Make: function (sellername, buyername, roomnumber) {
-        var query = { Sellername: sellername, Buyername: buyername, RoomN: roomnumber, Msg : [] };
+        var query = { Sellername: sellername, Buyername: buyername, RoomN: roomnumber, Msg: [] };
         console.log(query)
         dbo.collection("Room").insertOne(query, function (err, res) {
             if (err) throw err;
@@ -149,8 +155,8 @@ let dbcontrol =
         })
     },
 
-    db_LoadMsg : function(RoomNumber) {
-        const query = { RoomN : RoomNumber}
+    db_LoadMsg: function (RoomNumber) {
+        const query = { RoomN: RoomNumber }
         return new Promise(resolve => {
             dbo.collection("Room").find(query).toArray(function (err, result) {
                 if (err) throw err;
@@ -161,16 +167,28 @@ let dbcontrol =
         })
     },
 
-    db_SaveMsg : function (chatlog,RoomNumber) {
-        var query = { RoomN :RoomNumber }
-        var newvalues = { $set: { Msg : chatlog} };
+    db_SaveMsg: function (chatlog, RoomNumber) {
+        var query = { RoomN: RoomNumber }
+        var newvalues = { $set: { Msg: chatlog } };
         return new Promise(resolve => {
             dbo.collection("Room").updateOne(query, newvalues, function (err, res) {
-                if (err) throw err;     
+                if (err) throw err;
                 resolve();
-            })          
+            })
         })
     },
+
+    db_Search_Room: function (value) {
+        var query = { RoomN: value }
+        return new Promise(resolve => {
+            dbo.collection("Room").find(query, { projection: { Sellername: 1, Buyername: 1, RoomN: 1 } }).toArray(function (err, result) {
+                if (err) throw err;
+                resolve(result);
+                console.log("All document selected");
+            });
+        });
+    },
+
     db_GetOutRoom: function (value) {
         return new Promise(resolve => {
             var query = { RoomN: value };
@@ -180,6 +198,37 @@ let dbcontrol =
             });
         });
     },
+
+    db_GetOutRoom_Buyername: function (value, username) {
+        var query = { RoomN: value }
+        var newvalues = { $set: { Buyername: null } };
+        dbo.collection("Room").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log("1 document update");
+        })
+    },
+
+    db_GetOutRoom_Sellername: function (value, username) {
+        var query = { RoomN: value }
+        var newvalues = { $set: { Sellername: null } };
+        return new Promise(resolve => {
+            dbo.collection("Room").updateOne(query, newvalues, function (err, res) {
+                if (err) throw err;
+                console.log("1 document update");
+            })
+        })
+    },
+
+    db_LoadImg: function (houseAddress) {
+        return new Promise(resolve => {
+            var query = { address: houseAddress };
+            dbo.collection("Registration").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                resolve(result[0].files)   
+            })
+        })
+    },
+
     db_close: function () {
         db.close();
     }

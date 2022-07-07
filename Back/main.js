@@ -29,6 +29,11 @@ io.on('connection', socket => {
     socket.emit("MemberCheck", "회원 가입 완료!!!");
   })
 
+  socket.on('UserUpdate', ({ name, id, pw, phoneNum, MetaMaskAcc }) => {
+    dbcontrol.db_UserUpdate(name, id, pw, phoneNum, MetaMaskAcc);
+    socket.emit("UserUpdate_Result", "회원 정보 수정 완료!!!");
+  })
+
   socket.on('idCheck', ({ id }) => {
     (async () => {
       let result = await dbcontrol.db_idCheck(id);
@@ -137,6 +142,37 @@ io.on('connection', socket => {
   socket.on('GetOutRoom',({value})=>{
     dbcontrol.db_GetOutRoom(value);
     socket.emit("GetOutRoom_Result", "삭제 완료!!!");
+  })
+
+  socket.on('Search_Room' , ({value})=>{    
+    (async() =>{
+      let result = await dbcontrol.db_Search_Room(value);
+      socket.emit('Search_Room_Result' , ({result}) );
+    })()
+  })
+
+  socket.on('GetOutRoom_Buyername',({value, username})=>{
+    dbcontrol.db_GetOutRoom_Buyername(value, username);
+    socket.emit('GetOutRoom_Buyername_Result' , "삭제 완료!!!" );
+  })
+
+  socket.on('GetOutRoom_Sellername',({value, username})=>{
+    dbcontrol.db_GetOutRoom_Sellername(value, username);
+    socket.emit('GetOutRoom_Sellername_Result' , "삭제 완료!!!" );
+  })
+
+  socket.on('LoadImg',({houseAddress})=>{
+    //console.log(houseAddress);
+    (async() =>{
+      let result = await dbcontrol.db_LoadImg(houseAddress);
+      
+      let address = houseAddress
+      socket.emit("LoadImg_Result", {address ,result});
+    })()
+  })
+
+  socket.on('temp',({newcards})=>{
+    socket.emit('temp_Result', ({newcards}) );
   })
 
 })
