@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React from "react";
 import { useNavigate } from "react-router-dom";

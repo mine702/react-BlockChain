@@ -16,7 +16,6 @@ import Typography from '@mui/material/Typography';
 //#endregion
 
 //#region component
-//import Notify_Dialog from "./Notify_Dialog";
 import io from "socket.io-client";
 //#endregion
 
@@ -67,19 +66,14 @@ function Mypage_SellCard(props) {
                         <Button size="small" onClick={() => {
                             navigate("/post-CorrectionForm", { state: [card, user[0]] })
                         }}>정보 수정</Button>
-                        {/* <Notify_Dialog
-                            warningHead={"게시글을 삭제"}
-                            warningButton={"삭제"}
-                            warning={"정말 게시글을 삭제 하시겠습니까?"}
-                            OkButtonClick={() => {
-                                socket.emit("Delete_Data", { card });
-                                socket.on("Delete_Data_Result", (Result) => {
-                                    alert(Result);
-                                    socket.off(); 
-                                    window.location.replace("/post-UserMyPage")                                    
-                                })
-                            }}
-                        ></Notify_Dialog> */}
+                        <Button size="small" onClick={() => {
+                            socket.emit("Delete_Data", { card });
+                            socket.on("Delete_Data_Result", (Result) => {
+                                alert(Result);
+                                socket.off(); 
+                                window.location.replace("/post-UserMyPage")                             
+                            })
+                        }}>삭제</Button>
                     </CardActions>
                 </Card>
             </Grid> 

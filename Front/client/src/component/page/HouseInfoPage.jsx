@@ -70,8 +70,7 @@ function HouseInfoPage() {
    
 
  
-    useEffect(()=>{
-     
+    useEffect(()=>{     
         for(let i=0; i<transaction_record.length; i++)
         {
             if(transaction_record[i].houseAddress===houseAddress)
@@ -79,25 +78,21 @@ function HouseInfoPage() {
                 arr.push({sellerName : transaction_record[i][0], buyerName: transaction_record[i][1], housePrice : transaction_record[i][3]})
                 setTransaction_textlog(arr);
             }
-        }
-        
+        }        
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[transaction_record])
     
 
     useEffect(() => {
-        async function load() {            
-            console.log(location.state);
-            
+        async function load() {          
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = await BuyHouseContract.networks[networkId];
             const accounts = await web3.eth.getAccounts();
             setAccounts(accounts);
-            console.log(accounts);
             
             instance = new web3.eth.Contract(BuyHouseContract.abi, deployedNetwork.address);
-            console.log(instance);
 
             setTransaction_record(await instance.methods.readRealEstate(locations).call());
         }

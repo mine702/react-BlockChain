@@ -66,41 +66,29 @@ function PrimarySearchAppBar() {
             const accounts = await web3.eth.getAccounts();
             setAccounts(accounts);
             instance = new web3.eth.Contract(BuyHouseContract.abi, deployedNetwork.address);
-            loaddata();
+            // loaddata();
         }
         load();        
     }, [location]);
-
     
-    async function loaddata() {
-        // const value = await instance.methods.readRealEstate(area[0]).call()
-        // console.log(value)
-        let value =[];
-        for (let i = 0; i < area.length; i++) {
-            value.push( await instance.methods.readRealEstate(area[i]).call()); 
-        }
-        for(let i = 0; i < value.length; i++) {
-            console.log(value);
-            if (value[i][0].buyerName == location.state[0][0].name) {
-                const houseAddress = value[i][0].houseAddress;
-                socket.emit('LoadImg', ({ houseAddress }));
-                socket.on("LoadImg_Result", ({ result }) => {
-                    newcards.push({
-                        "id": count, "seller": value[i][0].sellerName, "buyer": value[i][0].buyerName,
-                        "price": value[i][0].housePrice, "address": value[i][0].houseAddress, "img": result
-                    });
-                    setNewdetails(newcards);
-                })
-            }
-            
-        }
-        
-        count++
-    }
-
-
-    
-
+    // async function loaddata() {
+    //     // const value = await instance.methods.readRealEstate(area[0]).call()
+    //     // console.log(value)
+    //     let value =[];
+    //     for (let i = 0; i < area.length; i++) {
+    //         value.push( await instance.methods.readRealEstate(area[i]).call()); 
+    //     }
+    //     for(let i = 0; i < value.length; i++) {
+    //         if (value[i][0].buyerName === location.state[0][0].name) {
+    //             const houseAddress = value[i][0].houseAddress;
+    //             socket.emit('LoadImg', ({ houseAddress }));
+    //             socket.on("LoadImg_Result", ({ result }) => {
+                    
+    //             })
+    //         }            
+    //     }        
+    //     count++
+    // }
 
     useEffect(() => {
         socket.emit("MyPageSell", { name, number });
@@ -126,9 +114,6 @@ function PrimarySearchAppBar() {
     function SendMessage() {
         navigate("/post-MainPage", { state: location.state[0] });
     }
-
-
-
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
