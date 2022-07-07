@@ -98,9 +98,7 @@ function HouseInfoPage() {
         }
         load();
        
-    }, [location]);
-
-   
+    }, [location]);   
 
     async function BuyHouse() {
         await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({

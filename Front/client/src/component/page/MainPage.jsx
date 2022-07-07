@@ -112,7 +112,7 @@ function Mainpage(props) {
         }
     }, [area])
 
-   
+    
 
     return (
         <ThemeProvider theme={theme}>
@@ -216,18 +216,6 @@ function Mainpage(props) {
                     <Mainpage_Card cards={cards} user={location.state}></Mainpage_Card>
                 </Container>
             </main>
-            {/* Footer */}
-            {/* <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
-                <Typography variant="h6" align="center" gutterBottom>
-                </Typography>
-                <Typography
-                    variant="subtitle1"
-                    align="center"
-                    color="text.secondary"
-                    component="p"
-                >
-                </Typography>
-            </Box> */}
             <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
                 <BuyLogText LogText={ALL_BuyLogText}></BuyLogText>
             </Box>
