@@ -20,6 +20,7 @@ function App(props) {
         <BrowserRouter>
             <Routes>
                 <Route index element={<LoginPage />} />
+                <Route path="post-LoginPage" element={<LoginPage />} />
                 <Route path="post-NewMemberPage" element={<NewMemberPage />} />
                 <Route path="post-MainPage" element={<MainPage  />} />
                 <Route path="post-Checkout" element={<HouseInfoInsert/>} />

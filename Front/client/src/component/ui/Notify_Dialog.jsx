@@ -1,5 +1,5 @@
 //#region react
-import React,{useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 //#endregion
 
 //#region mui
@@ -19,38 +19,45 @@ let buyhouse = BuyHouse
 
 function Notify_Dialog(props) {
 
-  const { warningHead, warning, warningButton, value} = props
+  const { warningHead, warning, warningButton, value } = props
   const [open, setOpen] = React.useState(false);
-
   const [sellername] = useState(value[0].name);
   const [sellerAddress] = useState(value[0].MetaMaskAcc);
   const [housePrice] = useState(value[0].price);
   const [houseAddress] = useState(value[0].address);
+  const [sellerImg] = useState(value[0].files);
   const [locations] = useState(value[0].location);
   const [buyername] = useState(value[1][0].name);
-
   const [accounts, setAccounts] = useState("");
 
-  useEffect(()=>{
-    async function load() {        
-        web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
-        setAccounts(await web3.eth.getAccounts());
+  useEffect(() => {
+    async function load() {
+      web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
+      setAccounts(await web3.eth.getAccounts());
 
-        const networkId = await web3.eth.net.getId();
-        const deployedNetwork = buyhouse.networks[networkId];
-  
-        instance =  new web3.eth.Contract(buyhouse.abi, deployedNetwork.address);
-        //console.log(value);
+      const networkId = await web3.eth.net.getId();
+      const deployedNetwork = buyhouse.networks[networkId];
+
+      instance = new web3.eth.Contract(buyhouse.abi, deployedNetwork.address);
+      //console.log(value);
     }
     load();
-  },[]);
+  }, []);
 
   async function BuyHouse() {
-      await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({
-          from: accounts[0],
-          value: web3.utils.toWei(housePrice, "ether"),    //wei
-          gas: 150000,
+    try{
+      await instance.methods.buyRealEstate(sellerAddress, locations, sellername, sellerImg, buyername, houseAddress, housePrice).send({
+        from: accounts[0],
+        value: web3.utils.toWei(housePrice, "ether"),    //wei
+        gas: 5000000,
       })
+      alert("구매완료")
+      window.location.replace("/post-MainPage")
+    }
+    catch(e){
+      alert(e.message)
+      window.location.replace("/post-MainPage")
+    }
   }
 
   const handleClickOpen = () => {
@@ -58,7 +65,7 @@ function Notify_Dialog(props) {
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpen(false);    
   };
 
   return (
@@ -78,7 +85,7 @@ function Notify_Dialog(props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>아니요</Button>
-          <Button onClick={()=>{
+          <Button onClick={() => {
             BuyHouse()
             handleClose()
           }} autoFocus>

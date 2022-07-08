@@ -36,16 +36,12 @@ let web3;
 let instance;
 let arr= [];
 
-
-
 function HouseInfoPage() {
 
     const navigate = useNavigate();
     const location = useLocation();
 
     const [sellername] = useState(location.state[0].name);
-    const [sellerAddress] = useState(location.state[0].MetaMaskAcc)
-    const [housePrice] = useState(location.state[0].price)
     const [houseAddress] = useState(location.state[0].address)
     const [locations] = useState(location.state[0].location)
     const [buyername] = useState(location.state[1][0].name);
@@ -64,12 +60,9 @@ function HouseInfoPage() {
     const [state, setState] = React.useState({
         left: false
     });
-    const [accounts, setAccounts] = useState()
     const [transaction_record, setTransaction_record] = useState([])
     const [transaction_textlog, setTransaction_textlog] = useState([])
-   
 
- 
     useEffect(()=>{     
         for(let i=0; i<transaction_record.length; i++)
         {
@@ -79,34 +72,21 @@ function HouseInfoPage() {
                 setTransaction_textlog(arr);
             }
         }        
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[transaction_record])
-    
 
     useEffect(() => {
         async function load() {          
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             const networkId = await web3.eth.net.getId();
-            const deployedNetwork = await BuyHouseContract.networks[networkId];
-            const accounts = await web3.eth.getAccounts();
-            setAccounts(accounts);
-            
+            const deployedNetwork = await BuyHouseContract.networks[networkId];      
             instance = new web3.eth.Contract(BuyHouseContract.abi, deployedNetwork.address);
-
             setTransaction_record(await instance.methods.readRealEstate(locations).call());
         }
         load();
        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location]);   
-
-    async function BuyHouse() {
-        await instance.methods.buyRealEstate(sellerAddress, locations, sellername, buyername, houseAddress, housePrice).send({
-            from: accounts[0],
-            value: web3.utils.toWei(housePrice, "ether"),    //wei
-            gas: 150000,
-        })
-    }
 
     return (
         <Box sx={{ flexGrow: 1 }}>

@@ -92,6 +92,7 @@ function Login(props) {
                                     // eslint-disable-next-line eqeqeq
                                     if (result == "" || undefined) {
                                         alert("아이디와 비밀번호를 확인하세요");
+                                        window.location.replace("/post-LoginPage")
                                         setId("");
                                     }
                                     else { 

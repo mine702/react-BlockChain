@@ -68,14 +68,6 @@ function RoomList(props) {
             }
         })
     }
-
-    function RoomOut(value) {
-        socket.emit("GetOutRoom", { value });
-        socket.on('GetOutRoom_Result', (result) => {
-            alert(result)
-            window.location.replace("/post-MainPage")
-        })
-    }
     return (
         <div>
             {value.map((value) => (

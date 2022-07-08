@@ -55,10 +55,10 @@ function Mainpage(props) {
 
     const navigate = useNavigate();
     const location = useLocation();
-
     const [cards, setCardsLow] = useState([]);
     const [area, setArea] = useState("");
     const [username, setUsername] = useState("");
+    const [buycards, setBuyCards] = useState([]);
     const [state, setState] = React.useState({
         left: false
     });
@@ -75,32 +75,25 @@ function Mainpage(props) {
         setState({ ...state, [anchor]: open });
     };
 
-    // useEffect(() => {
-    //     socket = io(ENDPOINT);
-    //     setUsername(location.state[0].name);
-    // }, [location])
-
-    useEffect(()=>{
+    useEffect(() => {
         socket = io(ENDPOINT);
         setUsername(location.state[0].name);
-        
-        async function load() {            
+        async function load() {
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
-            //setAccounts(await web3.eth.getAccounts());
-      
+            //setAccounts(await web3.eth.getAccounts());      
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = RealEstate.networks[networkId];
-            
-            instance =  new web3.eth.Contract(RealEstate.abi, deployedNetwork.address);
-            instance.events.BuyLogText({},{fromBlock:0 , toBlock:'latest'}, (err,res)=>{  //처음부터 끝까지 검색
+            instance = new web3.eth.Contract(RealEstate.abi, deployedNetwork.address);
+            instance.events.BuyLogText({}, { fromBlock: 0, toBlock: 'latest' }, (err, res) => {  //처음부터 끝까지 검색
                 Arr_BuyLogText.push(`${res.returnValues.buyerName}님이 ${res.returnValues.sellerName}님의 ${res.returnValues.houseAddress}를 ${res.returnValues.housePrice}eth로 매입하셨습니다.`);
                 console.log(Arr_BuyLogText);
                 setBuyLogText(Arr_BuyLogText);
             })
-          }
-
-          load();
-    },[])
+            setBuyCards(await instance.methods.readRealEstate().call())
+        }
+        load();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [socket])
 
     useEffect(() => {
         if (area !== "") {
@@ -111,8 +104,6 @@ function Mainpage(props) {
             })
         }
     }, [area])
-
-    
 
     return (
         <ThemeProvider theme={theme}>
@@ -143,8 +134,8 @@ function Mainpage(props) {
                                 <ListItem key="마이페이지" disablePadding sx={{ display: 'block' }}>
                                     <Divider />
                                     <ListItemButton>
-                                        <ListItemText onClick={()=>{
-                                            navigate("/post-UserMyPage", { state: [location.state] })
+                                        <ListItemText onClick={() => {
+                                            navigate("/post-UserMyPage", { state: [location.state, buycards] })
                                         }} primary="MyPage" />
                                     </ListItemButton>
                                     <ListItemButton>
@@ -216,6 +207,18 @@ function Mainpage(props) {
                     <Mainpage_Card cards={cards} user={location.state}></Mainpage_Card>
                 </Container>
             </main>
+            {/* Footer */}
+            {/* <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+                <Typography variant="h6" align="center" gutterBottom>
+                </Typography>
+                <Typography
+                    variant="subtitle1"
+                    align="center"
+                    color="text.secondary"
+                    component="p"
+                >
+                </Typography>
+            </Box> */}
             <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
                 <BuyLogText LogText={ALL_BuyLogText}></BuyLogText>
             </Box>

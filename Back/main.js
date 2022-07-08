@@ -163,9 +163,14 @@ io.on('connection', socket => {
 
   socket.on('LoadImg',({houseAddress})=>{
     (async() =>{
-      let result = await dbcontrol.db_LoadImg(houseAddress);
-      socket.emit("LoadImg_Result", {result});
+      let result = await dbcontrol.db_LoadImg(houseAddress);      
+      let address = houseAddress
+      socket.emit("LoadImg_Result", {address ,result});
     })()
+  })
+  
+  socket.on('temp',({newcards})=>{
+    socket.emit('temp_Result', ({newcards}) );
   })
 
 })
