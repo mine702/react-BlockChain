@@ -1,7 +1,9 @@
 /* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import io from "socket.io-client";
+import Web3 from 'web3';
 //#endregion
 
 //#region mui
@@ -18,7 +20,6 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useLocation, useNavigate } from "react-router-dom";
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -33,10 +34,8 @@ import Divider from '@mui/material/Divider';
 import RoomList_Dialog from '../ui/RoomList_Dialog';
 import Mainpage_Card from '../ui/Mainpage_Card';
 import BuyLogText from '../ui/BuyLogText';
-//#endregion
-
-import Web3 from 'web3';
 import RealEstate from '../../contracts/BuyHouse.json';
+//#endregion
 
 const theme = createTheme();
 
@@ -198,7 +197,6 @@ function Mainpage(props) {
                                 navigate("/post-Checkout", { state: location.state })
                             }}>판매 등록</Button>
                             <Button variant="outlined">매물 검색</Button>
-                            <Button variant="outlined" >구매</Button>
                         </Stack>
                     </Container>
                 </Box>

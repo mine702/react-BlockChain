@@ -13,7 +13,9 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 //#endregion
 
+//#region component
 import Notify_Dialog from "./Notify_Dialog";
+//#endregion
 
 function Mainpage_Card(props) {
 
@@ -21,7 +23,7 @@ function Mainpage_Card(props) {
 
     const { cards, user } = props;
 
-    var buy_State = 'buy_Possible'
+    var buy_State = 'buy_Possible'; //나중에 수정 예정
 
     return (
         <Grid container spacing={4}>
@@ -51,7 +53,6 @@ function Mainpage_Card(props) {
                                             warningButton={"구매"} 
                                             warning={"정말 구매하시겠습니까?"} 
                                             value={[card, user]}
-                                           
                                             ></Notify_Dialog>,
                                         buy_Impossible : <Notify_Dialog
                                             warningButton={"판매완료"} 

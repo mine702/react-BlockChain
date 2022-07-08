@@ -57,8 +57,8 @@ function MakeChatting(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chatlog])
 
-    const roomn = []
-    let makeroom = []
+    const roomn = [];
+    let makeroom = [];
     let roomnumber = 0;
 
     function MakeRoom() {

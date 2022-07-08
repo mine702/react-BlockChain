@@ -46,15 +46,15 @@ function HouseInfo_insert() {
   };
   //#endregion
 
-  const [selluserId] = useState(location.state[0].id)
-  const [sellusername] = useState(location.state[0].name)
-  const [sellusernumber] = useState(location.state[0].number)
+  const [selluserId] = useState(location.state[0].id);
+  const [sellusername] = useState(location.state[0].name);
+  const [sellusernumber] = useState(location.state[0].number);
   const [sellerMetaAddress]=useState(location.state[0].MetaMaskAcc);
   const [area, setArea] = useState("");
   const [address, setAddress] = useState("");
   const [agree, setAgree] = useState(false);
   const [price, setPrice] = useState();
-  console.log(location.state[0])
+  console.log(location.state[0]);
   useEffect(() => {
     socket = io(ENDPOINT);
   }, []);

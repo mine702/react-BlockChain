@@ -1,5 +1,6 @@
 //#region react
 import React, { useEffect, useState } from 'react';
+import io from "socket.io-client";
 //#endregion
 
 //#region mui
@@ -10,12 +11,11 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
-import Badge from '@mui/material/Badge'
+import Badge from '@mui/material/Badge';
 import MailIcon from '@mui/icons-material/Mail';
 //#endregion
 
 //#region component
-import io from "socket.io-client";
 import RoomList from "./RoomList";
 //#endregion
 

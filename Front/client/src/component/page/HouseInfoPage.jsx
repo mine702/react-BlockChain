@@ -29,7 +29,7 @@ import CardMedia from '@mui/material/CardMedia';
 //#region component
 import Make_Chatting from "../ui/Make_Chatting";
 import Transaction_log from "../ui/TransactionText"
-import BuyHouseContract from "../../contracts/BuyHouse.json"
+import BuyHouseContract from "../../contracts/BuyHouse.json";
 //#endregion
 
 let web3;
@@ -42,7 +42,7 @@ function HouseInfoPage() {
     const location = useLocation();
 
     const [sellername] = useState(location.state[0].name);
-    const [houseAddress] = useState(location.state[0].address)
+    const [houseAddress] = useState(location.state[0].address);
     const [buyername] = useState(location.state[1][0].name);
 
     const toggleDrawer = (anchor, open) => (event) => {
@@ -59,8 +59,8 @@ function HouseInfoPage() {
     const [state, setState] = React.useState({
         left: false
     });
-    const [transaction_record, setTransaction_record] = useState([])
-    const [transaction_textlog, setTransaction_textlog] = useState([])
+    const [transaction_record, setTransaction_record] = useState([]);
+    const [transaction_textlog, setTransaction_textlog] = useState([]);
 
     useEffect(()=>{
         for(let i=0; i<transaction_record.length; i++)

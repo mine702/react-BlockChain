@@ -1,5 +1,6 @@
 //#region react
 import React, { useState, useEffect } from 'react';
+import Web3 from 'web3';
 //#endregion
 
 //#region mui
@@ -10,16 +11,18 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 //#endregion
-import BuyHouse from "../../contracts/BuyHouse.json"
-import Web3 from 'web3';
+
+//#region component
+import BuyHouse from "../../contracts/BuyHouse.json";
+//#endregion
 
 let web3;
 let instance;
-let buyhouse = BuyHouse
+let buyhouse = BuyHouse;
 
 function Notify_Dialog(props) {
 
-  const { warningHead, warning, warningButton, value } = props
+  const { warningHead, warning, warningButton, value } = props;
   const [open, setOpen] = React.useState(false);
   const [sellername] = useState(value[0].name);
   const [sellerAddress] = useState(value[0].MetaMaskAcc);

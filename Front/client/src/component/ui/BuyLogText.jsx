@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
 import Box from '@mui/material/Box';
-import { useEffect } from "react";
-import { useState } from "react";
 
 const style = {
     position: 'relative',
