@@ -41,7 +41,6 @@ function PrimarySearchAppBar() {
     let name = 0;
     const [username] = useState(location.state[0][0].name);
     const [buycard] = useState(location.state[1])
-    console.log(location.state)
     useEffect(() => {
         async function load() {
             socket = io(ENDPOINT);

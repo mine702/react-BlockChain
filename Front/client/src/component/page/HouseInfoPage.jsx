@@ -43,7 +43,6 @@ function HouseInfoPage() {
 
     const [sellername] = useState(location.state[0].name);
     const [houseAddress] = useState(location.state[0].address)
-    const [locations] = useState(location.state[0].location)
     const [buyername] = useState(location.state[1][0].name);
 
     const toggleDrawer = (anchor, open) => (event) => {
@@ -63,15 +62,15 @@ function HouseInfoPage() {
     const [transaction_record, setTransaction_record] = useState([])
     const [transaction_textlog, setTransaction_textlog] = useState([])
 
-    useEffect(()=>{     
+    useEffect(()=>{
         for(let i=0; i<transaction_record.length; i++)
         {
             if(transaction_record[i].houseAddress===houseAddress)
             {
-                arr.push({sellerName : transaction_record[i][0], buyerName: transaction_record[i][1], housePrice : transaction_record[i][3]})
-                setTransaction_textlog(arr);
-            }
-        }        
+                arr.push({sellerName : transaction_record[i].sellerName, buyerName: transaction_record[i].buyerName, housePrice : transaction_record[i].housePrice})
+                setTransaction_textlog(arr); 
+            }   
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[transaction_record])
 
@@ -81,7 +80,7 @@ function HouseInfoPage() {
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = await BuyHouseContract.networks[networkId];      
             instance = new web3.eth.Contract(BuyHouseContract.abi, deployedNetwork.address);
-            setTransaction_record(await instance.methods.readRealEstate(locations).call());
+            setTransaction_record(await instance.methods.readRealEstate().call());
         }
         load();
        
