@@ -38,11 +38,17 @@ import BuyLogText from '../ui/BuyLogText';
 import Web3 from 'web3';
 import RealEstate from '../../contracts/BuyHouse.json';
 
+
 const theme = createTheme();
 
 let socket;
 let web3;
 let instance;
+
+
+
+
+
 
 function Mainpage(props) {
 
@@ -77,8 +83,11 @@ function Mainpage(props) {
 
     useEffect(() => {
         socket = io(ENDPOINT);
+       
+      
         setUsername(location.state[0].name);
         async function load() {
+
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             //setAccounts(await web3.eth.getAccounts());      
             const networkId = await web3.eth.net.getId();

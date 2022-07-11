@@ -23,6 +23,9 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 //#endregion
 
+import axios from 'axios';
+import FormData from 'form-data';
+
 let socket;
 
 function HouseInfo_insert() {
@@ -31,6 +34,44 @@ function HouseInfo_insert() {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [file, setFile] = useState();
+  const [myipfsHash, setIPFSHASH] = useState('');
+
+  const handleFile = async (fileToHandle) =>{
+    console.log('starting')
+
+    // initialize the form data
+    const formData = new FormData()
+
+    // append the file form data to 
+    formData.append("file", fileToHandle)
+
+    // call the keys from .env
+
+    // the endpoint needed to upload the file
+    const url =  `https://api.pinata.cloud/pinning/pinFileToIPFS`
+
+    const response = await axios.post(
+      url,
+      formData,
+      {
+          maxContentLength: "Infinity",
+          headers: {
+              "Content-Type": `multipart/form-data;boundary=${formData._boundary}`, 
+              'pinata_api_key': '97f3182c5eaaa5c01af0',
+              'pinata_secret_api_key': '23a31aa6f14b878f66c3f3b4f639f03e8619b1851e872d99793680db7550ae7b',
+
+          }
+      }
+  )
+
+  console.log(response)
+
+  // get the hash
+  //setIPFSHASH(response.data.IpfsHash)
+}
+
 
   //#region 이미지 인코딩
   const [files, setFiles] = useState(images1);
@@ -54,6 +95,7 @@ function HouseInfo_insert() {
   const [address, setAddress] = useState("");
   const [agree, setAgree] = useState(false);
   const [price, setPrice] = useState();
+
   console.log(location.state[0])
   useEffect(() => {
     socket = io(ENDPOINT);
@@ -166,9 +208,18 @@ function HouseInfo_insert() {
                   <input
                     type="file"
                     hidden
-                    onChange={(e) => encodeFileToBase64(e.target.files[0])}
+                    onChange={(e) => {
+                      encodeFileToBase64(e.target.files[0])
+                      setFile(e.target.files[0])
+                    }}
                   />
                 </Button>
+                {/* <input type="file" onChange={(event)=>setFile(event.target.files[0])}/> */}
+                <button onClick={()=>handleFile(file)}>IPFS등록</button>
+                {/* {
+                  //  render the hash
+                  myipfsHash.length > 0 && <img height='200' src={`https://gateway.pinata.cloud/ipfs/${myipfsHash}`} alt='not loading'/>
+                } */}
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
