@@ -8,7 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
-import Chatting from "./Chatting";
+import Chatting from "./Chatting"
 import ListItemButton from '@mui/material/ListItemButton';
 import { Button } from "@mui/material";
 //#endregion

@@ -1,6 +1,5 @@
 //#region react
 import React, { useState, useEffect } from 'react';
-import io from "socket.io-client";
 //#endregion
 
 //#region mui
@@ -9,7 +8,8 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
-import LogText from "./LogText";
+import io from "socket.io-client";
+import LogText from "./LogText"
 import Box from '@mui/material/Box';
 //#endregion
 

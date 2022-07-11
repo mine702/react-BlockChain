@@ -1,9 +1,7 @@
 /* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
 import io from "socket.io-client";
-import Web3 from 'web3';
 //#endregion
 
 //#region mui
@@ -20,6 +18,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { useLocation, useNavigate } from "react-router-dom";
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -34,8 +33,10 @@ import Divider from '@mui/material/Divider';
 import RoomList_Dialog from '../ui/RoomList_Dialog';
 import Mainpage_Card from '../ui/Mainpage_Card';
 import BuyLogText from '../ui/BuyLogText';
-import RealEstate from '../../contracts/BuyHouse.json';
 //#endregion
+
+import Web3 from 'web3';
+import RealEstate from '../../contracts/BuyHouse.json';
 
 const theme = createTheme();
 
@@ -85,7 +86,6 @@ function Mainpage(props) {
             instance = new web3.eth.Contract(RealEstate.abi, deployedNetwork.address);
             instance.events.BuyLogText({}, { fromBlock: 0, toBlock: 'latest' }, (err, res) => {  //처음부터 끝까지 검색
                 Arr_BuyLogText.push(`${res.returnValues.buyerName}님이 ${res.returnValues.sellerName}님의 ${res.returnValues.houseAddress}를 ${res.returnValues.housePrice}eth로 매입하셨습니다.`);
-                console.log(Arr_BuyLogText);
                 setBuyLogText(Arr_BuyLogText);
             })
             setBuyCards(await instance.methods.readRealEstate().call())
@@ -197,12 +197,13 @@ function Mainpage(props) {
                                 navigate("/post-Checkout", { state: location.state })
                             }}>판매 등록</Button>
                             <Button variant="outlined">매물 검색</Button>
+                            <Button variant="outlined" >구매</Button>
                         </Stack>
                     </Container>
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Mainpage_Card cards={cards} user={location.state}></Mainpage_Card>
+                    <Mainpage_Card cards={cards} user={location.state} value={buycards}></Mainpage_Card>
                 </Container>
             </main>
             {/* Footer */}

@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useEffect } from 'react';
-import io from "socket.io-client";
 //#endregion
 
 //#region mui
@@ -14,6 +13,10 @@ import { useNavigate } from "react-router-dom";
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+//#endregion
+
+//#region component
+import io from "socket.io-client";
 //#endregion
 
 let socket;

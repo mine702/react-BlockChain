@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from "react-router";
 import io from "socket.io-client";
 //#endregion
 
@@ -12,6 +11,7 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useNavigate, useLocation } from "react-router";
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -34,20 +34,20 @@ function PrimarySearchAppBar() {
 
     const ENDPOINT = "http://localhost:8080";
 
-    const navigate = useNavigate();
-    const location = useLocation();
+    const navigate = useNavigate()
+    const location = useLocation()
     const [cards, setCardsLow] = useState([]);
     let number = 0;
     let name = 0;
     const [username] = useState(location.state[0][0].name);
-    const [buycard] = useState(location.state[1]);
+    const [buycard] = useState(location.state[1])
     useEffect(() => {
         async function load() {
             socket = io(ENDPOINT);
             // eslint-disable-next-line react-hooks/exhaustive-deps
-            number = location.state[0][0].number;
+            number = location.state[0][0].number
             // eslint-disable-next-line react-hooks/exhaustive-deps
-            name = location.state[0][0].name;
+            name = location.state[0][0].name            
         }
         load();
     }, [location]);

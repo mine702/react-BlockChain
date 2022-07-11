@@ -13,17 +13,36 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 //#endregion
 
-//#region component
 import Notify_Dialog from "./Notify_Dialog";
-//#endregion
 
 function Mainpage_Card(props) {
 
     const navigate = useNavigate();
 
-    const { cards, user } = props;
+    const { cards, user, value } = props;
 
-    var buy_State = 'buy_Possible'; //나중에 수정 예정
+    const buyButtonText={
+        a:'구매',
+        b:'판매 완료',
+    } 
+
+    const buy_State_enum ={
+        a:'buy_Possible',
+        b:'buy_Impossible',
+    } 
+
+    let buy_State = buyButtonText.a;
+
+    function buystate()
+    {
+        if( buy_State == buyButtonText.a){
+            buy_State=buyButtonText.b;
+        }
+        else if(buy_State == buyButtonText.b){
+            buy_State=buyButtonText.a;
+        }
+       
+    }
 
     return (
         <Grid container spacing={4}>
@@ -45,28 +64,18 @@ function Mainpage_Card(props) {
                         />
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
-                            <div>
-                                {
-                                    {
-                                        buy_Possible : <Notify_Dialog
-                                            warningHead={"구매 확인"} 
-                                            warningButton={"구매"} 
-                                            warning={"정말 구매하시겠습니까?"} 
-                                            value={[card, user]}
-                                            ></Notify_Dialog>,
-                                        buy_Impossible : <Notify_Dialog
-                                            warningButton={"판매완료"} 
-                                            warning={"판매 완료된 매물입니다."} 
-                                            value={[card, user]}
-                                            ></Notify_Dialog>
-                                    }[buy_State]
-                                }
-                            </div>
+                           
+                                <Notify_Dialog
+                                warningHead={"구매 확인"} 
+                                warningButton={`구매`}
+                                warning={"정말 구매하시겠습니까?"}  
+                                value={[card, user]}
+                                ></Notify_Dialog>
+                           
                             <Button size="small" onClick={() => {
                                 navigate("/post-HouseInfoPage", { state: [card, user] });
                             }}>보기</Button>
                         </CardActions>
-
                     </Card>
                 </Grid>
             ))}
