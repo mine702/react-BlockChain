@@ -1,5 +1,5 @@
-const SimpleStorage = artifacts.require("BuyHouse");
+const BuyHouse = artifacts.require("BuyHouse");
 
 module.exports = function (deployer) {
-  deployer.deploy(SimpleStorage);
+  deployer.deploy(BuyHouse);
 };

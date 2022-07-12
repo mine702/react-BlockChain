@@ -11,10 +11,12 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 //#endregion
 import BuyHouse from "../../contracts/BuyHouse.json"
+import NFT from "../../contracts/NFT.json";
 import Web3 from 'web3';
 
 let web3;
 let instance;
+let NFT_instance;
 let buyhouse = BuyHouse
 
 function Notify_Dialog(props) {
@@ -29,28 +31,39 @@ function Notify_Dialog(props) {
   const [sellerImg] = useState(value[0].files);
   const [locations] = useState(value[0].location);
   const [buyername] = useState(value[1][0].name);
+  const [NFTHash] = useState(value[0].NFTHash);
   const [accounts, setAccounts] = useState("");
 
   useEffect(() => {
     async function load() {
       web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
       setAccounts(await web3.eth.getAccounts());
+      
 
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = buyhouse.networks[networkId];
+      const NFTNetwork = NFT.networks[networkId];
 
       instance = new web3.eth.Contract(buyhouse.abi, deployedNetwork.address);
-      //console.log(value);
+
+      NFT_instance = new web3.eth.Contract(NFT.abi, NFTNetwork.address);
+      console.log(NFT_instance);
+      
     }
     load();
   }, []);
 
   async function BuyHouse() {
     try{
-      await instance.methods.buyRealEstate(sellerAddress, locations, sellername, sellerImg, buyername, houseAddress, housePrice).send({
+      console.log(accounts);
+      // await instance.methods.buyRealEstate(sellerAddress, locations, sellername, sellerImg, buyername, houseAddress, housePrice).send({
+      //   from: accounts[0],
+      //   value: web3.utils.toWei(housePrice, "ether"),    //wei
+      //   gas: 5000000,
+      // })
+      await NFT_instance.methods.safeTransferFrom(accounts[0],'0x2DcCa9B61E50D79A90a813fcD6a42c3A3Ac52e6f',1).send({
         from: accounts[0],
-        value: web3.utils.toWei(housePrice, "ether"),    //wei
-        gas: 5000000,
+        gas: 5000000
       })
       alert("구매완료")
       window.location.replace("/post-MainPage")

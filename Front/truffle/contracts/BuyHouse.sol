@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.4.23;
+pragma solidity >=0.4.23;
 pragma experimental ABIEncoderV2;
 
 contract BuyHouse {
@@ -13,12 +13,13 @@ contract BuyHouse {
     uint256 housePrice;
   }
 
+
   event BuyLogText(string sellerName, string buyerName, string houseAddress, uint256 housePrice);
 
   HouseInfo[] public House;
 
-  function buyRealEstate(address sellerAddress, string locations, string sellerName,string sellerImg, string buyerName, string houseAddress, uint256 housePrice )public payable{
-    sellerAddress.transfer(msg.value);
+  function buyRealEstate(address sellerAddress, string memory locations, string memory sellerName,string memory sellerImg, string memory buyerName, string memory houseAddress, uint256 housePrice )public payable{
+    payable(sellerAddress).transfer(msg.value);
     House.push(HouseInfo(locations,sellerName,sellerImg,buyerName,houseAddress,housePrice));
     emit BuyLogText(sellerName ,buyerName , houseAddress , housePrice );
   }

@@ -26,7 +26,13 @@ import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 import FormData from 'form-data';
 
+import NFT from "../../../contracts/NFT.json";
+import Web3 from 'web3';
+
 let socket;
+let NFT_Hash;
+let web3;
+let NFT_instance;
 
 function HouseInfo_insert() {
 
@@ -37,8 +43,24 @@ function HouseInfo_insert() {
 
   const [file, setFile] = useState();
   const [myipfsHash, setIPFSHASH] = useState('');
+  const [accounts, setAccounts] = useState("");
+
+  useEffect(() => {
+    async function load() {
+      web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
+      setAccounts(await web3.eth.getAccounts());
+
+      const networkId = await web3.eth.net.getId();
+      const NFTNetwork = NFT.networks[networkId];
+
+      NFT_instance = new web3.eth.Contract(NFT.abi, NFTNetwork.address);
+      console.log(NFT_instance);
+    }
+    load();
+  }, []);
 
   const handleFile = async (fileToHandle) =>{
+
     console.log('starting')
 
     // initialize the form data
@@ -46,8 +68,12 @@ function HouseInfo_insert() {
 
     // append the file form data to 
     formData.append("file", fileToHandle)
-
+    
+    
     // call the keys from .env
+    const filename = fileToHandle.name;
+    const filenameStr = filename.split('.');
+    //console.log(filenameStr[0]);
 
     // the endpoint needed to upload the file
     const url =  `https://api.pinata.cloud/pinning/pinFileToIPFS`
@@ -67,9 +93,51 @@ function HouseInfo_insert() {
   )
 
   console.log(response)
+  Make_Json(filenameStr[0], response.data.IpfsHash);
 
   // get the hash
   //setIPFSHASH(response.data.IpfsHash)
+}
+
+const Make_Json= async(filenameStr, img_cid)=>{
+  
+  var data = JSON.stringify({
+    "pinataOptions": {
+      "cidVersion": 1
+    },
+    "pinataMetadata": {
+      "name": `${filenameStr}.json`,
+      "Address" : "우송대학교",
+      "Price" : "1",
+      "keyvalues": {
+        "customKey": "customValue",
+        "customKey2": "customValue2"
+      }
+    },
+    "pinataContent": {
+      // "somekey": "somevalue"
+      "img" : `ipfs://${img_cid}`,
+      "description" : "위베어베어스",
+    }
+  });
+  
+  var config = {
+    method: 'post',
+    url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
+    headers: { 
+      'Content-Type': 'application/json', 
+      'pinata_api_key': '97f3182c5eaaa5c01af0',
+      'pinata_secret_api_key': '23a31aa6f14b878f66c3f3b4f639f03e8619b1851e872d99793680db7550ae7b',
+    },
+    data : data
+  };
+  
+ 
+  const res = await axios(config);
+ 
+  
+  console.log(res.data);
+  NFT_Hash = res.data.IpfsHash;
 }
 
 
@@ -97,6 +165,7 @@ function HouseInfo_insert() {
   const [price, setPrice] = useState();
 
   console.log(location.state[0])
+
   useEffect(() => {
     socket = io(ENDPOINT);
   }, []);
@@ -111,8 +180,12 @@ function HouseInfo_insert() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else {
-      socket.emit("House_Register", { area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress });
-      socket.on("House_Register_Result", (CheckMsg) => {
+      socket.emit("House_Register", { area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress, NFT_Hash });
+      socket.on("House_Register_Result",  async (CheckMsg) => {
+        await NFT_instance.methods.mintNFT(accounts[0], `ipfs://${NFT_Hash}`).send({
+          from: accounts[0],
+          gas: 5000000
+        })
         alert(CheckMsg);
         navigate("/post-MainPage", { state: location.state });
       })
@@ -215,7 +288,7 @@ function HouseInfo_insert() {
                   />
                 </Button>
                 {/* <input type="file" onChange={(event)=>setFile(event.target.files[0])}/> */}
-                <button onClick={()=>handleFile(file)}>IPFS등록</button>
+                <Button  variant="contained" onClick={()=>handleFile(file)}>IPFS등록</Button>
                 {/* {
                   //  render the hash
                   myipfsHash.length > 0 && <img height='200' src={`https://gateway.pinata.cloud/ipfs/${myipfsHash}`} alt='not loading'/>

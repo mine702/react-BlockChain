@@ -49,8 +49,8 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on('House_Register', ({ area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress }) => {
-    dbcontrol.db_House_Register( area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress);
+  socket.on('House_Register', ({ area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress, NFT_Hash }) => {
+    dbcontrol.db_House_Register( area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress, NFT_Hash);
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
 
