@@ -1,6 +1,8 @@
+//#region 상위 컴포넌트
 import React from 'react';
+//#endregion
 
-
+//#region 채팅 로그 기록 함수
 function LogText(props){
 
     const {log} = props;
@@ -13,5 +15,6 @@ function LogText(props){
         </div>
     )
 }
+//#endregion
 
 export default LogText;

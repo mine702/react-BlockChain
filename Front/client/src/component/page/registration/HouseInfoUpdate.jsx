@@ -31,16 +31,20 @@ function CheckOutForm() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    //#region useState 변수
     const [_id] = useState(location.state[0]._id);
     const [files, setFiles] = useState(location.state[0].files);
     const [area, setArea] = useState(location.state[0].location);
     const [address, setAddress] = useState(location.state[0].address);
     const [checked, setCheckedButtons] = useState(false);
     const [price, setPrice] = useState(location.state[0].price);
+    //#endregion
 
+    //#region 이미지 파일 인코딩
     const encodeFileToBase64 = (fileBlob) => {
         const reader = new FileReader();
         reader.readAsDataURL(fileBlob);
+        
         return new Promise((resolve) => {
             reader.onload = () => {
                 setFiles(reader.result);
@@ -48,11 +52,15 @@ function CheckOutForm() {
             };
         });
     };
+    //#endregion
 
+    //#region uesEffect
     useEffect(() => {
         socket = io(ENDPOINT);
     }, []);
+    //#endregion
 
+    //#region 개인정보 동의 여부
     function House_Correction() {
         if (checked === false) {
             alert("개인정보 동의를 하세요");
@@ -68,7 +76,9 @@ function CheckOutForm() {
             })
         }
     }
+    //#endregion
 
+    //#region 체크박스 변경
     function CheckBoxControl() {
         if (checked === false) {
             setCheckedButtons(true);
@@ -77,6 +87,9 @@ function CheckOutForm() {
             setCheckedButtons(false);
         }
     }
+    //#endregion
+
+    //#region 렌더링
     return (
         <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
             <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
@@ -181,6 +194,7 @@ function CheckOutForm() {
             </Paper>
         </Container>
     );
+    //#endregion
 }
 
 export default CheckOutForm;

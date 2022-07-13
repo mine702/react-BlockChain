@@ -1,6 +1,5 @@
 //#region react
 import React, { useEffect } from "react";
-import io from "socket.io-client";
 //#endregion
 
 //#region mui
@@ -13,7 +12,13 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { Button } from "@mui/material";
 //#endregion
 
+//#region socket.io
+import io from "socket.io-client";
+//#endregion
+
+//#region 전역 변수
 let socket;
+//#endregion
 
 function RoomList(props) {
 
@@ -21,13 +26,17 @@ function RoomList(props) {
 
     const { value, username } = props;
 
+    //#region uesEffect
     useEffect(() => {
         socket = io(ENDPOINT);
     }, []);
+    //#endregion
 
-    async function RoomSerach(value) {
-        socket.emit("Search_Room", { value });
-        await socket.on('Search_Room_Result', (result) => {
+    //#region 채팅방 검색
+    async function RoomSearach(value) {
+
+        socket.emit("Search_Room", { value });  // 채팅방 검색
+        await socket.on('Search_Room_Result', (result) => {  //채팅방 검색결과
             if (result.result[0].Buyername === username) {
                 socket.emit("GetOutRoom_Buyername", { value, username });
                 socket.on('GetOutRoom_Buyername_Result', () => {
@@ -36,13 +45,13 @@ function RoomList(props) {
                         if (result.result[0].Sellername === null) {
                             socket.emit("GetOutRoom", { value });
                             socket.on('GetOutRoom_Result', (result) => {
-                                alert(result)
-                                window.location.replace("/post-MainPage")
-                            })
+                                alert(result);
+                                window.location.replace("/post-MainPage");
+                            });
                         }
                         else{
-                            alert("삭제완료")
-                            window.location.replace("/post-MainPage")
+                            alert("삭제완료");
+                            window.location.replace("/post-MainPage");
                         }
                     })
                 })
@@ -55,19 +64,22 @@ function RoomList(props) {
                         if (result.result[0].Buyername === null) {
                             socket.emit("GetOutRoom", { value });
                             socket.on('GetOutRoom_Result', (result) => {
-                                alert(result)
-                                window.location.replace("/post-MainPage")
-                            })
+                                alert(result);
+                                window.location.replace("/post-MainPage");
+                            });
                         }
                         else{
-                            alert("삭제완료")
-                            window.location.replace("/post-MainPage")
+                            alert("삭제완료");
+                            window.location.replace("/post-MainPage");
                         }
                     })
                 })
             }
         })
     }
+    //#endregion
+
+    //#region 렌더링
     return (
         <div>
             {value.map((value) => (
@@ -79,7 +91,7 @@ function RoomList(props) {
                         <Chatting value={value} buyername={username}></Chatting>
                         <Button
                             onClick={() => {
-                                RoomSerach(value)
+                                RoomSearach(value)
                             }}
                         >OUT</Button>
                     </ListItem>
@@ -88,6 +100,7 @@ function RoomList(props) {
             ))}
         </div>
     );
+    //#endregion
 }
 
 export default RoomList;

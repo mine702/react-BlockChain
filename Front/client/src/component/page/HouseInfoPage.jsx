@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
@@ -32,48 +31,52 @@ import Transaction_log from "../ui/TransactionText"
 import BuyHouseContract from "../../contracts/BuyHouse.json"
 //#endregion
 
+//#region 전역변수
 let web3;
 let instance;
-let arr= [];
+let All_record= [];
+//#endregion
 
 function HouseInfoPage() {
 
     const navigate = useNavigate();
     const location = useLocation();
 
+    //#region useState 변수
     const [sellername] = useState(location.state[0].name);
     const [houseAddress] = useState(location.state[0].address)
     const [buyername] = useState(location.state[1][0].name);
 
-    const toggleDrawer = (anchor, open) => (event) => {
-        if (
-            event &&
-            event.type === 'keydown' &&
-            (event.key === 'Tab' || event.key === 'Shift')
-        ) {
-            return;
-        }
-        setState({ ...state, [anchor]: open });
-    };
-
     const [state, setState] = React.useState({
         left: false
     });
-    const [transaction_record, setTransaction_record] = useState([])
-    const [transaction_textlog, setTransaction_textlog] = useState([])
+    
+    const [transaction_record, setTransaction_record] = useState([]);
+    const [transaction_textlog, setTransaction_textlog] = useState([]);
+    //#endregion
 
+    //#region 메뉴바 control
+    const toggleDrawer = (anchor, open) => (event) => {
+        if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift') ) {
+            return;
+        }
+
+        setState({ ...state, [anchor]: open });
+    };
+    //#endregion
+
+    //#region useEffect
+    //총 거래기록
     useEffect(()=>{
-        for(let i=0; i<transaction_record.length; i++)
-        {
-            if(transaction_record[i].houseAddress===houseAddress)
-            {
-                arr.push({sellerName : transaction_record[i].sellerName, buyerName: transaction_record[i].buyerName, housePrice : transaction_record[i].housePrice})
-                setTransaction_textlog(arr); 
+        for(let i=0; i<transaction_record.length; i++){
+            if(transaction_record[i].houseAddress === houseAddress){
+                All_record.push({sellerName : transaction_record[i].sellerName, buyerName: transaction_record[i].buyerName, housePrice : transaction_record[i].housePrice});
+                setTransaction_textlog(All_record); 
             }   
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[transaction_record])
+    },[transaction_record]);
 
+    //로딩
     useEffect(() => {
         async function load() {          
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
@@ -82,11 +85,12 @@ function HouseInfoPage() {
             instance = new web3.eth.Contract(BuyHouseContract.abi, deployedNetwork.address);
             setTransaction_record(await instance.methods.readRealEstate().call());
         }
+        
         load();
-       
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location]);   
+    //#endregion
 
+    //#region 렌더링
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -205,6 +209,7 @@ function HouseInfoPage() {
             </Box>
         </Box>
     );
+    //#endregion
 }
 
 export default HouseInfoPage;

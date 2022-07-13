@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useState, useEffect } from 'react';
 import io from "socket.io-client";
@@ -35,20 +34,18 @@ import Mainpage_Card from '../ui/Mainpage_Card';
 import BuyLogText from '../ui/BuyLogText';
 //#endregion
 
+//#region 라이브러리
 import Web3 from 'web3';
 import RealEstate from '../../contracts/BuyHouse.json';
-
+//#endregion
 
 const theme = createTheme();
 
+//#region 전역변수
 let socket;
 let web3;
 let instance;
-
-
-
-
-
+//#endregion
 
 function Mainpage(props) {
 
@@ -56,11 +53,12 @@ function Mainpage(props) {
 
     let Arr_BuyLogText = [];
 
-
     const ENDPOINT = "http://localhost:8080";
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    //#region useState 변수
     const [cards, setCardsLow] = useState([]);
     const [area, setArea] = useState("");
     const [username, setUsername] = useState("");
@@ -69,36 +67,29 @@ function Mainpage(props) {
         left: false
     });
     const [ALL_BuyLogText, setBuyLogText] = useState([]);
+    //#endregion
 
-    const toggleDrawer = (anchor, open) => (event) => {
-        if (
-            event &&
-            event.type === 'keydown' &&
-            (event.key === 'Tab' || event.key === 'Shift')
-        ) {
-            return;
-        }
-        setState({ ...state, [anchor]: open });
-    };
-
+    //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);
-       
       
         setUsername(location.state[0].name);
-        async function load() {
 
+        async function load() {
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             //setAccounts(await web3.eth.getAccounts());      
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = RealEstate.networks[networkId];
             instance = new web3.eth.Contract(RealEstate.abi, deployedNetwork.address);
+
             instance.events.BuyLogText({}, { fromBlock: 0, toBlock: 'latest' }, (err, res) => {  //처음부터 끝까지 검색
                 Arr_BuyLogText.push(`${res.returnValues.buyerName}님이 ${res.returnValues.sellerName}님의 ${res.returnValues.houseAddress}를 ${res.returnValues.housePrice}eth로 매입하셨습니다.`);
                 setBuyLogText(Arr_BuyLogText);
-            })
-            setBuyCards(await instance.methods.readRealEstate().call())
+            });
+
+            setBuyCards(await instance.methods.readRealEstate().call());
         }
+
         load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket])
@@ -112,7 +103,19 @@ function Mainpage(props) {
             })
         }
     }, [area])
+    //#endregion
+    
+    //#region 메뉴바 control
+    const toggleDrawer = (anchor, open) => (event) => {
+        if ( event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift') ) {
+            return;
+        }
+        
+        setState({ ...state, [anchor]: open });
+    };
+    //#endregion
 
+    //#region 렌더링
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -206,7 +209,6 @@ function Mainpage(props) {
                                 navigate("/post-Checkout", { state: location.state })
                             }}>판매 등록</Button>
                             <Button variant="outlined">매물 검색</Button>
-                            <Button variant="outlined" >구매</Button>
                         </Stack>
                     </Container>
                 </Box>
@@ -233,6 +235,7 @@ function Mainpage(props) {
             {/* End footer */}
         </ThemeProvider>
     );
+    //#endregion
 }
 
 export default Mainpage;

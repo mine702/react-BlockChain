@@ -10,20 +10,27 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 //#endregion
+
+//#region 라이브러리
 import BuyHouse from "../../contracts/BuyHouse.json"
 import NFT from "../../contracts/NFT.json";
 import Web3 from 'web3';
+//#endregion
 
+//#region 전역변수
 let web3;
 let instance;
 let NFT_instance;
-let buyhouse = BuyHouse
+let buyhouse = BuyHouse;
+//#endregion
 
 function Notify_Dialog(props) {
 
   const { warningHead, warning, warningButton, value } = props
 
+  //#region useState
   const [open, setOpen] = React.useState(false);
+
   const [sellername] = useState(value[0].name);
   const [sellerAddress] = useState(value[0].MetaMaskAcc);
   const [housePrice] = useState(value[0].price);
@@ -31,8 +38,11 @@ function Notify_Dialog(props) {
   const [sellerImg] = useState(value[0].files);
   const [locations] = useState(value[0].location);
   const [buyername] = useState(value[1][0].name);
+
   const [NFTHash] = useState(value[0].NFTHash);
+
   const [accounts, setAccounts] = useState("");
+  //#endregion
 
   useEffect(() => {
     async function load() {
@@ -48,11 +58,12 @@ function Notify_Dialog(props) {
 
       NFT_instance = new web3.eth.Contract(NFT.abi, NFTNetwork.address);
       console.log(NFT_instance);
-      
     }
+
     load();
   }, []);
 
+  //#region 구매(이벤트)
   async function BuyHouse() {
     try{
       console.log(accounts);
@@ -65,23 +76,26 @@ function Notify_Dialog(props) {
         from: accounts[0],
         gas: 5000000
       })
-      alert("구매완료")
-      window.location.replace("/post-MainPage")
+      alert("구매완료");
+      window.location.replace("/post-MainPage");
     }
     catch(e){
-      alert(e.message)
-      window.location.replace("/post-MainPage")
+      alert(e.message);
+      window.location.replace("/post-MainPage");
     }
   }
+  //#endregion
 
+  //#region 구매 모달 open & close
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);    
   };
+  //#endregion
 
+  //#region 렌더링
   return (
     <div>
       <Button size="small" onClick={handleClickOpen}>{warningButton}</Button>
@@ -109,6 +123,7 @@ function Notify_Dialog(props) {
       </Dialog>
     </div>
   );
+  //#endregion
 }
 
 export default Notify_Dialog;

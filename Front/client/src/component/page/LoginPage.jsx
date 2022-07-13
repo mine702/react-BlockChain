@@ -20,11 +20,9 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 //#endregion
 
-
 const theme = createTheme();
 
 let socket;
-
 
 function Login(props) {
 
@@ -32,13 +30,18 @@ function Login(props) {
 
     const navigate = useNavigate();
 
+    //#region useState 변수
     const [id, setId] = useState("");
     const [pw, setPw] = useState("");
+    //#endregion
 
+    //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);
     }, []);    
+    //#endregion
 
+    //#region 렌더링
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -122,6 +125,7 @@ function Login(props) {
             </Container>
         </ThemeProvider>
     );
+    //#endregion
 }
 
 export default Login;

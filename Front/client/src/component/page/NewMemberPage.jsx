@@ -28,6 +28,9 @@ const NewMember = () => {
 
     const ENDPOINT = "http://localhost:8080";
 
+    const navigate = useNavigate();
+
+    //#region useState
     const [name, setName] = useState("");
     const [id, setId] = useState("");
     const [pw, setPw] = useState("");
@@ -36,14 +39,15 @@ const NewMember = () => {
 
     const [idcheck, setIdCheck] = useState(false);
     const [infocheck, setInfocheck] = useState(false);
+    //#endregion
 
-    
-    const navigate = useNavigate();
-
+    //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);
-      }, []);
+    }, []);
+    //#endregion
     
+    //#region 회원가입 버튼(이벤트)
     function Sign_up(){
         if(infocheck === false){
             alert("개인정보 동의를 하세요");
@@ -62,7 +66,9 @@ const NewMember = () => {
             navigate('/');
         }
     }
+    //#endregion
 
+    //#region 체크박스 확인
     function CheckBoxBool(){
         if(infocheck === false){
             setInfocheck(true);
@@ -71,11 +77,13 @@ const NewMember = () => {
             setInfocheck(false);
         }
     }
+    //#endregion
 
+    //#region ID중복 확인
     function IdCheck() {
-
         if (id !== "") {
             socket.emit("idCheck", { id });
+            
             socket.on( "idCheck_rusult", (result)=>{
                 if(result.result === true){
                     alert("중복된 ID 입니다.")
@@ -91,7 +99,9 @@ const NewMember = () => {
             alert("ID를 입력하세요");
         }
     }
+    //#endregion
 
+    //#region 렌더링
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -215,6 +225,7 @@ const NewMember = () => {
             </Container>
         </ThemeProvider>
     );
+    //#endregion
 }
 
 export default NewMember;

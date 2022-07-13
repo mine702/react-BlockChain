@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React from 'react';
 //#endregion
@@ -63,12 +62,14 @@ function Mypage_BuyCard(props) {
             )
         }
     }
+    //#region 렌더링
     return (
         <Grid container spacing={4}>
             {cards.map((card) => (
                 UserNameCard(card)
             ))}
         </Grid>)
+    //#endregion
 }
 
 export default Mypage_BuyCard;

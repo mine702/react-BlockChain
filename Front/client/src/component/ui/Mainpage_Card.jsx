@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +12,9 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 //#endregion
 
+//#region 하위 컴포넌트
 import Notify_Dialog from "./Notify_Dialog";
+//#endregion
 
 function Mainpage_Card(props) {
 
@@ -33,15 +34,13 @@ function Mainpage_Card(props) {
 
     let buy_State = buyButtonText.a;
 
-    function buystate()
-    {
+    function buystate() {
         if( buy_State == buyButtonText.a){
             buy_State=buyButtonText.b;
         }
         else if(buy_State == buyButtonText.b){
             buy_State=buyButtonText.a;
         }
-       
     }
 
     return (

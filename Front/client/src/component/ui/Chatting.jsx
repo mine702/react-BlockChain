@@ -13,6 +13,7 @@ import LogText from "./LogText"
 import Box from '@mui/material/Box';
 //#endregion
 
+//#region CSS Style
 const style = {
     position: 'absolute',
     top: '50%',
@@ -26,68 +27,75 @@ const style = {
     px: 4,
     pb: 3,
 };
+//#endregion
 
+//#region 전역 변수
 let socket;
+//#endregion
+
 
 function Chatting(props) {
 
     const ENDPOINT = "http://localhost:8080";
 
-    const { value , buyername } = props
+    const { value , buyer_name } = props;
 
+    //#region useState
     const [modalIsOpen, setIsOpen] = useState(false);
-    const [chatlog, setChatlog] = useState([{}]);
-    const [sendmsg, setSendMsg] = useState("");
-    const [RoomNumber] = useState(value); 
-
+    const [chat_log, set_Chatlog] = useState([{}]);
+    const [send_msg, set_SendMsg] = useState("");
+    const [Room_Number] = useState(value); 
+    //#endregion
    
-    let roomnumber = 0;
+    let room_number = 0;
     
-    // 함수가 실행될때 modal의 상태를 true로 바꿔준다.
+    //#region 함수가 실행될때 modal의 상태를 true로 바꿔준다.
     function openModal() {
-        roomnumber=RoomNumber;
-        socket.emit("Chatting_Join",{roomnumber});
-        socket.on('Join_return',({roomnumber})=>{
+        room_number=Room_Number;
+        socket.emit("Chatting_Join",{room_number});
+        socket.on('Join_return',({room_number})=>{
             console.log("성공");
         })
-        socket.emit("Load_Msg_Chat",{RoomNumber});
+        socket.emit("Load_Msg_Chat",{Room_Number});
         socket.on('Return_Load_Msg_Chat',({result})=> {
-            setChatlog(result);
-        //setChatlog([...chatlog, { name: Oname, msg: sendmsg }]);
+            set_Chatlog(result);
         })
         setIsOpen(true);
         
     }
+    //#endregion
 
-    // 함수가 실행될때 modal의 상태를 false로 바꿔준다.
+    //#region 함수가 실행될때 modal의 상태를 false로 바꿔준다. 
     function closeModal() {
         setIsOpen(false);
     }
+    //#endregion
 
-
+    //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ENDPOINT]);
 
     useEffect(()=>{
         
-        socket.on("Msg_return", ({ buyername, sendmsg }) => {
+        socket.on("Msg_return", ({ buyer_name, send_msg }) => {
             console.log("신호");
-            setChatlog([...chatlog, { name: buyername, msg: sendmsg }]);
+            set_Chatlog([...chat_log, { name: buyer_name, msg: send_msg }]);
         })
-        if(chatlog.length !== 0 && chatlog.length !== 1)
-        {
-            socket.emit("Save_Msg",({chatlog, RoomNumber}));
+        if(chat_log.length !== 0 && chat_log.length !== 1) {
+            socket.emit("Save_Msg",({chat_log, Room_Number}));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[chatlog]);
+    },[chat_log]);
+    //#endregion
 
+    //#region 메세지 전달 함수
     function SendMessage() {
         
-        socket.emit("Message_Send", { buyername, sendmsg, RoomNumber });        
+        socket.emit("Message_Send", { buyer_name, send_msg, Room_Number });        
     }
+    //#endregion
 
+    //#region 렌더링
     return (
         <React.Fragment>
             <Button onClick={openModal}>Chatting</Button>
@@ -99,7 +107,7 @@ function Chatting(props) {
                 aria-describedby="child-modal-description"
             >
                 <Box sx={{ ...style }}>
-                    <LogText log={chatlog} ></LogText>
+                    <LogText log={chat_log} ></LogText>
                     <TextField
                         margin='normal'
                         required
@@ -109,7 +117,7 @@ function Chatting(props) {
                         name="Message"
                         autoComplete="Message"
                         autoFocus
-                        onChange={(e) => setSendMsg(e.target.value)}
+                        onChange={(e) => set_SendMsg(e.target.value)}
                     />
                     <ButtonGroup disableElevation variant="contained">
                         <Button variant="contained" onClick={() => { closeModal() }}>CLOSE</Button>
@@ -119,6 +127,7 @@ function Chatting(props) {
             </Modal>
         </React.Fragment>
     );
+    //#endregion
 }
 
 export default Chatting;

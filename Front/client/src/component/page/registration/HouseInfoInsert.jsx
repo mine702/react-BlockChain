@@ -23,16 +23,20 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 //#endregion
 
+//#region 라이브러리
 import axios from 'axios';
 import FormData from 'form-data';
+import Web3 from 'web3';
+//#endregion
 
 import NFT from "../../../contracts/NFT.json";
-import Web3 from 'web3';
 
+//#region 전역 변수
 let socket;
 let NFT_Hash;
 let web3;
 let NFT_instance;
+//#endregion
 
 function HouseInfo_insert() {
 
@@ -41,10 +45,24 @@ function HouseInfo_insert() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [file, setFile] = useState();
-  const [myipfsHash, setIPFSHASH] = useState('');
-  const [accounts, setAccounts] = useState("");
+  //#region uesState 변수
+  const [selluserId] = useState(location.state[0].id);
+  const [sellusername] = useState(location.state[0].name);
+  const [sellusernumber] = useState(location.state[0].number);
+  const [sellerMetaAddress]=useState(location.state[0].MetaMaskAcc);
 
+  const [area, setArea] = useState("");
+  const [address, setAddress] = useState("");
+  const [agree, setAgree] = useState(false);
+  const [price, setPrice] = useState();
+
+  const [files, setFiles] = useState(images1);
+  
+  const [file, setFile] = useState();
+  const [accounts, setAccounts] = useState("");
+  //#endregion
+
+  //#region useEffect
   useEffect(() => {
     async function load() {
       web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
@@ -56,27 +74,26 @@ function HouseInfo_insert() {
       NFT_instance = new web3.eth.Contract(NFT.abi, NFTNetwork.address);
       console.log(NFT_instance);
     }
+
     load();
   }, []);
 
+  useEffect(() => {
+    socket = io(ENDPOINT);
+  }, []);
+  //#endregion
+
+  //#region 이미지 업로드
   const handleFile = async (fileToHandle) =>{
+    console.log('starting');
 
-    console.log('starting')
-
-    // initialize the form data
-    const formData = new FormData()
-
-    // append the file form data to 
-    formData.append("file", fileToHandle)
+    const formData = new FormData();
+    formData.append("file", fileToHandle);
     
-    
-    // call the keys from .env
-    const filename = fileToHandle.name;
-    const filenameStr = filename.split('.');
-    //console.log(filenameStr[0]);
+    const filename = fileToHandle.name;      //파일 이름.확장자
+    const filenameStr = filename.split('.'); //파일이름
 
-    // the endpoint needed to upload the file
-    const url =  `https://api.pinata.cloud/pinning/pinFileToIPFS`
+    const url =  `https://api.pinata.cloud/pinning/pinFileToIPFS` //파일 올리는 URL
 
     const response = await axios.post(
       url,
@@ -84,68 +101,65 @@ function HouseInfo_insert() {
       {
           maxContentLength: "Infinity",
           headers: {
-              "Content-Type": `multipart/form-data;boundary=${formData._boundary}`, 
+              'Content-Type': `multipart/form-data;boundary=${formData._boundary}`, 
               'pinata_api_key': '97f3182c5eaaa5c01af0',
               'pinata_secret_api_key': '23a31aa6f14b878f66c3f3b4f639f03e8619b1851e872d99793680db7550ae7b',
-
           }
       }
-  )
+    );
 
-  console.log(response)
-  Make_Json(filenameStr[0], response.data.IpfsHash);
+    console.log(response);
+    Make_Json(filenameStr[0], response.data.IpfsHash); //response.data.IpfsHash : 매물 해시값
+  }
+  //#endregion
 
-  // get the hash
-  //setIPFSHASH(response.data.IpfsHash)
-}
-
-const Make_Json= async(filenameStr, img_cid)=>{
-  
-  var data = JSON.stringify({
-    "pinataOptions": {
-      "cidVersion": 1
-    },
-    "pinataMetadata": {
-      "name": `${filenameStr}.json`,
-      "Address" : "우송대학교",
-      "Price" : "1",
-      "keyvalues": {
-        "customKey": "customValue",
-        "customKey2": "customValue2"
+  //#region 제이슨 파일 업로드
+  const Make_Json= async(filenameStr, img_cid)=>{
+    
+    //#region JSON 변환
+    var data = JSON.stringify({
+      "pinataOptions": {
+        "cidVersion": 1
+      },
+      "pinataMetadata": {
+        "name": `${filenameStr}.json`,
+        "Address" : "우송대학교",
+        "Price" : "1",
+        "keyvalues": {
+          "customKey": "customValue",
+          "customKey2": "customValue2"
+        }
+      },
+      "pinataContent": {
+        "img" : `ipfs://${img_cid}`,
+        "description" : "위베어베어스",
       }
-    },
-    "pinataContent": {
-      // "somekey": "somevalue"
-      "img" : `ipfs://${img_cid}`,
-      "description" : "위베어베어스",
-    }
-  });
+    });
+    //#endregion
+    
+    var config = {
+      method: 'post',
+      url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',  //JSON 올리는 URL
+      headers: { 
+        'Content-Type': 'application/json', 
+        'pinata_api_key': '97f3182c5eaaa5c01af0',
+        'pinata_secret_api_key': '23a31aa6f14b878f66c3f3b4f639f03e8619b1851e872d99793680db7550ae7b',
+      },
+      data : data
+    };
   
-  var config = {
-    method: 'post',
-    url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
-    headers: { 
-      'Content-Type': 'application/json', 
-      'pinata_api_key': '97f3182c5eaaa5c01af0',
-      'pinata_secret_api_key': '23a31aa6f14b878f66c3f3b4f639f03e8619b1851e872d99793680db7550ae7b',
-    },
-    data : data
-  };
+    const res = await axios(config);
   
- 
-  const res = await axios(config);
- 
-  
-  console.log(res.data);
-  NFT_Hash = res.data.IpfsHash;
-}
-
+    console.log(res.data);
+    NFT_Hash = res.data.IpfsHash;  //JSON 해쉬 값
+  }
+  //#endregion
 
   //#region 이미지 인코딩
-  const [files, setFiles] = useState(images1);
   const encodeFileToBase64 = (fileBlob) => {
     const reader = new FileReader();
     reader.readAsDataURL(fileBlob);
+
     return new Promise((resolve) => {
       reader.onload = () => {
         setFiles(reader.result);
@@ -155,22 +169,7 @@ const Make_Json= async(filenameStr, img_cid)=>{
   };
   //#endregion
 
-  const [selluserId] = useState(location.state[0].id)
-  const [sellusername] = useState(location.state[0].name)
-  const [sellusernumber] = useState(location.state[0].number)
-  const [sellerMetaAddress]=useState(location.state[0].MetaMaskAcc);
-  const [area, setArea] = useState("");
-  const [address, setAddress] = useState("");
-  const [agree, setAgree] = useState(false);
-  const [price, setPrice] = useState();
-
-  console.log(location.state[0])
-
-  useEffect(() => {
-    socket = io(ENDPOINT);
-  }, []);
-
-
+  //#region 매물등록
   function House_register() {
 
     if (agree === false) {
@@ -181,17 +180,20 @@ const Make_Json= async(filenameStr, img_cid)=>{
     }
     else {
       socket.emit("House_Register", { area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress, NFT_Hash });
+
       socket.on("House_Register_Result",  async (CheckMsg) => {
         await NFT_instance.methods.mintNFT(accounts[0], `ipfs://${NFT_Hash}`).send({
           from: accounts[0],
           gas: 5000000
-        })
+        });
         alert(CheckMsg);
         navigate("/post-MainPage", { state: location.state });
       })
     }
   }
+  //#endregion
 
+  //#region 동의여부
   function CheckBoxBool() {
     if (agree === false) {
       setAgree(true);
@@ -200,7 +202,9 @@ const Make_Json= async(filenameStr, img_cid)=>{
       setAgree(false);
     }
   }
+  //#endregion
   
+  //#region 렌더링
   return (
     <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
       <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
@@ -314,6 +318,7 @@ const Make_Json= async(filenameStr, img_cid)=>{
       </Paper>
     </Container>
   );
+  //#endregion
 }
 
 export default HouseInfo_insert;

@@ -26,36 +26,42 @@ const theme = createTheme();
 
 const NewMember = () => {
 
-    const navigate = useNavigate();
-    const location = useLocation()
-
     const ENDPOINT = "http://localhost:8080";
 
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    //#region useState 변수
     const [name, setName] = useState(location.state[0][0].name);
     const [id] = useState(location.state[0][0].id);
     const [pw, setPw] = useState(location.state[0][0].pw);
     const [phoneNum, setPhoneNum] = useState(location.state[0][0].number);
     const [MetaMaskAcc, setMetaMaskAcc] = useState(location.state[0][0].MetaMaskAcc);
+    //#endregion
 
-
+    //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);
     }, []);
+    //#endregion
 
+    //#region 정보수정 버튼(이벤트)
     function Sign_up() {
         if (name === "" || id === "" || pw === "" || phoneNum === "" || MetaMaskAcc === "") {
             alert("입력하지 않은 정보가 있습니다");
         }
         else {
-            console.log(phoneNum)
+            console.log(phoneNum);
             socket.emit("UserUpdate", { name, id, pw, phoneNum, MetaMaskAcc });
             socket.on("UserUpdate_Result", (CheckMsg) => {
                 alert(CheckMsg);
-            })
+            });
             navigate('/');
         }
     }
+    //#endregion
 
+    //#region 렌더링
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -154,6 +160,7 @@ const NewMember = () => {
             </Container>
         </ThemeProvider>
     );
+    //#endregion
 }
 
 export default NewMember;

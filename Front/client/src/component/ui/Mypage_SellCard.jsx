@@ -1,6 +1,6 @@
-/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 //#endregion
 
 //#region mui
@@ -9,17 +9,18 @@ import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { useNavigate } from "react-router-dom";
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 //#endregion
 
-//#region component
+//#region socket.io
 import io from "socket.io-client";
 //#endregion
 
+//#region 전역 변수
 let socket;
+//#endregion
 
 function Mypage_SellCard(props) {
 
@@ -29,10 +30,13 @@ function Mypage_SellCard(props) {
 
     const { cards, user } = props;
     
+    //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);
     },[])
+    //#endregion
 
+    //#region 렌더링
     return (
         <Grid container spacing={4}>
             {cards.map((card) => (
@@ -79,6 +83,7 @@ function Mypage_SellCard(props) {
             </Grid> 
             ))}
         </Grid>)
+    //#endregion
 }
 
 export default Mypage_SellCard;

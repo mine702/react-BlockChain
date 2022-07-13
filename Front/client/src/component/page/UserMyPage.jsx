@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useState, useEffect } from 'react';
 import io from "socket.io-client";
@@ -34,48 +33,62 @@ function PrimarySearchAppBar() {
 
     const ENDPOINT = "http://localhost:8080";
 
-    const navigate = useNavigate()
-    const location = useLocation()
-    const [cards, setCardsLow] = useState([]);
     let number = 0;
     let name = 0;
+        
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    //#region useState 변수
+    const [cards, setCardsLow] = useState([]);
+
     const [username] = useState(location.state[0][0].name);
-    const [buycard] = useState(location.state[1])
+    const [buycard] = useState(location.state[1]);
+
+    const [state, setState] = React.useState({
+        left: false
+    });
+
+    //#endregion
+
+    //#region useEffect
     useEffect(() => {
         async function load() {
             socket = io(ENDPOINT);
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            number = location.state[0][0].number
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            name = location.state[0][0].name            
+            console.log(location.state);
+            number = location.state[0][0].number;
+            //name = location.state[0][0].name;       
         }
+
         load();
     }, [location]);
 
     useEffect(() => {
         socket.emit("MyPageSell", { name, number });
+
         socket.on("MyPageSell_Result", (Result) => {
             setCardsLow(Result);
         })
-    }, [name, number])
+    }, [name, number]);
+    //#endregion
 
+    //#region 메뉴바 control
     const toggleDrawer = (anchor, open) => (event) => {
-        if (
-            event &&
-            event.type === 'keydown' &&
-            (event.key === 'Tab' || event.key === 'Shift')
-        ) {
+        if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
         }
+        
         setState({ ...state, [anchor]: open });
     };
-    const [state, setState] = React.useState({
-        left: false
-    });
-    function SendMessage() {
+    //#endregion
+
+    //#region Mypage -> MainPage
+    function MainPage_move() {
         navigate("/post-MainPage", { state: location.state[0] });
     }
+    //#endregion
 
+    //#region 렌더링
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -109,7 +122,7 @@ function PrimarySearchAppBar() {
                                         }} primary="LogOut" />
                                     </ListItemButton>
                                     <ListItemButton>
-                                        <ListItemText onClick={SendMessage} primary="MainPage" />
+                                        <ListItemText onClick={MainPage_move} primary="MainPage" />
                                     </ListItemButton>
                                     <ListItemButton>
                                         <ListItemText onClick={() => {
@@ -175,6 +188,7 @@ function PrimarySearchAppBar() {
 
         </Box>
     );
+    //#endregion
 }
 
 export default PrimarySearchAppBar;

@@ -1,8 +1,12 @@
-import React from "react";
-import Box from '@mui/material/Box';
-import { useEffect } from "react";
-import { useState } from "react";
+//#region 상위 컴포넌트
+import React, {useState, useEffect} from "react";
+//#endregion
 
+//#region mui
+import Box from '@mui/material/Box';
+//#endregion
+
+//#region CSS Style
 const style = {
     position: 'relative',
     whiteSpace: 'normal',
@@ -21,25 +25,31 @@ const style = {
     px: 4,
     pb: 3,
 };
+//#endregion
 
 function BuyLogText(props){
 
     const {LogText} = props;
-    const [ALL_BuyLogText,setBuyLogText] = useState([]);
+
+    //#region React Hook
+    const [ALL_BuyLogText,set_BuyLogText] = useState([]);
 
     useEffect(()=>{
-        setBuyLogText(LogText);
+        set_BuyLogText(LogText);
     },[LogText]);
+    //#endregion
 
+    //#region 렌더링
     return (
                 <Box sx={{ ...style }}>
                     <div>
-                    {ALL_BuyLogText.map((ALL_BuyLogText, index) => (
+                    {LogText.map((ALL_BuyLogText, index) => (
                         <p key={index}>{ALL_BuyLogText}<br></br></p>
                      ))}
                     </div>
                 </Box>
     )
+    //#endregion
 }
 
 export default BuyLogText;

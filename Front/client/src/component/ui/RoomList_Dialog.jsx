@@ -14,30 +14,42 @@ import Badge from '@mui/material/Badge'
 import MailIcon from '@mui/icons-material/Mail';
 //#endregion
 
-//#region component
-import io from "socket.io-client";
+//#region 하위 컴포넌트
 import RoomList from "./RoomList";
 //#endregion
 
-let socket;
+//#region socket.io
+import io from "socket.io-client";
+//#endregion
 
+//#region 전역 변수
+let socket;
+//#endregion
+
+//#region 채팅방 애니메이션
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
+//#endregion
 
 function FullScreenDialog(props) {
 
-    const ENDPOINT = "http://localhost:8080";
-
-    const [RoomNumbers , setRoomN] = useState([]);
-    const [open, setOpen] = useState(false);
-
     const {name} = props;
 
-    useEffect( ()=>{
-        socket = io(ENDPOINT)
-    });
+    const ENDPOINT = "http://localhost:8080";
 
+    //#region useState
+    const [RoomNumbers , setRoomN] = useState([]);
+    const [open, setOpen] = useState(false);
+    //#endregion
+
+    //#region useEffect
+    useEffect( ()=>{
+        socket = io(ENDPOINT);
+    });
+    //#endregion
+
+    //#region 버튼 클릭 이벤트
     const handleClickOpen = () => {
         socket.emit("RoomNumber" , {name});
         socket.on("RoomNuber_Result" ,(res)=>{
@@ -49,7 +61,9 @@ function FullScreenDialog(props) {
     const handleClose = () => {
         setOpen(false);
     };
+    //#endregion
 
+    //#region 렌더링
     return (
         <div >
             <IconButton onClick={handleClickOpen}>
@@ -83,6 +97,7 @@ function FullScreenDialog(props) {
             </Dialog>
         </div>
     );
+    //#endregion
 }
 
 export default FullScreenDialog;
