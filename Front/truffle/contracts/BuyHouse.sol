@@ -11,6 +11,8 @@ contract BuyHouse {
     string buyerName;    
     string houseAddress;
     uint256 housePrice;
+    string tokkenId;
+    address buyerAddress;
   }
 
 
@@ -18,9 +20,9 @@ contract BuyHouse {
 
   HouseInfo[] public House;
 
-  function buyRealEstate(address sellerAddress, string memory locations, string memory sellerName,string memory sellerImg, string memory buyerName, string memory houseAddress, uint256 housePrice )public payable{
+  function buyRealEstate(address sellerAddress, string memory locations, string memory sellerName,string memory sellerImg, string memory buyerName, string memory houseAddress, uint256 housePrice, string memory tokkenId )public payable{
     payable(sellerAddress).transfer(msg.value);
-    House.push(HouseInfo(locations,sellerName,sellerImg,buyerName,houseAddress,housePrice));
+    House.push(HouseInfo( locations, sellerName, sellerImg, buyerName, houseAddress, housePrice, tokkenId, msg.sender));
     emit BuyLogText(sellerName ,buyerName , houseAddress , housePrice );
   }
 

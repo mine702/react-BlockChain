@@ -62,7 +62,6 @@ function FullScreenDialog(props) {
         setOpen(false);
     };
     //#endregion
-
     //#region 렌더링
     return (
         <div >

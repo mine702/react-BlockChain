@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useState, useEffect } from 'react';
 import io from "socket.io-client";
@@ -37,6 +38,7 @@ import BuyLogText from '../ui/BuyLogText';
 //#region 라이브러리
 import Web3 from 'web3';
 import RealEstate from '../../contracts/BuyHouse.json';
+import NFTContract from '../../contracts/NFT.json'
 //#endregion
 
 const theme = createTheme();
@@ -45,6 +47,7 @@ const theme = createTheme();
 let socket;
 let web3;
 let instance;
+let NFTinstance;
 //#endregion
 
 function Mainpage(props) {
@@ -72,21 +75,18 @@ function Mainpage(props) {
     //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);
-      
         setUsername(location.state[0].name);
-
         async function load() {
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
-            //setAccounts(await web3.eth.getAccounts());      
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = RealEstate.networks[networkId];
+            const NFTdeployedNetwork = NFTContract.networks[networkId];
             instance = new web3.eth.Contract(RealEstate.abi, deployedNetwork.address);
-
+            NFTinstance = new web3.eth.Contract(NFTContract.abi, NFTdeployedNetwork.address);
             instance.events.BuyLogText({}, { fromBlock: 0, toBlock: 'latest' }, (err, res) => {  //처음부터 끝까지 검색
                 Arr_BuyLogText.push(`${res.returnValues.buyerName}님이 ${res.returnValues.sellerName}님의 ${res.returnValues.houseAddress}를 ${res.returnValues.housePrice}eth로 매입하셨습니다.`);
                 setBuyLogText(Arr_BuyLogText);
             });
-
             setBuyCards(await instance.methods.readRealEstate().call());
         }
 
@@ -104,13 +104,12 @@ function Mainpage(props) {
         }
     }, [area])
     //#endregion
-    
+
     //#region 메뉴바 control
     const toggleDrawer = (anchor, open) => (event) => {
-        if ( event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift') ) {
+        if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
         }
-        
         setState({ ...state, [anchor]: open });
     };
     //#endregion

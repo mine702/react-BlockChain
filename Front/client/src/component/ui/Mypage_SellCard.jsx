@@ -29,7 +29,6 @@ function Mypage_SellCard(props) {
     const navigate = useNavigate();
 
     const { cards, user } = props;
-    
     //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);
@@ -63,6 +62,9 @@ function Mypage_SellCard(props) {
                         </Typography>
                         <Typography sx={{ fontSize: 14 }} gutterBottom>
                             Price : {card.price}
+                        </Typography>
+                        <Typography sx={{ fontSize: 14 }} gutterBottom>
+                            NFTID : {card.tokkenId}
                         </Typography>
                     </CardContent>
                     <CardActions>

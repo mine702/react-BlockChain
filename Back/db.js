@@ -66,8 +66,8 @@ let dbcontrol =
         });
     },
 
-    db_House_Register: function (area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress, NFT_Hash) {
-        var query = { location: area, address: address, price: price, files: files, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc: sellerMetaAddress, NFTHash : NFT_Hash };
+    db_House_Register: function (area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res) {
+        var query = { location: area, address: address, price: price, files: PinataImage, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc: sellerMetaAddress, tokkenId: res };
         dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -160,6 +160,7 @@ let dbcontrol =
         return new Promise(resolve => {
             dbo.collection("Room").find(query).toArray(function (err, result) {
                 if (err) throw err;
+                console.log(result)
                 let Msg_Arr = [];
                 Msg_Arr = result[0].Msg;
                 resolve(Msg_Arr);
@@ -224,7 +225,7 @@ let dbcontrol =
             var query = { address: houseAddress };
             dbo.collection("Registration").find(query).toArray(function (err, result) {
                 if (err) throw err;
-                resolve(result[0].files)   
+                resolve(result[0].files)
             })
         })
     },

@@ -49,8 +49,8 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on('House_Register', ({ area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress, NFT_Hash }) => {
-    dbcontrol.db_House_Register( area, address, price, files, selluserId, sellusername, sellusernumber, sellerMetaAddress, NFT_Hash);
+  socket.on('House_Register', ({ area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res }) => {
+    dbcontrol.db_House_Register(area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res);
     socket.emit("House_Register_Result", "등록 완료!!!");
   })
 
@@ -87,15 +87,16 @@ io.on('connection', socket => {
   })
 
   socket.on('Room_Make', ({ sellername, buyername, roomnumber }) => {
-    
+
     dbcontrol.db_Room_Make(sellername, buyername, roomnumber);
     socket.emit("Room_Make_Result", "Ok");
   })
 
   socket.on('Chatting_Join', ({ roomnumber }) => {
     socket.join(`${roomnumber}번방`);
-    io.to(`${roomnumber}번방`).emit('Join_return', {roomnumber} );
+    io.to(`${roomnumber}번방`).emit('Join_return', { roomnumber });
   })
+
 
   socket.on('Message_Send', ({ buyername, sendmsg, RoomNumber }) => {
     try {
@@ -109,68 +110,69 @@ io.on('connection', socket => {
   })
 
 
-  socket.on('RoomNumber' , ({name})=>{    
-    (async() =>{
+  socket.on('RoomNumber', ({ name }) => {
+    (async () => {
       let result = await dbcontrol.db_GetRoomNum(name);
-      socket.emit('RoomNuber_Result' , ({result}) );
+      socket.emit('RoomNuber_Result', ({ result }));
     })()
   })
 
-  socket.on("Load_Msg_Makechat",({roomnumber})=> {
-    (async() =>{
+  socket.on("Load_Msg_Makechat", ({ roomnumber }) => {
+    (async () => {
       console.log(roomnumber)
       let result = await dbcontrol.db_LoadMsg(roomnumber);
-      socket.emit("Return_Load_Msg_Makechat", ({result}));
+      socket.emit("Return_Load_Msg_Makechat", ({ result }));
     })()
   })
 
-  socket.on("Load_Msg_Chat",({RoomNumber})=> {
-    (async() =>{
-      console.log(RoomNumber)
+  socket.on("Load_Msg_Chat", ({ RoomNumber }) => {
+    (async () => {
       let result = await dbcontrol.db_LoadMsg(RoomNumber);
-      socket.emit("Return_Load_Msg_Chat", ({result}));
+      socket.emit("Return_Load_Msg_Chat", ({ result }));
     })()
   })
 
-  socket.on('Save_Msg',({chatlog,RoomNumber}) => {
-    (async() =>{
-      await dbcontrol.db_SaveMsg(chatlog,RoomNumber);
+  socket.on('Save_Msg', ({ chatlog, RoomNumber }) => {
+    (async () => {
+      await dbcontrol.db_SaveMsg(chatlog, RoomNumber);
       //socket.emit('RoomNuber_Result' , ({result}) );
     })()
   })
 
-  socket.on('GetOutRoom',({value})=>{
+  socket.on('GetOutRoom', ({ value }) => {
     dbcontrol.db_GetOutRoom(value);
     socket.emit("GetOutRoom_Result", "삭제 완료!!!");
   })
 
-  socket.on('Search_Room' , ({value})=>{    
-    (async() =>{
+  socket.on('Search_Room', ({ value }) => {
+    (async () => {
       let result = await dbcontrol.db_Search_Room(value);
-      socket.emit('Search_Room_Result' , ({result}) );
+      socket.emit('Search_Room_Result', ({ result }));
     })()
   })
 
-  socket.on('GetOutRoom_Buyername',({value, username})=>{
+  socket.on('GetOutRoom_Buyername', ({ value, username }) => {
     dbcontrol.db_GetOutRoom_Buyername(value, username);
-    socket.emit('GetOutRoom_Buyername_Result' , "삭제 완료!!!" );
+    socket.emit('GetOutRoom_Buyername_Result', "삭제 완료!!!");
   })
 
-  socket.on('GetOutRoom_Sellername',({value, username})=>{
+  socket.on('GetOutRoom_Sellername', ({ value, username }) => {
     dbcontrol.db_GetOutRoom_Sellername(value, username);
-    socket.emit('GetOutRoom_Sellername_Result' , "삭제 완료!!!" );
+    socket.emit('GetOutRoom_Sellername_Result', "삭제 완료!!!");
   })
 
-  socket.on('LoadImg',({houseAddress})=>{
-    (async() =>{
-      let result = await dbcontrol.db_LoadImg(houseAddress);      
+  socket.on('LoadImg', ({ houseAddress }) => {
+    (async () => {
+      let result = await dbcontrol.db_LoadImg(houseAddress);
       let address = houseAddress
-      socket.emit("LoadImg_Result", {address ,result});
+      socket.emit("LoadImg_Result", { address, result });
     })()
   })
-  
-  socket.on('temp',({newcards})=>{
-    socket.emit('temp_Result', ({newcards}) );
+
+  socket.on('temp', ({ newcards }) => {
+    socket.emit('temp_Result', ({ newcards }));
   })
+
+
 
 })

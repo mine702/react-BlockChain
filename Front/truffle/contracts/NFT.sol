@@ -1,6 +1,5 @@
+pragma solidity ^0.8.1;
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -8,11 +7,11 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract NFT is ERC721 {
     using Counters for Counters.Counter;
-    Counters.Counter private deedId; // 디지털 인증서의 고유번호 , 단순정수형태
+    Counters.Counter private deedId; // 디지털 인증서의 고유번호
 
-    constructor() ERC721("BearImg","Bear") {} // Apeach이름으로 ERC721 토큰배포하겠다 Apc : 심볼
+    constructor() ERC721("Apeach","Apc") {}
 
-    mapping(uint => string) tokenURIs; // 피나타로 배포한 URI //  key 는 deedId
+    mapping(uint => string) tokenURIs;
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         return tokenURIs[tokenId];
@@ -26,5 +25,11 @@ contract NFT is ERC721 {
         tokenURIs[newDeedId] = tokenURI;
 
         return newDeedId;
-    } // adress to 로 받은 주소를 통해  tokenURI return 
+    }
+
+    function showTokenOwner(uint256 tokenId) public view returns(address){
+      address tokenOwner = ownerOf(tokenId);
+      return tokenOwner;
+    }
+
 }

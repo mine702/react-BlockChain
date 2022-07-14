@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -69,8 +70,7 @@ function Mainpage_Card(props) {
                                 warningButton={`구매`}
                                 warning={"정말 구매하시겠습니까?"}  
                                 value={[card, user]}
-                                ></Notify_Dialog>
-                           
+                                ></Notify_Dialog>                           
                             <Button size="small" onClick={() => {
                                 navigate("/post-HouseInfoPage", { state: [card, user] });
                             }}>보기</Button>

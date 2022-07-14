@@ -18,7 +18,7 @@ function Mypage_BuyCard(props) {
     function UserNameCard(card) {
         if (card.buyerName === username) {
             return (
-                <Grid item xs={5} sm={6} md={2.9} key={card.address}>
+                <Grid item xs={5} sm={6} md={2.9} key={card.houseAddress}>
                     <Card
                         sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                     >
@@ -47,6 +47,9 @@ function Mypage_BuyCard(props) {
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} gutterBottom>
                                 판매자 : {card.sellerName}
+                            </Typography>
+                            <Typography sx={{ fontSize: 14 }} gutterBottom>
+                                NFTID : {card.tokkenId}
                             </Typography>
                         </CardContent>
                         <CardActions>

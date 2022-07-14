@@ -12,9 +12,7 @@ import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
 //#endregion 
 
-//#region 전역 변수
 let socket;
-//#endregion
 
 function MakeChatting(props) {
 
@@ -22,33 +20,28 @@ function MakeChatting(props) {
 
     const { sellername, buyername } = props;
 
-    //#region useState
     const [modalIsOpen, setIsOpen] = useState(false);
     const [roommax] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     const [sendmsg, setSendMsg] = useState("");
     const [chatlog, setChatlog] = useState([{}]);
     const [RoomNumber, setRoomNumber] = useState();
-    //#endregion
 
-    //#region 함수가 실행될때 modal의 상태를 true로 바꿔준다.
+    // 함수가 실행될때 modal의 상태를 true로 바꿔준다.
     function openModal() {
         if (sellername === buyername) {
-            alert("본인의 매물을 구매할 수 없습니다.");
+            alert("본인의 매물을 구매할 수 없습니다.")
         }
         else {
             setIsOpen(true);
-            MakeRoom();
+            MakeRoom()
         }
     }
-    //#endregion
 
-    //#region 함수가 실행될때 modal의 상태를 false로 바꿔준다.
+    // 함수가 실행될때 modal의 상태를 false로 바꿔준다.
     function closeModal() {
         setIsOpen(false);
     }
-    //#endregion
 
-    //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);
     }, []);
@@ -57,78 +50,72 @@ function MakeChatting(props) {
         socket.on("Msg_return", ({ buyername, sendmsg }) => {
             setChatlog([...chatlog, { name: buyername, msg: sendmsg }]);
         })
-        if(chatlog.length !== 0 && chatlog.length !== 1) {
+        if(chatlog.length !== 0 && chatlog.length !== 1)
+        {
             socket.emit("Save_Msg",({chatlog, RoomNumber}));
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chatlog])
-    //#endregion
 
-    //#region 지역 변수
-    const roomn = [];
-    let makeroom = [];
+    const roomn = []
+    let makeroom = []
     let roomnumber = 0;
-    //#endregion
 
-    //#region 채팅방 생성
     function MakeRoom() {
-
         socket.emit("Room_Search");
-
         socket.on("Room_Search_Result", (result) => {
+
             for (let i = 0; i < result.length; i++) {
-                roomn.push(result[i].RoomN);
+                roomn.push(result[i].RoomN)
             }
-
             console.log(`res: ${result}`);
-
-            makeroom = roommax.filter(x => !roomn.includes(x));
-
+            makeroom = roommax.filter(x => !roomn.includes(x))
             if (makeroom.length === 10) {  //방이 없을때
-                roomnumber = makeroom[0];
-                setRoomNumber(makeroom[0]);
+                roomnumber = makeroom[0]
+                setRoomNumber(makeroom[0])
                 console.log(RoomNumber);
                 socket.emit("Room_Make", { sellername, buyername, roomnumber });
+                // eslint-disable-next-line no-loop-func
                 socket.on("Room_Make_Result", () => {
                     socket.emit("Chatting_Join", { roomnumber });
-                });
+                })
             }
             else {  //방이 있을때                
                 for (let i = 0; i < result.length; i++) {
                     if (result[i].Sellername === sellername && result[i].Buyername === buyername) {
-                        roomnumber = result[i].RoomN;
-                        console.log(result[i].Msg);          
+                        roomnumber = result[i].RoomN   
+                        console.log(result[i].Msg)                     
                         console.log(roomnumber);
-                        setRoomNumber(roomnumber);
+                        setRoomNumber(roomnumber)                        
                         socket.emit("Chatting_Join", { roomnumber });
-                        setChatlog(result[i].Msg);
+                        setChatlog(result[i].Msg)
                         socket.emit("Load_Msg_Makechat", { roomnumber });
                         socket.on('Return_Load_Msg_Makechat', ({ result }) => {
                             setChatlog(result);
+                            //console.log(result)
+                            //setChatlog([...chatlog, { name: Oname, msg: sendmsg }]);
                         })
-                        break;
+                        break
                     }
                     else if (i === result.length - 1) {
-                        console.log("방이없다");
-                        roomnumber = makeroom[0];
-                        setRoomNumber(makeroom[0]);
+                        console.log("방이없다")
+                        roomnumber = makeroom[0]
+                        setRoomNumber(makeroom[0])
                         socket.emit("Room_Make", { sellername, buyername, roomnumber });
+                        // eslint-disable-next-line no-loop-func
                         socket.on("Room_Make_Result", () => {
                             socket.emit("Chatting_Join", { roomnumber });
                         })
                     }
                 }
             }
-        });
+        })
     }
-    //#endregion
 
-    //#region 메세지 전달 함수
     function SendMessage() {
         socket.emit("Message_Send", { buyername, sendmsg, RoomNumber });
     }
-    //#endregion
 
-    //#region 렌더링
     return (
         <div>
             <Button onClick={() => {
@@ -154,7 +141,6 @@ function MakeChatting(props) {
             </Modal>
         </div>
     );
-    //#endregion
 }
 
 export default MakeChatting;

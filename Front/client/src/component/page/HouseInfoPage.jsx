@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
@@ -43,9 +44,9 @@ function HouseInfoPage() {
     const location = useLocation();
 
     //#region useState 변수
-    const [sellername] = useState(location.state[0].name);
+    const [seller_name] = useState(location.state[0].name);
     const [houseAddress] = useState(location.state[0].address)
-    const [buyername] = useState(location.state[1][0].name);
+    const [buyer_name] = useState(location.state[1][0].name);
 
     const [state, setState] = React.useState({
         left: false
@@ -68,12 +69,14 @@ function HouseInfoPage() {
     //#region useEffect
     //총 거래기록
     useEffect(()=>{
+        
         for(let i=0; i<transaction_record.length; i++){
             if(transaction_record[i].houseAddress === houseAddress){
                 All_record.push({sellerName : transaction_record[i].sellerName, buyerName: transaction_record[i].buyerName, housePrice : transaction_record[i].housePrice});
                 setTransaction_textlog(All_record); 
             }   
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[transaction_record]);
 
     //로딩
@@ -202,7 +205,7 @@ function HouseInfoPage() {
                         </CardContent>
                         <CardActions>
                             <Box sx={{ flexGrow: 1 }} />
-                            <Make_Chatting sellername={sellername} buyername={buyername} ></Make_Chatting>
+                            <Make_Chatting sellername={seller_name} buyername={buyer_name} ></Make_Chatting>
                         </CardActions>
                     </Card>
                 </Container>

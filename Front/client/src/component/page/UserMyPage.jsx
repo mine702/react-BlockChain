@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 //#region react
 import React, { useState, useEffect } from 'react';
 import io from "socket.io-client";
@@ -25,6 +26,7 @@ import CardContent from '@mui/material/CardContent';
 //#region component
 import Mypage_SellCard from '../ui/Mypage_SellCard';
 import Mypage_BuyCard from '../ui/Mypage_BuyCard';
+import Mypage_TransactionCard from '../ui/Mypage_TransactionCard'
 //#endregion
 
 let socket;
@@ -38,7 +40,6 @@ function PrimarySearchAppBar() {
         
     const navigate = useNavigate();
     const location = useLocation();
-
     //#region useState 변수
     const [cards, setCardsLow] = useState([]);
 
@@ -48,24 +49,22 @@ function PrimarySearchAppBar() {
     const [state, setState] = React.useState({
         left: false
     });
-
     //#endregion
 
     //#region useEffect
     useEffect(() => {
         async function load() {
             socket = io(ENDPOINT);
-            console.log(location.state);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             number = location.state[0][0].number;
-            //name = location.state[0][0].name;       
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            name = location.state[0][0].name;       
         }
-
         load();
     }, [location]);
 
     useEffect(() => {
         socket.emit("MyPageSell", { name, number });
-
         socket.on("MyPageSell_Result", (Result) => {
             setCardsLow(Result);
         })
@@ -183,9 +182,19 @@ function PrimarySearchAppBar() {
                             <Mypage_BuyCard cards = {buycard} username={username}></Mypage_BuyCard>
                         </CardContent>
                     </Card>
+                    <br />
+                    <Card
+                        sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                    >
+                        <CardContent sx={{ flexGrow: 1 }}>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                거래 승인 요청
+                            </Typography>
+                            <Mypage_TransactionCard cards = {buycard} username={username}></Mypage_TransactionCard>
+                        </CardContent>
+                    </Card>
                 </Container>
             </Box>
-
         </Box>
     );
     //#endregion
