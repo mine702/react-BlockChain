@@ -63,8 +63,7 @@ function Mainpage_Card(props) {
                             alt="random"
                         />
                         <CardActions>
-                            <Box sx={{ flexGrow: 1 }} />
-                           
+                            <Box sx={{ flexGrow: 1 }} />                           
                                 <Notify_Dialog
                                 warningHead={"구매 확인"} 
                                 warningButton={`구매`}

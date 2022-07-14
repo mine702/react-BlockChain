@@ -179,13 +179,13 @@ function HouseInfo_insert() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else if (NFT_Hash === undefined || NFT_Hash === null || NFT_Hash === "") {
-      alert("잠시만 기달려주세요")
+      alert("잠시만 기다려주세요")
     }
     else {
       console.log(NFT_Hash)
       const resl = await NFT_instance.methods.mintNFT(accounts[0], `ipfs://${NFT_Hash}`).send({
         from: accounts[0],
-        gas: 5000000
+        gas: 900000
       });
       const res = resl.events.Transfer.returnValues.tokenId
       socket.emit("House_Register", { area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res });

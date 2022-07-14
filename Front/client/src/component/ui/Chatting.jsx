@@ -33,28 +33,28 @@ function Chatting(props) {
 
     const ENDPOINT = "http://localhost:8080";
 
-    const { value , buyername } = props
+    const { value, buyername } = props
 
     const [modalIsOpen, setIsOpen] = useState(false);
     const [chatlog, setChatlog] = useState([{}]);
     const [sendmsg, setSendMsg] = useState("");
-    const [RoomNumber] = useState(value); 
+    const [RoomNumber] = useState(value);
 
     let roomnumber = 0;
-    
+
     // 함수가 실행될때 modal의 상태를 true로 바꿔준다.
     function openModal() {
-        roomnumber=RoomNumber;
-        socket.emit("Chatting_Join",{roomnumber});
-        socket.on('Join_return',({roomnumber})=>{
+        roomnumber = RoomNumber;
+        socket.emit("Chatting_Join", { roomnumber });
+        socket.on('Join_return', ({ roomnumber }) => {
             console.log("성공");
         })
-        socket.emit("Load_Msg_Chat",{RoomNumber});
-        socket.on('Return_Load_Msg_Chat',({result})=> {
+        socket.emit("Load_Msg_Chat", { RoomNumber });
+        socket.on('Return_Load_Msg_Chat', ({ result }) => {
             setChatlog(result);
-        //setChatlog([...chatlog, { name: Oname, msg: sendmsg }]);
+            //setChatlog([...chatlog, { name: Oname, msg: sendmsg }]);
         })
-        setIsOpen(true);        
+        setIsOpen(true);
     }
 
     // 함수가 실행될때 modal의 상태를 false로 바꿔준다.
@@ -64,26 +64,25 @@ function Chatting(props) {
 
 
     useEffect(() => {
-        socket = io(ENDPOINT);        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        socket = io(ENDPOINT);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ENDPOINT]);
 
-    useEffect(()=>{
-        
+    useEffect(() => {
+
         socket.on("Msg_return", ({ buyername, sendmsg }) => {
             console.log("신호");
             setChatlog([...chatlog, { name: buyername, msg: sendmsg }]);
         })
-        if(chatlog.length !== 0 && chatlog.length !== 1)
-        {
-            socket.emit("Save_Msg",({chatlog, RoomNumber}));
+        if (chatlog.length !== 0 && chatlog.length !== 1) {
+            socket.emit("Save_Msg", ({ chatlog, RoomNumber }));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[chatlog]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chatlog]);
 
     function SendMessage() {
-        
-        socket.emit("Message_Send", { buyername, sendmsg, RoomNumber });        
+
+        socket.emit("Message_Send", { buyername, sendmsg, RoomNumber });
     }
 
     return (

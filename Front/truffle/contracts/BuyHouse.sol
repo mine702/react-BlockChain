@@ -15,7 +15,6 @@ contract BuyHouse {
     address buyerAddress;
   }
 
-
   event BuyLogText(string sellerName, string buyerName, string houseAddress, uint256 housePrice);
 
   HouseInfo[] public House;

@@ -9,7 +9,7 @@ contract NFT is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private deedId; // 디지털 인증서의 고유번호
 
-    constructor() ERC721("Apeach","Apc") {}
+    constructor() ERC721("House","HouseNFT") {}
 
     mapping(uint => string) tokenURIs;
 
@@ -23,13 +23,11 @@ contract NFT is ERC721 {
         uint256 newDeedId = deedId.current();
         _mint(to,newDeedId);
         tokenURIs[newDeedId] = tokenURI;
-
         return newDeedId;
     }
 
     function showTokenOwner(uint256 tokenId) public view returns(address){
-      address tokenOwner = ownerOf(tokenId);
-      return tokenOwner;
+        address tokenOwner = ownerOf(tokenId);
+        return tokenOwner;
     }
-
 }

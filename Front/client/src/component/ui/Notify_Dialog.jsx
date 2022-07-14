@@ -1,5 +1,6 @@
 //#region react
 import React, { useState, useEffect } from 'react';
+import io from "socket.io-client";
 //#endregion
 
 //#region mui
@@ -20,9 +21,12 @@ import Web3 from 'web3';
 let web3;
 let instance;
 let buyhouse = BuyHouse;
+let socket;
 //#endregion
 
 function Notify_Dialog(props) {
+
+  const ENDPOINT = "http://localhost:8080";
 
   const { warningHead, warning, warningButton, value } = props
 
@@ -37,11 +41,12 @@ function Notify_Dialog(props) {
   const [locations] = useState(value[0].location);
   const [buyername] = useState(value[1][0].name);
   const [tokkenId] = useState(value[0].tokkenId);
-
+  const [buyerAddress] = useState(value[1][0].MetaMaskAcc)
   const [accounts, setAccounts] = useState("");
   //#endregion
-
+  
   useEffect(() => {
+    socket = io(ENDPOINT);
     async function load() {
       web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
       setAccounts(await web3.eth.getAccounts());
@@ -60,8 +65,9 @@ function Notify_Dialog(props) {
       await instance.methods.buyRealEstate(sellerAddress, locations, sellername, sellerImg, buyername, houseAddress, housePrice, tokkenId).send({
         from: accounts[0],
         value: web3.utils.toWei(housePrice, "ether"),    //wei
-        gas: 5000000,
+        gas: 900000,
       })
+      socket.emit("Add_Approval", { sellerAddress, locations, sellername, sellerImg, buyername, buyerAddress, houseAddress, housePrice, tokkenId });
       alert("구매완료");
       window.location.replace("/post-MainPage");
     }

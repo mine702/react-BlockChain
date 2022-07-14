@@ -1,5 +1,6 @@
 //#region react
 import React, { useState, useEffect } from 'react';
+import io from "socket.io-client";
 //#endregion
 
 //#region mui
@@ -20,15 +21,18 @@ import NFTContract from '../../contracts/NFT.json'
 
 //#region 전역변수
 let web3;
+let socket;
 let NFTinstance;
 //#endregion
 
-function Mypage_BuyCard(props) {
+function Mypage_TransactionCard(props) {
     const { cards, username } = props;
     const [accounts, setAccounts] = useState("");
+    const ENDPOINT = "http://localhost:8080";
 
-    useEffect(() => {
+    useEffect(() => {        
         async function load() {
+            socket = io(ENDPOINT);
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             setAccounts(await web3.eth.getAccounts());
             const networkId = await web3.eth.net.getId();
@@ -37,65 +41,71 @@ function Mypage_BuyCard(props) {
         }
         load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    })
+    },[socket])
 
-    async function Tran(card)
-    {
-        await NFTinstance.methods.safeTransferFrom(accounts[0], card.buyerAddress, card.tokkenId).send({
-            from: accounts[0],
-            gas: 5000000
-        })
-        alert("거래 승인 성공")
-        window.location.replace("/post-UserMyPage")
+    async function Tran(card) {
+        try {
+            const houseAddress = card.houseAddress
+            const locations = card.locations
+            await NFTinstance.methods.safeTransferFrom(accounts[0], card.buyerAddress, card.tokkenId).send({
+                from: accounts[0],
+                gas: 5000000
+            })
+            socket.emit("Delete_Approval", { username, locations, houseAddress });
+            socket.emit("Delete_House_Registration", { username, locations, houseAddress });
+            alert("거래 승인 성공")
+            window.location.replace("/post-UserMyPage")
+        }
+        catch (e) {
+            alert(e.message)
+        }
     }
 
     function UserNameCard(card) {
-        if (card.sellerName === username) {
-            return (
-                <Grid item xs={5} sm={6} md={2.9} key={card.houseAddress}>
-                    <Card
-                        sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                    >
-                        <CardMedia
-                            component="img"
-                            sx={{
-                                // 16:9
-                                pt: '0%',
-                                maxWidth: 250,
-                                minWidth: 250,
-                                minHeight: 150,
-                                maxHeight: 150
-                            }}
-                            src={card.sellerImg}
-                            alt="random"
-                        />
-                        <CardContent>
-                            <Typography sx={{ fontSize: 14 }} gutterBottom>
-                                주소 : {card.houseAddress}
-                            </Typography>
-                            <Typography sx={{ fontSize: 14 }} gutterBottom>
-                                가격 : {card.housePrice}
-                            </Typography>
-                            <Typography sx={{ fontSize: 14 }} gutterBottom>
-                                구매자 : {card.buyerName}
-                            </Typography>
-                            <Typography sx={{ fontSize: 14 }} gutterBottom>
-                                판매자 : {card.sellerName}
-                            </Typography>
-                            <Typography sx={{ fontSize: 14 }} gutterBottom>
-                                NFTID : {card.tokkenId}
-                            </Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Box sx={{ flexGrow: 1 }} />
-                            <Button size="small" onClick={()=>{
-                                Tran(card)
-                            }}>거래 승인</Button>
-                        </CardActions>
-                    </Card>
-                </Grid>
-            )
-        }
+        return (
+            <Grid item xs={5} sm={6} md={2.9} key={card.houseAddress}>
+                <Card
+                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                >
+                    <CardMedia
+                        component="img"
+                        sx={{
+                            // 16:9
+                            pt: '0%',
+                            maxWidth: 250,
+                            minWidth: 250,
+                            minHeight: 150,
+                            maxHeight: 150
+                        }}
+                        src={card.sellerImg}
+                        alt="random"
+                    />
+                    <CardContent>
+                        <Typography sx={{ fontSize: 14 }} gutterBottom>
+                            주소 : {card.houseAddress}
+                        </Typography>
+                        <Typography sx={{ fontSize: 14 }} gutterBottom>
+                            가격 : {card.housePrice}
+                        </Typography>
+                        <Typography sx={{ fontSize: 14 }} gutterBottom>
+                            구매자 : {card.buyername}
+                        </Typography>
+                        <Typography sx={{ fontSize: 14 }} gutterBottom>
+                            판매자 : {card.sellername}
+                        </Typography>
+                        <Typography sx={{ fontSize: 14 }} gutterBottom>
+                            NFTID : {card.tokkenId}
+                        </Typography>
+                    </CardContent>
+                    <CardActions>
+                        <Box sx={{ flexGrow: 1 }} />
+                        <Button size="small" onClick={() => {
+                            Tran(card)
+                        }}>거래 승인</Button>
+                    </CardActions>
+                </Card>
+            </Grid>
+        )
     }
     //#region 렌더링
     return (
@@ -107,4 +117,4 @@ function Mypage_BuyCard(props) {
     //#endregion
 }
 
-export default Mypage_BuyCard;
+export default Mypage_TransactionCard;

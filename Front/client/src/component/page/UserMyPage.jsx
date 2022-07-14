@@ -42,7 +42,7 @@ function PrimarySearchAppBar() {
     const location = useLocation();
     //#region useState 변수
     const [cards, setCardsLow] = useState([]);
-
+    const [approvalCards, setApprovalCards] = useState([]);
     const [username] = useState(location.state[0][0].name);
     const [buycard] = useState(location.state[1]);
 
@@ -67,6 +67,11 @@ function PrimarySearchAppBar() {
         socket.emit("MyPageSell", { name, number });
         socket.on("MyPageSell_Result", (Result) => {
             setCardsLow(Result);
+        })
+        socket.emit("MyPageApproval", { name });
+        socket.on("MyPageApproval_Result", (Result) => {
+            console.log(Result)
+            setApprovalCards(Result);
         })
     }, [name, number]);
     //#endregion
@@ -190,7 +195,7 @@ function PrimarySearchAppBar() {
                             <Typography gutterBottom variant="h5" component="h2">
                                 거래 승인 요청
                             </Typography>
-                            <Mypage_TransactionCard cards = {buycard} username={username}></Mypage_TransactionCard>
+                            <Mypage_TransactionCard cards = {approvalCards} username={username}></Mypage_TransactionCard>
                         </CardContent>
                     </Card>
                 </Container>

@@ -97,7 +97,6 @@ io.on('connection', socket => {
     io.to(`${roomnumber}번방`).emit('Join_return', { roomnumber });
   })
 
-
   socket.on('Message_Send', ({ buyername, sendmsg, RoomNumber }) => {
     try {
       console.log(buyername, sendmsg, RoomNumber);
@@ -108,7 +107,6 @@ io.on('connection', socket => {
       console.log(error);
     }
   })
-
 
   socket.on('RoomNumber', ({ name }) => {
     (async () => {
@@ -169,10 +167,27 @@ io.on('connection', socket => {
     })()
   })
 
+  socket.on("Add_Approval", ({ sellerAddress, locations, sellername, sellerImg, buyername, buyerAddress, houseAddress, housePrice, tokkenId })=>{
+    dbcontrol.db_Add_Approval( sellerAddress, locations, sellername, sellerImg, buyername, buyerAddress, houseAddress, housePrice, tokkenId);
+  })
+
+  socket.on('MyPageApproval', ({ name }) => {
+    (async () => {
+      let result = await dbcontrol.db_MyPageApproval(name);
+      socket.emit("MyPageApproval_Result", result);
+    })()
+  })
+
+  socket.on("Delete_Approval", ({ username, locations, houseAddress })=>{
+    dbcontrol.db_Delete_Approval( username, locations, houseAddress );
+  })
+
+  socket.on("Delete_House_Registration", ({ username, locations, houseAddress })=>{
+    dbcontrol.db_Delete_House_Registration( username, locations, houseAddress );
+  })
+
   socket.on('temp', ({ newcards }) => {
     socket.emit('temp_Result', ({ newcards }));
   })
-
-
 
 })

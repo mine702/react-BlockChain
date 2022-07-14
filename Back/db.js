@@ -33,12 +33,12 @@ let dbcontrol =
     },
 
     db_delete: function (name) {
-        var myquery = { name: name }; +
+        var myquery = { name: name };
 
-            dbo.collection("Member").deleteOne(myquery, function (err, obj) {
-                if (err) throw err;
-                console.log("1 document deleted");
-            });
+        dbo.collection("Member").deleteOne(myquery, function (err, obj) {
+            if (err) throw err;
+            console.log("1 document deleted");
+        });
     },
 
     db_idCheck: function (id) {
@@ -228,6 +228,41 @@ let dbcontrol =
                 resolve(result[0].files)
             })
         })
+    },
+
+    db_Add_Approval: function (sellerAddress, locations, sellername, sellerImg, buyername, buyerAddress, houseAddress, housePrice, tokkenId) {
+        var query = { sellerAddress: sellerAddress, locations: locations, sellername: sellername, sellerImg: sellerImg, buyername: buyername, buyerAddress: buyerAddress, houseAddress: houseAddress, housePrice: housePrice, tokkenId: tokkenId };
+        dbo.collection("Approval").insertOne(query, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+        })
+    },
+
+    db_MyPageApproval: function (name) {
+        return new Promise(resolve => {
+            var query = { sellername: name };
+            dbo.collection("Approval").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                resolve(result);
+                console.log("All document selected");
+            });
+        });
+    },
+
+    db_Delete_Approval: function (username, locations, houseAddress) {
+        var myquery = { sellername: username, locations: locations, houseAddress: houseAddress };
+        dbo.collection("Approval").deleteOne(myquery, function (err, obj) {
+            if (err) throw err;
+            console.log("1 document deleted");
+        });
+    },
+
+    db_Delete_House_Registration: function (username, locations, houseAddress) {
+        var myquery = { name: username, location: locations, address: houseAddress };
+        dbo.collection("Registration").deleteOne(myquery, function (err, obj) {
+            if (err) throw err;
+            console.log("1 document deleted");
+        });
     },
 
     db_close: function () {
