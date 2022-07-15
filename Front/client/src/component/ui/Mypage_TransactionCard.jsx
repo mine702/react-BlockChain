@@ -67,8 +67,7 @@ function Mypage_TransactionCard(props) {
         }
         catch (e) {
             alert(e.message)
-            window.location.replace("/post-UserMyPage")
-        }
+            window.location.replace("/post-UserMyPage")        }
     }
 
     function UserNameCard(card) {

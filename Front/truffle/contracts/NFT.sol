@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract NFT is ERC721{
+contract NFT is ERC721, ERC721Enumerable{
     using Counters for Counters.Counter;
     Counters.Counter private deedId; // 디지털 인증서의 고유번호
 
@@ -29,5 +29,5 @@ contract NFT is ERC721{
     function showTokenOwner(uint256 tokenId) public view returns(address){
         address tokenOwner = ownerOf(tokenId);
         return tokenOwner;
-    }
+    }    
 }
