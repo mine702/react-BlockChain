@@ -45,7 +45,7 @@ function PrimarySearchAppBar() {
     const [approvalCards, setApprovalCards] = useState([]);
     const [username] = useState(location.state[0][0].name);
     const [buycard] = useState(location.state[1]);
-
+    const [usernumber] = useState(location.state[0][0].number)
     const [state, setState] = React.useState({
         left: false
     });
@@ -70,7 +70,6 @@ function PrimarySearchAppBar() {
         })
         socket.emit("MyPageApproval", { name });
         socket.on("MyPageApproval_Result", (Result) => {
-            console.log(Result)
             setApprovalCards(Result);
         })
     }, [name, number]);
@@ -80,8 +79,7 @@ function PrimarySearchAppBar() {
     const toggleDrawer = (anchor, open) => (event) => {
         if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
-        }
-        
+        }        
         setState({ ...state, [anchor]: open });
     };
     //#endregion
@@ -195,7 +193,7 @@ function PrimarySearchAppBar() {
                             <Typography gutterBottom variant="h5" component="h2">
                                 거래 승인 요청
                             </Typography>
-                            <Mypage_TransactionCard cards = {approvalCards} username={username}></Mypage_TransactionCard>
+                            <Mypage_TransactionCard cards = {approvalCards} username={username} usernumber={usernumber}></Mypage_TransactionCard>
                         </CardContent>
                     </Card>
                 </Container>

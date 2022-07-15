@@ -51,7 +51,7 @@ io.on('connection', socket => {
 
   socket.on('House_Register', ({ area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res }) => {
     dbcontrol.db_House_Register(area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res);
-    socket.emit("House_Register_Result", "등록 완료!!!");
+    socket.emit("House_Register_Result");
   })
 
   socket.on('House_Correction', ({ _id, area, address, price, files }) => {
@@ -167,8 +167,8 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on("Add_Approval", ({ sellerAddress, locations, sellername, sellerImg, buyername, buyerAddress, houseAddress, housePrice, tokkenId })=>{
-    dbcontrol.db_Add_Approval( sellerAddress, locations, sellername, sellerImg, buyername, buyerAddress, houseAddress, housePrice, tokkenId);
+  socket.on("Add_Approval", ({ sellerAddress, locations, sellername, sellerImg, buyername, buyernumber, buyerAddress, houseAddress, housePrice, tokenId }) => {
+    dbcontrol.db_Add_Approval(sellerAddress, locations, sellername, sellerImg, buyername, buyernumber, buyerAddress, houseAddress, housePrice, tokenId);
   })
 
   socket.on('MyPageApproval', ({ name }) => {
@@ -178,12 +178,30 @@ io.on('connection', socket => {
     })()
   })
 
-  socket.on("Delete_Approval", ({ username, locations, houseAddress })=>{
-    dbcontrol.db_Delete_Approval( username, locations, houseAddress );
+  socket.on("Delete_Approval", ({ username, locations, houseAddress }) => {    
+    dbcontrol.db_Delete_Approval(username, locations, houseAddress);
+    socket.emit("Delete_Approval_Result");
   })
 
-  socket.on("Delete_House_Registration", ({ username, locations, houseAddress })=>{
-    dbcontrol.db_Delete_House_Registration( username, locations, houseAddress );
+  socket.on("Delete_House_Registration", ({ username, locations, houseAddress }) => {
+    dbcontrol.db_Delete_House_Registration(username, locations, houseAddress);
+    socket.emit("Delete_House_Registration_Result");
+  })
+
+  socket.on('CheckAddr', ({ address }) => {
+    (async () => {
+      let result = await dbcontrol.db_AddrCheck(address);
+      console.log(result);
+      socket.emit("AddrCheck_result", { result });
+    })()
+  })
+
+  socket.on('Token_Add', ({ sellusername, sellusernumber, res }) => {
+    dbcontrol.db_Token_Add(sellusername, sellusernumber, res);
+  })
+
+  socket.on('Token_Update', ({ username, usernumber, buyername, buyernumber, tokenId }) => {
+    dbcontrol.db_Token_Update(username, usernumber, buyername, buyernumber, tokenId);
   })
 
   socket.on('temp', ({ newcards }) => {

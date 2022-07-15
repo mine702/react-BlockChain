@@ -64,7 +64,7 @@ function Mypage_SellCard(props) {
                             Price : {card.price}
                         </Typography>
                         <Typography sx={{ fontSize: 14 }} gutterBottom>
-                            NFTID : {card.tokkenId}
+                            NFTID : {card.tokenId}
                         </Typography>
                     </CardContent>
                     <CardActions>

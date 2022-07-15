@@ -60,6 +60,9 @@ function HouseInfo_insert() {
 
   const [file, setFile] = useState();
   const [accounts, setAccounts] = useState("");
+  const [AddrCheck, setAddrCheck] = useState(false);
+  const PinataAPIKey = "a1d2edb7b927ab31fb99";
+  const PinataAPISecret = "46ccb00b675745ec0cb7e87e77e3e32e9a7264de2796fad077cf3e527bb3c116";
   //#endregion
 
   //#region useEffect
@@ -85,31 +88,35 @@ function HouseInfo_insert() {
 
   //#region 이미지 업로드
   const handleFile = async (fileToHandle) => {
-    console.log('starting');
+    if (AddrCheck === true) {
 
-    const formData = new FormData();
-    formData.append("file", fileToHandle);
+      console.log('starting');
 
-    const filename = fileToHandle.name;      //파일 이름.확장자
-    const filenameStr = filename.split('.'); //파일이름
+      const formData = new FormData();
+      formData.append("file", fileToHandle);
 
-    const url = `https://api.pinata.cloud/pinning/pinFileToIPFS` //파일 올리는 URL
+      const filename = fileToHandle.name;      //파일 이름.확장자
+      const filenameStr = filename.split('.'); //파일이름
 
-    const response = await axios.post(
-      url,
-      formData,
-      {
-        maxContentLength: "Infinity",
-        headers: {
-          'Content-Type': `multipart/form-data;boundary=${formData._boundary}`,
-          'pinata_api_key': '97f3182c5eaaa5c01af0',
-          'pinata_secret_api_key': '23a31aa6f14b878f66c3f3b4f639f03e8619b1851e872d99793680db7550ae7b',
+      const url = `https://api.pinata.cloud/pinning/pinFileToIPFS` //파일 올리는 URL
+
+      const response = await axios.post(
+        url,
+        formData,
+        {
+          maxContentLength: "Infinity",
+          headers: {
+            'Content-Type': `multipart/form-data;boundary=${formData._boundary}`,
+            'pinata_api_key': PinataAPIKey,
+            'pinata_secret_api_key': PinataAPISecret,
+          }
         }
-      }
-    );
-    console.log(response);
-    Make_Json(filenameStr[0], response.data.IpfsHash); //response.data.IpfsHash : 매물 해시값
-    PinataImage = "https://gateway.pinata.cloud/ipfs/"+response.data.IpfsHash
+
+      );
+      console.log(response);
+      Make_Json(filenameStr[0], response.data.IpfsHash); //response.data.IpfsHash : 매물 해시값
+      PinataImage = "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
+    }
   }
   //#endregion
 
@@ -132,7 +139,7 @@ function HouseInfo_insert() {
       },
       "pinataContent": {
         "img": `ipfs://${img_cid}`,
-        "description": "위베어베어스",
+        "description": filenameStr,
       }
     });
     //#endregion
@@ -142,8 +149,8 @@ function HouseInfo_insert() {
       url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',  //JSON 올리는 URL
       headers: {
         'Content-Type': 'application/json',
-        'pinata_api_key': '97f3182c5eaaa5c01af0',
-        'pinata_secret_api_key': '23a31aa6f14b878f66c3f3b4f639f03e8619b1851e872d99793680db7550ae7b',
+        'pinata_api_key': PinataAPIKey,
+        'pinata_secret_api_key': PinataAPISecret,
       },
       data: data
     };
@@ -182,15 +189,23 @@ function HouseInfo_insert() {
       alert("잠시만 기다려주세요")
     }
     else {
-      console.log(NFT_Hash)
-      const resl = await NFT_instance.methods.mintNFT(accounts[0], `ipfs://${NFT_Hash}`).send({
-        from: accounts[0],
-        gas: 900000
-      });
-      const res = resl.events.Transfer.returnValues.tokenId
-      socket.emit("House_Register", { area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res });
-      alert("등록 완료!");
-      navigate("/post-MainPage", { state: location.state });
+      try {
+        const resl = await NFT_instance.methods.mintNFT(accounts[0], `ipfs://${NFT_Hash}`).send({
+          from: accounts[0],
+          gas: 900000
+        });
+        const res = resl.events.Transfer.returnValues.tokenId
+        socket.emit("House_Register", { area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res });
+        socket.on("House_Register_Result", () => {
+          socket.emit("Token_Add", { sellusername, sellusernumber, res });
+          alert("등록 완료!");
+          navigate("/post-MainPage", { state: location.state });
+        })
+      }
+      catch (e) {
+        alert(e.message)
+        navigate("/post-MainPage", { state: location.state });
+      }
     }
   }
   //#endregion
@@ -205,6 +220,21 @@ function HouseInfo_insert() {
     }
   }
   //#endregion
+
+  function CheckAddress() {
+    socket.emit('CheckAddr', { address });
+    socket.on('AddrCheck_result', (res) => {
+      if (res.result === true) {
+        alert("중복된 주소입니다.");
+        setAddrCheck(false);
+      }
+      else {
+        alert("사용 가능한 주소입니다.");
+        setAddrCheck(true);
+      }
+    })
+
+  }
 
   //#region 렌더링
   return (
@@ -250,6 +280,9 @@ function HouseInfo_insert() {
                     setAddress(e.target.value)
                   }}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <Button variant="contained" onClick={CheckAddress}>중복체크</Button>
               </Grid>
               <Grid item xs={12}>
                 <TextField

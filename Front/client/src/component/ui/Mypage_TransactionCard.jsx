@@ -26,13 +26,13 @@ let NFTinstance;
 //#endregion
 
 function Mypage_TransactionCard(props) {
-    const { cards, username } = props;
+    const { cards, username, usernumber } = props;
     const [accounts, setAccounts] = useState("");
     const ENDPOINT = "http://localhost:8080";
 
-    useEffect(() => {        
+    useEffect(() => {
+        socket = io(ENDPOINT);
         async function load() {
-            socket = io(ENDPOINT);
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             setAccounts(await web3.eth.getAccounts());
             const networkId = await web3.eth.net.getId();
@@ -41,23 +41,33 @@ function Mypage_TransactionCard(props) {
         }
         load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[socket])
+    }, [])
 
     async function Tran(card) {
         try {
             const houseAddress = card.houseAddress
             const locations = card.locations
-            await NFTinstance.methods.safeTransferFrom(accounts[0], card.buyerAddress, card.tokkenId).send({
+            const buyername = card.buyername
+            const buyernumber = card.buyernumber
+            const tokenId = card.tokenId
+            await NFTinstance.methods.safeTransferFrom(accounts[0], card.buyerAddress, tokenId).send({
                 from: accounts[0],
-                gas: 5000000
+                gas: 900000
             })
             socket.emit("Delete_Approval", { username, locations, houseAddress });
-            socket.emit("Delete_House_Registration", { username, locations, houseAddress });
-            alert("거래 승인 성공")
-            window.location.replace("/post-UserMyPage")
+            socket.on("Delete_Approval_Result", () => {
+                socket.emit("Delete_House_Registration", { username, locations, houseAddress });
+                socket.on("Delete_House_Registration_Result",()=>{
+                    socket.emit("Token_Update", { username, usernumber, buyername, buyernumber, tokenId });
+                    alert("거래 승인 성공")
+                    window.location.replace("/post-UserMyPage")
+                })
+                
+            })
         }
         catch (e) {
             alert(e.message)
+            window.location.replace("/post-UserMyPage")
         }
     }
 
@@ -94,7 +104,7 @@ function Mypage_TransactionCard(props) {
                             판매자 : {card.sellername}
                         </Typography>
                         <Typography sx={{ fontSize: 14 }} gutterBottom>
-                            NFTID : {card.tokkenId}
+                            NFTID : {card.tokenId}
                         </Typography>
                     </CardContent>
                     <CardActions>

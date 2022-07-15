@@ -69,9 +69,10 @@ function Mainpage(props) {
     const [state, setState] = React.useState({
         left: false
     });
+    const [accounts, setAccounts] = useState("");
     const [ALL_BuyLogText, setBuyLogText] = useState([]);
-    //#endregion
 
+    //#endregion
     //#region useEffect
     useEffect(() => {
         socket = io(ENDPOINT);
@@ -79,6 +80,7 @@ function Mainpage(props) {
         async function load() {
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             const networkId = await web3.eth.net.getId();
+            setAccounts(await web3.eth.getAccounts());
             const deployedNetwork = RealEstate.networks[networkId];
             const NFTdeployedNetwork = NFTContract.networks[networkId];
             instance = new web3.eth.Contract(RealEstate.abi, deployedNetwork.address);
@@ -89,7 +91,6 @@ function Mainpage(props) {
             });
             setBuyCards(await instance.methods.readRealEstate().call());
         }
-
         load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket])
@@ -112,7 +113,7 @@ function Mainpage(props) {
         }
         setState({ ...state, [anchor]: open });
     };
-    //#endregion
+    //#endregion    
 
     //#region 렌더링
     return (
@@ -206,8 +207,10 @@ function Mainpage(props) {
                             </Box>
                             <Button variant="contained" onClick={() => {
                                 navigate("/post-Checkout", { state: location.state })
-                            }}>판매 등록</Button>
-                            <Button variant="outlined">매물 검색</Button>
+                            }}>신규 판매 등록</Button>
+                            <Button variant="outlined" onClick={() => {
+                                navigate("/post-HouseInfoInsertOne", { state: location.state })
+                            }}>기존 판매 등록</Button>
                         </Stack>
                     </Container>
                 </Box>

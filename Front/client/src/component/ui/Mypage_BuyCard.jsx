@@ -49,7 +49,7 @@ function Mypage_BuyCard(props) {
                                 판매자 : {card.sellerName}
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} gutterBottom>
-                                NFTID : {card.tokkenId}
+                                NFTID : {card.tokenId}
                             </Typography>
                         </CardContent>
                         <CardActions>

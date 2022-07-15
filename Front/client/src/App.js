@@ -15,6 +15,7 @@ import HouseInfoPage from "./component/page/HouseInfoPage";
 import HouseInfoInsert from "./component/page/registration/HouseInfoInsert";
 import HouseInfoUpdate from "./component/page/registration/HouseInfoUpdate"
 import UserUpdatePage from "./component/page/UserUpdatePage"
+import HouseInfoInsertOne from"./component/page/registration/HouseInfoInsertOne"
 function App(props) {
     return (
         <BrowserRouter>
@@ -24,6 +25,7 @@ function App(props) {
                 <Route path="post-NewMemberPage" element={<NewMemberPage />} />
                 <Route path="post-MainPage" element={<MainPage  />} />
                 <Route path="post-Checkout" element={<HouseInfoInsert/>} />
+                <Route path="post-HouseInfoInsertOne" element={<HouseInfoInsertOne />} />
                 <Route path="post-UserMyPage" element={<UserMyPage />} />
                 <Route path="post-HouseInfoPage" element={<HouseInfoPage />} />
                 <Route path="post-CorrectionForm" element={<HouseInfoUpdate />} />

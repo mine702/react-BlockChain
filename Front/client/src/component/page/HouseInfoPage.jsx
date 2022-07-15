@@ -68,8 +68,7 @@ function HouseInfoPage() {
 
     //#region useEffect
     //총 거래기록
-    useEffect(()=>{
-        
+    useEffect(()=>{        
         for(let i=0; i<transaction_record.length; i++){
             if(transaction_record[i].houseAddress === houseAddress){
                 All_record.push({sellerName : transaction_record[i].sellerName, buyerName: transaction_record[i].buyerName, housePrice : transaction_record[i].housePrice});

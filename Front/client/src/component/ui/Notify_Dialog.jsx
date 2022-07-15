@@ -40,11 +40,11 @@ function Notify_Dialog(props) {
   const [sellerImg] = useState(value[0].files);
   const [locations] = useState(value[0].location);
   const [buyername] = useState(value[1][0].name);
-  const [tokkenId] = useState(value[0].tokkenId);
+  const [tokenId] = useState(value[0].tokenId);
   const [buyerAddress] = useState(value[1][0].MetaMaskAcc)
+  const [buyernumber] = useState(value[1][0].number)
   const [accounts, setAccounts] = useState("");
   //#endregion
-  
   useEffect(() => {
     socket = io(ENDPOINT);
     async function load() {
@@ -61,13 +61,12 @@ function Notify_Dialog(props) {
   //#region 구매(이벤트)
   async function BuyHouse() {
     try{
-      console.log(sellerAddress)
-      await instance.methods.buyRealEstate(sellerAddress, locations, sellername, sellerImg, buyername, houseAddress, housePrice, tokkenId).send({
+      await instance.methods.buyRealEstate(sellerAddress, locations, sellername, sellerImg, buyername, houseAddress, housePrice, tokenId).send({
         from: accounts[0],
         value: web3.utils.toWei(housePrice, "ether"),    //wei
         gas: 900000,
       })
-      socket.emit("Add_Approval", { sellerAddress, locations, sellername, sellerImg, buyername, buyerAddress, houseAddress, housePrice, tokkenId });
+      socket.emit("Add_Approval", { sellerAddress, locations, sellername, sellerImg, buyername, buyernumber, buyerAddress, houseAddress, housePrice, tokenId });
       alert("구매완료");
       window.location.replace("/post-MainPage");
     }

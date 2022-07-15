@@ -67,7 +67,7 @@ let dbcontrol =
     },
 
     db_House_Register: function (area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res) {
-        var query = { location: area, address: address, price: price, files: PinataImage, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc: sellerMetaAddress, tokkenId: res };
+        var query = { location: area, address: address, price: price, files: PinataImage, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc: sellerMetaAddress, tokenId: res };
         dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -230,8 +230,8 @@ let dbcontrol =
         })
     },
 
-    db_Add_Approval: function (sellerAddress, locations, sellername, sellerImg, buyername, buyerAddress, houseAddress, housePrice, tokkenId) {
-        var query = { sellerAddress: sellerAddress, locations: locations, sellername: sellername, sellerImg: sellerImg, buyername: buyername, buyerAddress: buyerAddress, houseAddress: houseAddress, housePrice: housePrice, tokkenId: tokkenId };
+    db_Add_Approval: function (sellerAddress, locations, sellername, sellerImg, buyername, buyernumber, buyerAddress, houseAddress, housePrice, tokenId) {
+        var query = { sellerAddress: sellerAddress, locations: locations, sellername: sellername, sellerImg: sellerImg, buyername: buyername, buyernumber: buyernumber, buyerAddress: buyerAddress, houseAddress: houseAddress, housePrice: housePrice, tokenId: tokenId };
         dbo.collection("Approval").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
@@ -263,6 +263,38 @@ let dbcontrol =
             if (err) throw err;
             console.log("1 document deleted");
         });
+    },
+
+    db_AddrCheck: function (address) {
+        var query = { address: address };
+        return new Promise(resolve => {
+            dbo.collection("Registration").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                if (result != "") {
+                    resolve(true);
+                }
+                else {
+                    resolve(false);
+                }
+            });
+        });
+    },
+
+    db_Token_Add: function (sellusername, sellusernumber, res) {
+        var myobj = { username: sellusername, usernumber: sellusernumber, tokenId: res };
+        dbo.collection("Token").insertOne(myobj, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+        })
+    },
+
+    db_Token_Update: function (username, usernumber, buyername, buyernumber, tokenId) {
+        var query = { username: username, usernumber: usernumber, tokenId: tokenId }
+        var newvalues = { $set: { username: buyername, usernumber: buyernumber } };
+        dbo.collection("Token").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log("1 document update");
+        })
     },
 
     db_close: function () {
