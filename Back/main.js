@@ -204,6 +204,13 @@ io.on('connection', socket => {
     dbcontrol.db_Token_Update(username, usernumber, buyername, buyernumber, tokenId);
   })
 
+  socket.on('MyToken', ({ name, number }) => {
+    (async () => {
+      let result = await dbcontrol.db_MyToken(name,number);
+      socket.emit("MyToken_Result", result);
+    })()
+  })
+
   socket.on('temp', ({ newcards }) => {
     socket.emit('temp_Result', ({ newcards }));
   })

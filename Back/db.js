@@ -297,6 +297,17 @@ let dbcontrol =
         })
     },
 
+    db_MyToken: function (name, number) {
+        return new Promise(resolve => {
+            var query = { username: name, usernumber: number };
+            dbo.collection("Token").find(query).toArray(function (err, result) {
+                if (err) throw err;
+                resolve(result);
+                console.log("All document selected");
+            });
+        });
+    },
+
     db_close: function () {
         db.close();
     }

@@ -70,12 +70,9 @@ function HouseInfo_insert() {
     async function load() {
       web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
       setAccounts(await web3.eth.getAccounts());
-
       const networkId = await web3.eth.net.getId();
       const NFTNetwork = NFT.networks[networkId];
-
       NFT_instance = new web3.eth.Contract(NFT.abi, NFTNetwork.address);
-      console.log(NFT_instance);
     }
 
     load();
@@ -88,8 +85,10 @@ function HouseInfo_insert() {
 
   //#region 이미지 업로드
   const handleFile = async (fileToHandle) => {
-    if (AddrCheck === true) {
-
+    if (area === "" || address === "" || price === "") {
+      alert("입력하지 않은 정보가 있습니다");
+    }
+    else if (AddrCheck === true) {
       console.log('starting');
 
       const formData = new FormData();
@@ -111,9 +110,10 @@ function HouseInfo_insert() {
             'pinata_secret_api_key': PinataAPISecret,
           }
         }
-
       );
       console.log(response);
+
+
       Make_Json(filenameStr[0], response.data.IpfsHash); //response.data.IpfsHash : 매물 해시값
       PinataImage = "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
     }
@@ -122,7 +122,6 @@ function HouseInfo_insert() {
 
   //#region 제이슨 파일 업로드
   const Make_Json = async (filenameStr, img_cid) => {
-
     //#region JSON 변환
     var data = JSON.stringify({
       "pinataOptions": {
@@ -130,16 +129,15 @@ function HouseInfo_insert() {
       },
       "pinataMetadata": {
         "name": `${filenameStr}.json`,
-        "Address": "우송대학교",
-        "Price": "1",
-        "keyvalues": {
-          "customKey": "customValue",
-          "customKey2": "customValue2"
-        }
       },
       "pinataContent": {
         "img": `ipfs://${img_cid}`,
         "description": filenameStr,
+        "keyvalues": {
+          "Price": price,
+          "Address": address,
+          "Area": area,
+        }
       }
     });
     //#endregion
@@ -181,9 +179,6 @@ function HouseInfo_insert() {
 
     if (agree === false) {
       alert("개인정보 동의를 하세요");
-    }
-    else if (area === "" || address === "") {
-      alert("입력하지 않은 정보가 있습니다");
     }
     else if (NFT_Hash === undefined || NFT_Hash === null || NFT_Hash === "") {
       alert("잠시만 기다려주세요")
