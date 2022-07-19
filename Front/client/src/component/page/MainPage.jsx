@@ -209,7 +209,7 @@ function Mainpage(props) {
                                 navigate("/post-Checkout", { state: location.state })
                             }}>신규 판매 등록</Button>
                             <Button variant="outlined" onClick={() => {
-                                navigate("/post-HouseInfoInsertOne", { state: location.state })
+                                navigate("/post-HouseInfoExistInsert", { state: location.state })
                             }}>기존 판매 등록</Button>
                         </Stack>
                     </Container>

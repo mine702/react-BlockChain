@@ -23,26 +23,7 @@ function Mainpage_Card(props) {
 
     const { cards, user, value } = props;
 
-    const buyButtonText={
-        a:'구매',
-        b:'판매 완료',
-    } 
-
-    const buy_State_enum ={
-        a:'buy_Possible',
-        b:'buy_Impossible',
-    } 
-
-    let buy_State = buyButtonText.a;
-
-    function buystate() {
-        if( buy_State == buyButtonText.a){
-            buy_State=buyButtonText.b;
-        }
-        else if(buy_State == buyButtonText.b){
-            buy_State=buyButtonText.a;
-        }
-    }
+    
 
     return (
         <Grid container spacing={4}>

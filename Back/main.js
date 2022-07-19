@@ -24,8 +24,8 @@ server.listen(8080, function () {
 
 io.on('connection', socket => {
 
-  socket.on('sign_up', ({ name, id, pw, number, MetaMaskAcc }) => {
-    dbcontrol.db_insert(name, id, pw, number, MetaMaskAcc);
+  socket.on('sign_up', ({ name, id, pw, phoneNum, MetaMaskAcc }) => {
+    dbcontrol.db_insert(name, id, pw, phoneNum, MetaMaskAcc);
     socket.emit("MemberCheck", "회원 가입 완료!!!");
   })
 
