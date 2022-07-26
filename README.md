@@ -1,1 +1,1 @@
-# react-BlockChain
+# 이더리움 기반 부동산 거래 플랫폼 Dapp
