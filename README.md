@@ -7,17 +7,17 @@
 <li>MetaMask</li>
 
 ## 사용된 기술
-# 백엔드
+### 백엔드
 <li>Node.js</li>
 <li>Express</li>
 <li>IPFS</li>
 <li>Pinata</li>
 <li>Web3</li>
 
-# 데이터베이스
+### 데이터베이스
 <li>MongoDB</li>
 
-# 프론트엔드
+### 프론트엔드
 <li>HTML/CSS/JavaScript</li>
 <li>React</li>
 
