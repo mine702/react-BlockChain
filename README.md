@@ -6,6 +6,7 @@
 <li>Visual Studio Code</li>
 <li>MetaMask</li>
 
+
 ## 사용된 기술
 ### 백엔드
 <li>Node.js</li>
@@ -21,7 +22,9 @@
 <li>HTML/CSS/JavaScript</li>
 <li>React</li>
 
+
 ## 사용자 메뉴얼
+
 
 
 ## 테스트 환경
