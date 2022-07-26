@@ -6,6 +6,7 @@
 <li>MetaMask</li>
 <li>Ganache</li>
 <li>Remix</li>
+
 ## 사용된 기술
 <li>HTML/CSS/JavaScript</li>
 <li>React</li>
