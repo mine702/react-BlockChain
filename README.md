@@ -5,20 +5,27 @@
 <li>Window 10 OS</li>
 <li>Visual Studio Code</li>
 <li>MetaMask</li>
-<li>Ganache</li>
-<li>Remix</li>
 
 ## 사용된 기술
-<li>HTML/CSS/JavaScript</li>
-<li>React</li>
+# 백엔드
 <li>Node.js</li>
 <li>Express</li>
 <li>IPFS</li>
 <li>Pinata</li>
-<li>MongoDB</li>
 <li>Web3</li>
+
+# 데이터베이스
+<li>MongoDB</li>
+
+# 프론트엔드
+<li>HTML/CSS/JavaScript</li>
+<li>React</li>
 
 ## 사용자 메뉴얼
 
+
+## 테스트 환경
+<li>Ganache</li>
+<li>Remix</li>
 
 ## 
