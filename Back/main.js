@@ -15,6 +15,8 @@ const io = require('socket.io')(server, {
   },
 });
 
+let controller;
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors()); //모든 cross-origin 요청에 대해 응답
@@ -98,16 +100,20 @@ io.on('connection', socket => {
 
   socket.on("Load_Msg_Chat", ({ RoomNumber }) => {
     (async () => {
+      controller = RoomNumber;
       let result = await dbcontrol.db_LoadMsg(RoomNumber);
       socket.emit("Return_Load_Msg_Chat", ({ result }));
     })()
   })
 
   socket.on('Save_Msg', ({ chatlog, RoomNumber }) => {
-    (async () => {
-      await dbcontrol.db_SaveMsg(chatlog, RoomNumber);
-      //socket.emit('RoomNuber_Result' , ({result}) );
-    })()
+    if(controller === RoomNumber){
+      (async () => {
+        console.log(`${controller}번째방 채팅 로딩`);
+        await dbcontrol.db_SaveMsg(chatlog, RoomNumber);
+        //socket.emit('RoomNuber_Result' , ({result}) );
+      })()
+    }
   })
 
   socket.on('GetOutRoom', ({ value }) => {
