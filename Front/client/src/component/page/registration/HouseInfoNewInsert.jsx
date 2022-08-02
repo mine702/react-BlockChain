@@ -89,7 +89,7 @@ function HouseInfo_insert() {
       alert("입력하지 않은 정보가 있습니다");
     }
     else if (AddrCheck === true) {
-      console.log('starting');
+      console.log('IPFS starting');
 
       const formData = new FormData();
       formData.append("file", fileToHandle);
@@ -112,7 +112,7 @@ function HouseInfo_insert() {
         }
       );
       console.log(response);
-
+      console.log("IPFS Complete");
 
       Make_Json(filenameStr[0], response.data.IpfsHash); //response.data.IpfsHash : 매물 해시값
       PinataImage = "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
@@ -228,7 +228,6 @@ function HouseInfo_insert() {
         setAddrCheck(true);
       }
     })
-
   }
 
   //#region 렌더링
@@ -342,6 +341,14 @@ function HouseInfo_insert() {
               sx={{ mt: 3, ml: 1 }}
               onClick={House_register}
             >등록
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ mt: 3, ml: 1 }}
+              onClick={()=>{
+                navigate("/post-MainPage", { state: location.state });
+              }}
+            >취소
             </Button>
           </Box>
         </React.Fragment>

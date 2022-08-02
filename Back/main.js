@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const dbcontrol = require('./db.js');
+const con_member = require('./member.js');
+const con_token = require('./token.js')
 const http = require("http");
 const server = http.createServer(app);
 const io = require('socket.io')(server, {
@@ -24,60 +26,31 @@ server.listen(8080, function () {
 
 io.on('connection', socket => {
 
+  //#region 소켓전달
+  con_member.get_Socket(socket);
+  con_token.get_Socket(socket);
+  //#endregion
+
+  //#region 멤버관리
+
   socket.on('sign_up', ({ name, id, pw, phoneNum, MetaMaskAcc }) => {
-    dbcontrol.db_insert(name, id, pw, phoneNum, MetaMaskAcc);
-    socket.emit("MemberCheck", "회원 가입 완료!!!");
+    con_member.insert(name, id, pw, phoneNum, MetaMaskAcc);
   })
 
   socket.on('UserUpdate', ({ name, id, pw, phoneNum, MetaMaskAcc }) => {
-    dbcontrol.db_UserUpdate(name, id, pw, phoneNum, MetaMaskAcc);
-    socket.emit("UserUpdate_Result", "회원 정보 수정 완료!!!");
+    con_member.update(name, id, pw, phoneNum, MetaMaskAcc);
   })
 
   socket.on('idCheck', ({ id }) => {
-    (async () => {
-      let result = await dbcontrol.db_idCheck(id);
-      console.log(result);
-      socket.emit("idCheck_rusult", { result });
-    })()
+    con_member.idcheck(id);
   })
 
   socket.on('Login', ({ id, pw }) => {
-    (async () => {
-      let result = await dbcontrol.db_Login(id, pw);
-      socket.emit("Login_result", result);
-    })()
+   con_member.login(id,pw);
   })
-
-  socket.on('House_Register', ({ area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res }) => {
-    dbcontrol.db_House_Register(area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res);
-    socket.emit("House_Register_Result");
-  })
-
-  socket.on('House_Correction', ({ _id, area, address, price, files }) => {
-    dbcontrol.db_House_Correction(_id, area, address, price, files);
-    socket.emit("House_Correction_Result", "수정 완료!!!");
-  })
-
-  socket.on('Area_Data', ({ area }) => {
-    (async () => {
-      let result = await dbcontrol.db_Location_Data(area);
-      socket.emit("Area_Data_Result", result);
-    })()
-  })
-
-  socket.on('MyPageSell', ({ name, number }) => {
-    (async () => {
-      let result = await dbcontrol.db_MyPageSell(name, number);
-      socket.emit("MyPageSell_Result", result);
-    })()
-  })
-
-  socket.on('Delete_Data', ({ card }) => {
-    dbcontrol.db_Delete_Data(card._id);
-    socket.emit("Delete_Data_Result", "삭제 완료!!!");
-  })
-
+  //#endregion
+  
+  //#region 채팅관리
   socket.on('Room_Search', () => {
     (async () => {  //합격
       let result = await dbcontrol.db_Room_Search();
@@ -87,7 +60,7 @@ io.on('connection', socket => {
   })
 
   socket.on('Room_Make', ({ sellername, buyername, roomnumber }) => {
-
+    //con_chat.makeRoom();
     dbcontrol.db_Room_Make(sellername, buyername, roomnumber);
     socket.emit("Room_Make_Result", "Ok");
   })
@@ -158,6 +131,37 @@ io.on('connection', socket => {
     dbcontrol.db_GetOutRoom_Sellername(value, username);
     socket.emit('GetOutRoom_Sellername_Result', "삭제 완료!!!");
   })
+  //#endregion
+
+  //#region 매물관리
+  socket.on('House_Register', ({ area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res }) => {
+    dbcontrol.db_House_Register(area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res);
+    socket.emit("House_Register_Result");
+  })
+
+  socket.on('House_Correction', ({ _id, area, address, price, files }) => {
+    dbcontrol.db_House_Correction(_id, area, address, price, files);
+    socket.emit("House_Correction_Result", "수정 완료!!!");
+  })
+
+  socket.on('Area_Data', ({ area }) => {
+    (async () => {
+      let result = await dbcontrol.db_Location_Data(area);
+      socket.emit("Area_Data_Result", result);
+    })()
+  })
+
+  socket.on('MyPageSell', ({ name, number }) => {
+    (async () => {
+      let result = await dbcontrol.db_MyPageSell(name, number);
+      socket.emit("MyPageSell_Result", result);
+    })()
+  })
+
+  socket.on('Delete_Data', ({ card }) => {
+    dbcontrol.db_Delete_Data(card._id);
+    socket.emit("Delete_Data_Result", "삭제 완료!!!");
+  })
 
   socket.on('LoadImg', ({ houseAddress }) => {
     (async () => {
@@ -195,24 +199,25 @@ io.on('connection', socket => {
       socket.emit("AddrCheck_result", { result });
     })()
   })
+  //#endregion
 
+  //#region 토큰관리
   socket.on('Token_Add', ({ sellusername, sellusernumber, res }) => {
-    dbcontrol.db_Token_Add(sellusername, sellusernumber, res);
+    con_token.addToken(sellusername, sellusernumber, res);
   })
 
   socket.on('Token_Update', ({ username, usernumber, buyername, buyernumber, tokenId }) => {
-    dbcontrol.db_Token_Update(username, usernumber, buyername, buyernumber, tokenId);
+    con_token.updateToken(username, usernumber, buyername, buyernumber, tokenId);
   })
 
   socket.on('MyToken', ({ name, number }) => {
-    (async () => {
-      let result = await dbcontrol.db_MyToken(name,number);
-      socket.emit("MyToken_Result", result);
-    })()
+    con_token.getmyToken(name,number);
   })
+  //#endregion
 
   socket.on('temp', ({ newcards }) => {
     socket.emit('temp_Result', ({ newcards }));
   })
+
 
 })

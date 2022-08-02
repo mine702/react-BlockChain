@@ -38,7 +38,7 @@ import BuyLogText from '../ui/BuyLogText';
 //#region 라이브러리
 import Web3 from 'web3';
 import RealEstate from '../../contracts/BuyHouse.json';
-import NFTContract from '../../contracts/NFT.json'
+// import NFTContract from '../../contracts/NFT.json'   삭제
 //#endregion
 
 const theme = createTheme();
@@ -47,8 +47,13 @@ const theme = createTheme();
 let socket;
 let web3;
 let instance;
-let NFTinstance;
+// let NFTinstance;   삭제
 //#endregion
+
+let options = {
+    fromBlock: 0,
+    toBlock: 'latest'
+};
 
 function Mainpage(props) {
 
@@ -69,7 +74,7 @@ function Mainpage(props) {
     const [state, setState] = React.useState({
         left: false
     });
-    const [accounts, setAccounts] = useState("");
+    //const [accounts, setAccounts] = useState("");  삭제
     const [ALL_BuyLogText, setBuyLogText] = useState([]);
 
     //#endregion
@@ -80,15 +85,26 @@ function Mainpage(props) {
         async function load() {
             web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
             const networkId = await web3.eth.net.getId();
-            setAccounts(await web3.eth.getAccounts());
+            //setAccounts(await web3.eth.getAccounts());  삭제
             const deployedNetwork = RealEstate.networks[networkId];
-            const NFTdeployedNetwork = NFTContract.networks[networkId];
+            // const NFTdeployedNetwork = NFTContract.networks[networkId];   삭제
             instance = new web3.eth.Contract(RealEstate.abi, deployedNetwork.address);
-            NFTinstance = new web3.eth.Contract(NFTContract.abi, NFTdeployedNetwork.address);
-            instance.events.BuyLogText({}, { fromBlock: 0, toBlock: 'latest' }, (err, res) => {  //처음부터 끝까지 검색
-                Arr_BuyLogText.push(`${res.returnValues.buyerName}님이 ${res.returnValues.sellerName}님의 ${res.returnValues.houseAddress}를 ${res.returnValues.housePrice}eth로 매입하셨습니다.`);
+            // NFTinstance = new web3.eth.Contract(NFTContract.abi, NFTdeployedNetwork.address);   삭제
+
+            instance.getPastEvents({} , options).then((res) => {  //이번트에 있는 값 전체 검색
+                for (let i = 0; i < res.length; i++) {
+                    Arr_BuyLogText.push(`${res[i].returnValues.buyerName}님이 ${res[i].returnValues.sellerName}님의 ${res[i].returnValues.houseAddress}를 ${res[i].returnValues.housePrice}eth로 매입하셨습니다.`);
+                }
                 setBuyLogText(Arr_BuyLogText);
-            });
+            }).catch((err) =>{
+                throw err;
+            })
+
+            // instance.events.BuyLogText({} , options, (err, res) => {      삭제 
+            //     Arr_BuyLogText.push(`${res.returnValues.buyerName}님이 ${res.returnValues.sellerName}님의 ${res.returnValues.houseAddress}를 ${res.returnValues.housePrice}eth로 매입하셨습니다.`);
+            //     setBuyLogText(Arr_BuyLogText);
+            // });
+
             setBuyCards(await instance.methods.readRealEstate().call());
         }
         load();
@@ -100,6 +116,7 @@ function Mainpage(props) {
             socket.emit("Area_Data", { area });
             socket.on("Area_Data_Result", (Result) => {
                 setCardsLow(Result);
+                console.log(area+ "지역 " + Result.length+"개 로드");
                 socket.off();
             })
         }
@@ -216,7 +233,8 @@ function Mainpage(props) {
                 </Box>
                 <Container sx={{ py: 8 }} maxWidth="md">
                     {/* End hero unit */}
-                    <Mainpage_Card cards={cards} user={location.state} value={buycards}></Mainpage_Card>
+                    {/* <Mainpage_Card cards={cards} user={location.state} value={buycards}></Mainpage_Card>  삭제 */}
+                    <Mainpage_Card cards={cards} user={location.state}></Mainpage_Card>
                 </Container>
             </main>
             {/* Footer */}

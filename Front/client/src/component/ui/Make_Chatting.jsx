@@ -21,7 +21,7 @@ function MakeChatting(props) {
     const { sellername, buyername } = props;
 
     const [modalIsOpen, setIsOpen] = useState(false);
-    const [roommax] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const [roommax] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20]);
     const [sendmsg, setSendMsg] = useState("");
     const [chatlog, setChatlog] = useState([{}]);
     const [RoomNumber, setRoomNumber] = useState();
@@ -33,7 +33,7 @@ function MakeChatting(props) {
         }
         else {
             setIsOpen(true);
-            MakeRoom()
+            MakeRoom();
         }
     }
 
@@ -64,16 +64,15 @@ function MakeChatting(props) {
     function MakeRoom() {
         socket.emit("Room_Search");
         socket.on("Room_Search_Result", (result) => {
-
-            for (let i = 0; i < result.length; i++) {
-                roomn.push(result[i].RoomN)
+            console.log(result);  // 결과값 없음
+            for (let i = 0; i < result.length; i++) {  //결과값이 없을때 실행이 안됨
+                roomn.push(result[i].RoomN);
             }
-            console.log(`res: ${result}`);
-            makeroom = roommax.filter(x => !roomn.includes(x))
-            if (makeroom.length === 10) {  //방이 없을때
-                roomnumber = makeroom[0]
-                setRoomNumber(makeroom[0])
-                console.log(RoomNumber);
+            makeroom = roommax.filter(x => !roomn.includes(x)); // 
+            if (makeroom.length === 21) {  //방이 없을때
+                roomnumber = makeroom[0];
+                setRoomNumber(makeroom[0]);
+                console.log(`방 번호 : ${roomnumber}`);
                 socket.emit("Room_Make", { sellername, buyername, roomnumber });
                 // eslint-disable-next-line no-loop-func
                 socket.on("Room_Make_Result", () => {
@@ -83,24 +82,21 @@ function MakeChatting(props) {
             else {  //방이 있을때                
                 for (let i = 0; i < result.length; i++) {
                     if (result[i].Sellername === sellername && result[i].Buyername === buyername) {
-                        roomnumber = result[i].RoomN   
-                        console.log(result[i].Msg)                     
-                        console.log(roomnumber);
-                        setRoomNumber(roomnumber)                        
+                        roomnumber = result[i].RoomN;
+                        console.log(`방 번호 : ${roomnumber}`);
+                        setRoomNumber(roomnumber);                      
                         socket.emit("Chatting_Join", { roomnumber });
-                        setChatlog(result[i].Msg)
+                        setChatlog(result[i].Msg);
                         socket.emit("Load_Msg_Makechat", { roomnumber });
                         socket.on('Return_Load_Msg_Makechat', ({ result }) => {
                             setChatlog(result);
-                            //console.log(result)
-                            //setChatlog([...chatlog, { name: Oname, msg: sendmsg }]);
                         })
                         break
                     }
                     else if (i === result.length - 1) {
-                        console.log("방이없다")
-                        roomnumber = makeroom[0]
-                        setRoomNumber(makeroom[0])
+                        console.log("채팅방 생성!!");
+                        roomnumber = makeroom[0];
+                        setRoomNumber(makeroom[0]);
                         socket.emit("Room_Make", { sellername, buyername, roomnumber });
                         // eslint-disable-next-line no-loop-func
                         socket.on("Room_Make_Result", () => {
@@ -114,12 +110,19 @@ function MakeChatting(props) {
 
     function SendMessage() {
         socket.emit("Message_Send", { buyername, sendmsg, RoomNumber });
+        setSendMsg(" ");
+    }
+
+    function OnkeyPress (e){
+        if(e.key === 'Enter'){
+            SendMessage();
+        }
     }
 
     return (
         <div>
             <Button onClick={() => {
-                openModal()
+                openModal();
             }}>CHATTING</Button>
             <Modal isOpen={modalIsOpen} ariaHideApp={false}>
                 <LogText log={chatlog} ></LogText>
@@ -132,11 +135,13 @@ function MakeChatting(props) {
                     name="Message"
                     autoComplete="Message"
                     autoFocus
+                    value={sendmsg}
                     onChange={(e) => setSendMsg(e.target.value)}
+                    onKeyUp={OnkeyPress}
                 />
                 <ButtonGroup disableElevation variant="contained">
                     <Button variant="contained" onClick={() => { closeModal() }}>CLOSE</Button>
-                    <Button variant="contained" endIcon={<SendIcon />} onClick={() => { SendMessage() }} >SEND</Button>
+                    <Button variant="contained" endIcon={<SendIcon />} onClick={SendMessage} >SEND</Button>
                 </ButtonGroup>
             </Modal>
         </div>

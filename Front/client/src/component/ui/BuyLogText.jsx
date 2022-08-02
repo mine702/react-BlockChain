@@ -1,5 +1,6 @@
 //#region 상위 컴포넌트
-import React, {useState, useEffect} from "react";
+// import React, {useState, useEffect} from "react";   삭제
+import React from 'react';
 //#endregion
 
 //#region mui
@@ -31,12 +32,12 @@ function BuyLogText(props){
 
     const {LogText} = props;
 
-    //#region React Hook
-    const [ALL_BuyLogText,set_BuyLogText] = useState([]);
+    //#region React Hook  삭제
+    // const [ALL_BuyLogText,set_BuyLogText] = useState([]);
 
-    useEffect(()=>{
-        set_BuyLogText(LogText);
-    },[LogText]);
+    // useEffect(()=>{
+    //     set_BuyLogText(LogText);
+    // },[LogText]);
     //#endregion
 
     //#region 렌더링

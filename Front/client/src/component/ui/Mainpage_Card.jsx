@@ -21,7 +21,8 @@ function Mainpage_Card(props) {
 
     const navigate = useNavigate();
 
-    const { cards, user, value } = props;
+    // const { cards, user, value } = props;
+    const { cards, user} = props;
 
     
 

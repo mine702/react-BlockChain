@@ -2,7 +2,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
 
-var url = "mongodb+srv://mine702:633ehddbs@cluster0.ohw26.mongodb.net/?retryWrites=true&w=majority";
+var url = "mongodb+srv://wus:1234@cluster0.ohw26.mongodb.net/test";
 
 var dbo;
 
@@ -19,7 +19,7 @@ let dbcontrol =
         var myobj = { name: name, id: id, pw: pw, number: phoneNum, MetaMaskAcc: MetaMaskAcc };
         dbo.collection("Member").insertOne(myobj, function (err, res) {
             if (err) throw err;
-            console.log("1 document inserted");
+            console.log(`${name}님이 회원가입 완료`);
         })
     },
 
@@ -28,18 +28,18 @@ let dbcontrol =
         var newvalues = { $set: { name: name, pw: pw, number: phoneNum, MetaMaskAcc: MetaMaskAcc } };
         dbo.collection("Member").updateOne(myquery, newvalues, function (err, res) {
             if (err) throw err;
-            console.log("1 document update");
+            console.log(`${name}님이 회원정보 수정 완료`);
         })
     },
 
-    db_delete: function (name) {
-        var myquery = { name: name };
+    // db_delete: function (name) {   삭제
+    //     var myquery = { name: name };
 
-        dbo.collection("Member").deleteOne(myquery, function (err, obj) {
-            if (err) throw err;
-            console.log("1 document deleted");
-        });
-    },
+    //     dbo.collection("Member").deleteOne(myquery, function (err, obj) {
+    //         if (err) throw err;
+    //         console.log("1 document deleted");
+    //     });
+    // },
 
     db_idCheck: function (id) {
         var query = { id: id };
@@ -70,7 +70,7 @@ let dbcontrol =
         var query = { location: area, address: address, price: price, files: PinataImage, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc: sellerMetaAddress, tokenId: res };
         dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
-            console.log("1 document inserted");
+            console.log("매물 등록 완료");
         })
     },
 
@@ -80,7 +80,7 @@ let dbcontrol =
         var newvalues = { $set: { location: area, address: address, price: price, files: files } };
         dbo.collection("Registration").updateOne(myquery, newvalues, function (err, res) {
             if (err) throw err;
-            console.log("1 document update");
+            console.log("매물 정보 수정 완료");
         })
     },
 
@@ -89,8 +89,8 @@ let dbcontrol =
         return new Promise(resolve => {
             dbo.collection("Registration").find(query).toArray(function (err, result) {
                 if (err) throw err;
+                console.log(`${area}지역 검색중`);
                 resolve(result);
-                console.log("All document selected");
             });
         });
     },
@@ -100,8 +100,8 @@ let dbcontrol =
             var query = { name: name, number: number };
             dbo.collection("Registration").find(query).toArray(function (err, result) {
                 if (err) throw err;
+                console.log("My_Page 판매내역 검색중");
                 resolve(result);
-                console.log("All document selected");
             });
         });
     },
@@ -112,7 +112,7 @@ let dbcontrol =
             var query = { _id: id };
             dbo.collection("Registration").deleteOne(query, function (err, result) {
                 if (err) throw err;
-                console.log("1 document deleted");
+                console.log("매물 삭제 완료");
             });
         });
     },
@@ -122,7 +122,7 @@ let dbcontrol =
             dbo.collection("Room").find({}).toArray(function (err, result) {
                 if (err) throw err;
                 resolve(result);
-                console.log("All document selected");
+                console.log("채팅방 검색중");
             });
         });
     },
@@ -132,14 +132,13 @@ let dbcontrol =
         console.log(query)
         dbo.collection("Room").insertOne(query, function (err, res) {
             if (err) throw err;
-            console.log("1 document inserted");
+            console.log("채팅방 생성 완료");
         })
     },
 
     db_GetRoomNum: function (UserName) {
         return new Promise(resolve => {
             dbo.collection("Room").find({}, { projection: { Sellername: 1, Buyername: 1, RoomN: 1 } }).toArray(function (err, result) {
-
                 if (err) throw err;
                 let Buyername_arr = [];
                 for (i = 0; i < result.length; i++) {
@@ -160,7 +159,7 @@ let dbcontrol =
         return new Promise(resolve => {
             dbo.collection("Room").find(query).toArray(function (err, result) {
                 if (err) throw err;
-                console.log(result)
+                console.log(result);
                 let Msg_Arr = [];
                 Msg_Arr = result[0].Msg;
                 resolve(Msg_Arr);
@@ -185,37 +184,37 @@ let dbcontrol =
             dbo.collection("Room").find(query, { projection: { Sellername: 1, Buyername: 1, RoomN: 1 } }).toArray(function (err, result) {
                 if (err) throw err;
                 resolve(result);
-                console.log("All document selected");
+                console.log("채팅방 검색 완료");
             });
         });
     },
 
-    db_GetOutRoom: function (value) {
+    db_GetOutRoom: function (value) {  //둘다 나갔을때 채팅방 삭제
         return new Promise(resolve => {
             var query = { RoomN: value };
             dbo.collection("Room").deleteOne(query, function (err, result) {
                 if (err) throw err;
-                console.log("1 document deleted");
+                console.log(`${value}번 채팅방 삭제 완료`);
             });
         });
     },
 
-    db_GetOutRoom_Buyername: function (value, username) {
+    db_GetOutRoom_Buyername: function (value, username) {   //구매자 채팅방 나가기
         var query = { RoomN: value }
         var newvalues = { $set: { Buyername: null } };
         dbo.collection("Room").updateOne(query, newvalues, function (err, res) {
             if (err) throw err;
-            console.log("1 document update");
+            console.log(`구매자 : ${username}님이 ${value}번 채팅방을 나가셨습니다`);
         })
     },
 
-    db_GetOutRoom_Sellername: function (value, username) {
+    db_GetOutRoom_Sellername: function (value, username) {  //판매자 채팅방 나가기
         var query = { RoomN: value }
         var newvalues = { $set: { Sellername: null } };
         return new Promise(resolve => {
             dbo.collection("Room").updateOne(query, newvalues, function (err, res) {
                 if (err) throw err;
-                console.log("1 document update");
+                console.log(`판매자 : ${username}님이 ${value}번 채팅방을 나가셨습니다`);
             })
         })
     },
@@ -234,7 +233,7 @@ let dbcontrol =
         var query = { sellerAddress: sellerAddress, locations: locations, sellername: sellername, sellerImg: sellerImg, buyername: buyername, buyernumber: buyernumber, buyerAddress: buyerAddress, houseAddress: houseAddress, housePrice: housePrice, tokenId: tokenId };
         dbo.collection("Approval").insertOne(query, function (err, res) {
             if (err) throw err;
-            console.log("1 document inserted");
+            console.log("거래 승인 요청 추가 완료");
         })
     },
 
@@ -243,8 +242,8 @@ let dbcontrol =
             var query = { sellername: name };
             dbo.collection("Approval").find(query).toArray(function (err, result) {
                 if (err) throw err;
+                console.log("My_Page 승인요청 검색중");
                 resolve(result);
-                console.log("All document selected");
             });
         });
     },
@@ -253,7 +252,7 @@ let dbcontrol =
         var myquery = { sellername: username, locations: locations, houseAddress: houseAddress };
         dbo.collection("Approval").deleteOne(myquery, function (err, obj) {
             if (err) throw err;
-            console.log("1 document deleted");
+            console.log("거래 승인 요청 삭제 완료");
         });
     },
 
@@ -261,7 +260,7 @@ let dbcontrol =
         var myquery = { name: username, location: locations, address: houseAddress };
         dbo.collection("Registration").deleteOne(myquery, function (err, obj) {
             if (err) throw err;
-            console.log("1 document deleted");
+            console.log("거래 승인 후 매물 삭제 완료");
         });
     },
 
@@ -284,7 +283,7 @@ let dbcontrol =
         var myobj = { username: sellusername, usernumber: sellusernumber, tokenId: res };
         dbo.collection("Token").insertOne(myobj, function (err, res) {
             if (err) throw err;
-            console.log("1 document inserted");
+            console.log("토큰 추가 완료");
         })
     },
 
@@ -293,7 +292,7 @@ let dbcontrol =
         var newvalues = { $set: { username: buyername, usernumber: buyernumber } };
         dbo.collection("Token").updateOne(query, newvalues, function (err, res) {
             if (err) throw err;
-            console.log("1 document update");
+            console.log("토큰 수정 완료");
         })
     },
 
@@ -302,8 +301,8 @@ let dbcontrol =
             var query = { username: name, usernumber: number };
             dbo.collection("Token").find(query).toArray(function (err, result) {
                 if (err) throw err;
+                console.log("토큰 검색중");
                 resolve(result);
-                console.log("All document selected");
             });
         });
     },

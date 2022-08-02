@@ -34,7 +34,6 @@ function RoomList(props) {
 
     //#region 채팅방 검색
     async function RoomSearach(value) {
-
         socket.emit("Search_Room", { value });  // 채팅방 검색
         await socket.on('Search_Room_Result', (result) => {  //채팅방 검색결과
             if (result.result[0].Buyername === username) {
@@ -87,11 +86,11 @@ function RoomList(props) {
                     <ListItem disablePadding>
                         <ListItemButton>
                             <ListItemText primary={value} secondary="메세지내용" />
+                            <Chatting value={value} buyername={username}></Chatting>
                         </ListItemButton>
-                        <Chatting value={value} buyername={username}></Chatting>
                         <Button
                             onClick={() => {
-                                RoomSearach(value)
+                                RoomSearach(value);
                             }}
                         >OUT</Button>
                     </ListItem>

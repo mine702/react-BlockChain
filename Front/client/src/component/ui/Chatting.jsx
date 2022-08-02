@@ -25,6 +25,7 @@ const style = {
     pt: 2,
     px: 4,
     pb: 3,
+    overflow:'scroll',
 };
 
 let socket;
@@ -47,12 +48,11 @@ function Chatting(props) {
         roomnumber = RoomNumber;
         socket.emit("Chatting_Join", { roomnumber });
         socket.on('Join_return', ({ roomnumber }) => {
-            console.log("성공");
-        })
+            console.log(`${roomnumber}번에 참가하였습니다.`);
+        });
         socket.emit("Load_Msg_Chat", { RoomNumber });
         socket.on('Return_Load_Msg_Chat', ({ result }) => {
             setChatlog(result);
-            //setChatlog([...chatlog, { name: Oname, msg: sendmsg }]);
         })
         setIsOpen(true);
     }
@@ -60,6 +60,7 @@ function Chatting(props) {
     // 함수가 실행될때 modal의 상태를 false로 바꿔준다.
     function closeModal() {
         setIsOpen(false);
+        // setChatlog([...chatlog] , {});
     }
 
 
@@ -69,9 +70,8 @@ function Chatting(props) {
     }, [ENDPOINT]);
 
     useEffect(() => {
-
         socket.on("Msg_return", ({ buyername, sendmsg }) => {
-            console.log("신호");
+            console.log("채팅 전송 완료");
             setChatlog([...chatlog, { name: buyername, msg: sendmsg }]);
         })
         if (chatlog.length !== 0 && chatlog.length !== 1) {
@@ -81,8 +81,14 @@ function Chatting(props) {
     }, [chatlog]);
 
     function SendMessage() {
-
         socket.emit("Message_Send", { buyername, sendmsg, RoomNumber });
+        setSendMsg(" ");
+    }
+
+    function OnkeyPress (e){
+        if(e.key === 'Enter'){
+            SendMessage();
+        }
     }
 
     return (
@@ -106,11 +112,13 @@ function Chatting(props) {
                         name="Message"
                         autoComplete="Message"
                         autoFocus
+                        value={sendmsg}
                         onChange={(e) => setSendMsg(e.target.value)}
+                        onKeyUp={OnkeyPress}
                     />
                     <ButtonGroup disableElevation variant="contained">
                         <Button variant="contained" onClick={() => { closeModal() }}>CLOSE</Button>
-                        <Button variant="contained" endIcon={<SendIcon />} onClick={() => { SendMessage() }} >SEND</Button>
+                        <Button variant="contained" endIcon={<SendIcon />} onClick={SendMessage} >SEND</Button>
                     </ButtonGroup>
                 </Box>
             </Modal>

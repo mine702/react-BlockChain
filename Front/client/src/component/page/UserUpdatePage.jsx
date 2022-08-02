@@ -152,6 +152,17 @@ const NewMember = () => {
                         >
                             정보 수정
                         </Button>
+                        <Button
+                            type="button"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                            onClick={() => {
+                                navigate("/post-MainPage", { state: location.state });
+                            }}
+                        >
+                            Main_Page 이동
+                        </Button>
                     </Box>
                 </Box>
             </Container>

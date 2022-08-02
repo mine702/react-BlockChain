@@ -232,6 +232,14 @@ function HouseInfoExistInsert() {
               onClick={House_register}
             >등록
             </Button>
+            <Button
+              variant="contained"
+              sx={{ mt: 3, ml: 1 }}
+              onClick={()=>{
+                navigate("/post-MainPage", { state: location.state });
+              }}
+            >취소
+            </Button>
           </Box>
         </React.Fragment>
       </Paper>
