@@ -66,8 +66,8 @@ let dbcontrol =
         });
     },
 
-    db_House_Register: function (area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res) {
-        var query = { location: area, address: address, price: price, files: PinataImage, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc: sellerMetaAddress, tokenId: res };
+    db_House_Register: function (area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res, PinataDocx) {
+        var query = { location: area, address: address, price: price, files: PinataImage, selluserId: selluserId, name: sellusername, number: sellusernumber, MetaMaskAcc: sellerMetaAddress, tokenId: res, PinataDocx: PinataDocx };
         dbo.collection("Registration").insertOne(query, function (err, res) {
             if (err) throw err;
             console.log("매물 등록 완료");

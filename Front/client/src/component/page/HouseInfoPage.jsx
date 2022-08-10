@@ -24,6 +24,7 @@ import CardContent from '@mui/material/CardContent';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
+import Link from '@mui/material/Link';
 //#endregion
 
 //#region component
@@ -195,6 +196,13 @@ function HouseInfoPage() {
                             </Typography>
                             <Typography>
                                 &nbsp;&nbsp;{location.state[0].address}
+                            </Typography>
+                            <br/>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                계약서
+                            </Typography>
+                            <Typography>
+                                <Link href={location.state[0].PinataDocx}>DOWNLOAD</Link>
                             </Typography>
                             <br/>
                             <Typography gutterBottom variant="h5" component="h2">

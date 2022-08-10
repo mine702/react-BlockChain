@@ -140,8 +140,8 @@ io.on('connection', socket => {
   //#endregion
 
   //#region 매물관리
-  socket.on('House_Register', ({ area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res }) => {
-    dbcontrol.db_House_Register(area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res);
+  socket.on('House_Register', ({ area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res, PinataDocx }) => {
+    dbcontrol.db_House_Register(area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res, PinataDocx);
     socket.emit("House_Register_Result");
   })
 

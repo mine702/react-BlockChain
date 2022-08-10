@@ -37,6 +37,7 @@ let NFT_Hash;
 let web3;
 let NFT_instance;
 let PinataImage;
+let PinataDocx;
 //#endregion
 
 function HouseInfo_insert() {
@@ -57,8 +58,10 @@ function HouseInfo_insert() {
   const [agree, setAgree] = useState(false);
   const [price, setPrice] = useState();
   const [files, setFiles] = useState(images1);
-
+  const [docxfiles, DocxsetFiles] = useState("선택된 파일 없음");
   const [file, setFile] = useState();
+  const [docxfile, DocxsetFile] = useState();
+  const [docxresponse, setDocxResponse] = useState();
   const [accounts, setAccounts] = useState("");
   const [AddrCheck, setAddrCheck] = useState(false);
   const PinataAPIKey = "a1d2edb7b927ab31fb99";
@@ -85,12 +88,15 @@ function HouseInfo_insert() {
 
   //#region 이미지 업로드
   const handleFile = async (fileToHandle) => {
-    if (area === "" || address === "" || price === "") {
+    if (file === undefined) {
+      alert("사진을 입력해주세요");
+    }
+    else if (area === "" || address === "" || price === "" || docxfile === undefined) {
       alert("입력하지 않은 정보가 있습니다");
     }
-    else if (AddrCheck === true) {
+    else if (file !== undefined) {
       console.log('IPFS starting');
-
+      console.log(fileToHandle)
       const formData = new FormData();
       formData.append("file", fileToHandle);
 
@@ -114,49 +120,87 @@ function HouseInfo_insert() {
       console.log(response);
       console.log("IPFS Complete");
 
-      Make_Json(filenameStr[0], response.data.IpfsHash); //response.data.IpfsHash : 매물 해시값
+      Make_Json(filenameStr[0], response.data.IpfsHash, docxresponse); //response.data.IpfsHash : 매물 해시값
       PinataImage = "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
     }
   }
   //#endregion
 
-  //#region 제이슨 파일 업로드
-  const Make_Json = async (filenameStr, img_cid) => {
-    //#region JSON 변환
-    var data = JSON.stringify({
-      "pinataOptions": {
-        "cidVersion": 1
-      },
-      "pinataMetadata": {
-        "name": `${filenameStr}.json`,
-      },
-      "pinataContent": {
-        "img": `ipfs://${img_cid}`,
-        "description": filenameStr,
-        "keyvalues": {
-          "Price": price,
-          "Address": address,
-          "Area": area,
+  //#region 문서 업로드
+  const handleDocxFile = async (fileToHandle) => {
+    if (docxfile === undefined) {
+      alert("사진을 입력해주세요");
+    }
+    else if (docxfile !== undefined) {
+      console.log('IPFS starting');
+      const formData = new FormData();
+      formData.append("file", fileToHandle);
+
+      const url = `https://api.pinata.cloud/pinning/pinFileToIPFS` //파일 올리는 URL
+
+      const response = await axios.post(
+        url,
+        formData,
+        {
+          maxContentLength: "Infinity",
+          headers: {
+            'Content-Type': `multipart/form-data;boundary=${formData._boundary}`,
+            'pinata_api_key': PinataAPIKey,
+            'pinata_secret_api_key': PinataAPISecret,
+          }
         }
-      }
-    });
-    //#endregion
+      );
+      console.log(response);
+      console.log("IPFS Complete");
+      setDocxResponse(response.data.IpfsHash)
+      PinataDocx="https://gateway.pinata.cloud/ipfs/"+response.data.IpfsHash
+    }
+  }
+  //#endregion
 
-    var config = {
-      method: 'post',
-      url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',  //JSON 올리는 URL
-      headers: {
-        'Content-Type': 'application/json',
-        'pinata_api_key': PinataAPIKey,
-        'pinata_secret_api_key': PinataAPISecret,
-      },
-      data: data
-    };
+  //#region 제이슨 파일 업로드
+  const Make_Json = async (filenameStr, img_cid, docx_cid) => {
+    if (docx_cid === undefined) {
+      alert("문서 파일 IPFS 업로드를 해주세요")
+    }
+    //#region JSON 변환
+    else {
+      var data = JSON.stringify({
+        "pinataOptions": {
+          "cidVersion": 1
+        },
+        "pinataMetadata": {
+          "name": `${filenameStr}.json`,
+        },
+        "pinataContent": {
+          "img": `ipfs://${img_cid}`,
+          "description": filenameStr,
+          "keyvalues": {
+            "Price": price,
+            "Address": address,
+            "Area": area,
+            "File": docx_cid
+          }
+        }
+      });
+      //#endregion
 
-    const res = await axios(config);
+      var config = {
+        method: 'post',
+        url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',  //JSON 올리는 URL
+        headers: {
+          'Content-Type': 'application/json',
+          'pinata_api_key': PinataAPIKey,
+          'pinata_secret_api_key': PinataAPISecret,
+        },
+        data: data
+      };
 
-    console.log(res.data);
-    NFT_Hash = res.data.IpfsHash;  //JSON 해쉬 값
+      const res = await axios(config);
+
+      console.log(res.data);
+      NFT_Hash = res.data.IpfsHash;  //JSON 해쉬 값
+    }
   }
   //#endregion
 
@@ -176,8 +220,10 @@ function HouseInfo_insert() {
 
   //#region 매물등록
   async function House_register() {
-
-    if (agree === false) {
+    if (AddrCheck === false) {
+      alert("주소 중복체크를 하세요")
+    }
+    else if (agree === false) {
       alert("개인정보 동의를 하세요");
     }
     else if (NFT_Hash === undefined || NFT_Hash === null || NFT_Hash === "") {
@@ -190,7 +236,7 @@ function HouseInfo_insert() {
           gas: 900000
         });
         const res = resl.events.Transfer.returnValues.tokenId
-        socket.emit("House_Register", { area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res });
+        socket.emit("House_Register", { area, address, price, PinataImage, selluserId, sellusername, sellusernumber, sellerMetaAddress, res, PinataDocx });
         socket.on("House_Register_Result", () => {
           socket.emit("Token_Add", { sellusername, sellusernumber, res });
           alert("등록 완료!");
@@ -198,7 +244,7 @@ function HouseInfo_insert() {
         })
       }
       catch (e) {
-        alert(e.message)
+        alert("MetaMask Login False")
         navigate("/post-MainPage", { state: location.state });
       }
     }
@@ -291,6 +337,26 @@ function HouseInfo_insert() {
                 />
               </Grid>
               <Grid item xs={12}>
+                <TextField
+                  label="File" value={docxfiles}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button variant="contained" component="label">
+                  문서올리기
+                  <input hidden accept="." multiple type="file"
+                    onChange={(e) => {
+                      DocxsetFile(e.target.files[0])
+                      DocxsetFiles(e.target.files[0].name)
+                    }}
+                  />
+                </Button>&nbsp;
+                <Button variant="contained" onClick={() => handleDocxFile(docxfile)}>IPFS등록</Button>&nbsp;
+              </Grid>
+              <Grid item xs={12}>
                 <Card
                   sx={{ height: '100%', display: 'flex' }}
                 >
@@ -320,12 +386,7 @@ function HouseInfo_insert() {
                     }}
                   />
                 </Button>&nbsp;
-                {/* <input type="file" onChange={(event)=>setFile(event.target.files[0])}/> */}
-                <Button variant="contained" onClick={() => handleFile(file)}>IPFS등록</Button>
-                {/* {
-                  //  render the hash
-                  myipfsHash.length > 0 && <img height='200' src={`https://gateway.pinata.cloud/ipfs/${myipfsHash}`} alt='not loading'/>
-                } */}
+                <Button variant="contained" onClick={() => handleFile(file)}>IPFS등록</Button>&nbsp;
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
@@ -345,7 +406,7 @@ function HouseInfo_insert() {
             <Button
               variant="contained"
               sx={{ mt: 3, ml: 1 }}
-              onClick={()=>{
+              onClick={() => {
                 navigate("/post-MainPage", { state: location.state });
               }}
             >취소

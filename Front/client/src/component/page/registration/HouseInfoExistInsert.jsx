@@ -23,6 +23,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
+import Link from '@mui/material/Link';
 //#endregion
 
 //#region 라이브러리
@@ -57,7 +58,7 @@ function HouseInfoExistInsert() {
   const [agree, setAgree] = useState(false);
   const [price, setPrice] = useState("");
   const [PinataImage, setPinataImage] = useState(images1);
-
+  const [docxfiles, setDocxfiles] = useState();
   const [res, setRes] = useState()
   const [tokenvalues, setTokenValues] = useState([])
   //#endregion
@@ -135,6 +136,7 @@ function HouseInfoExistInsert() {
     setPrice(json.keyvalues.Price)
     let imgpro = json.img.split('ipfs://');
     setPinataImage(`https://gateway.pinata.cloud/ipfs/${imgpro[1]}`)
+    setDocxfiles(`https://gateway.pinata.cloud/ipfs/${json.keyvalues.File}`)
     setRes(value.tokenId)
   }
 
@@ -201,6 +203,9 @@ function HouseInfoExistInsert() {
                   variant="standard"
                   value={price}
                 />
+              </Grid>
+              <Grid item xs={12}>
+              <Link href={docxfiles}>평면도</Link>
               </Grid>
               <Grid item xs={12}>
                 <Card
