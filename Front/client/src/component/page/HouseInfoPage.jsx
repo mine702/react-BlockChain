@@ -199,7 +199,7 @@ function HouseInfoPage() {
                             </Typography>
                             <br/>
                             <Typography gutterBottom variant="h5" component="h2">
-                                계약서
+                                단면도
                             </Typography>
                             <Typography>
                                 <Link href={location.state[0].PinataDocx}>DOWNLOAD</Link>
